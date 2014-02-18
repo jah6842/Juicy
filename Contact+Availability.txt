@@ -15,3 +15,11 @@ Ian kane
 		T:	2:30pm - X
 		R:	4:30pm - X
 		Sat/Sun:Whenever
+Jack Bradford
+	email: jdb5739@rit.edu
+	github: jdb5739
+	phone: 8598018377
+	Available:
+		MWF: 10am-4pm, 5pm-X (10am-4pm preferred)
+		TR: 12:30pm-X
+		SS: Whenever
