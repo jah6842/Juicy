@@ -23,3 +23,15 @@ Jack Bradford
 		MWF: 10am-4pm, 5pm-X (10am-4pm preferred)
 		TR: 12:30pm-X
 		SS: Whenever
+
+John Stelben
+	email: jjs8640@g.rit.edu
+	github: jstelben
+	Available:
+		M: before 2 and after 5
+		T: before 1 and after 7
+		W: before 12 and after 5
+		Th: before 2 and after 7
+		F: before 12 and between 5-7
+		Sat: before 12 and between 2-7
+		Sun: Anytime
