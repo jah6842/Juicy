@@ -69,3 +69,5 @@ ipch/
 *.pidb
 *.svclog
 *.scc
+Unity Mockup/Library/
+Unity Mockup/Mockup_Data/
