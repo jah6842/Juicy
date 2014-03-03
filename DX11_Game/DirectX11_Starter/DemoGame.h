@@ -8,12 +8,6 @@
 #include "Renderer.h"
 #include <vector>
 
-// Include run-time memory checking in debug builds
-#if defined(DEBUG) || defined(_DEBUG)
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-#endif
-
 // For DirectX Math
 using namespace DirectX;
 

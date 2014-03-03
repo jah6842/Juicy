@@ -9,6 +9,18 @@
 #include <string>
 #include <iostream>
 
+// Include run-time memory checking in debug builds
+#if defined(DEBUG) || defined(_DEBUG)
+	#define _CRTDBG_MAP_ALLOC
+	#include <crtdbg.h>
+
+	// Visual Leak Detector is much better than the standard leak detector
+	// but doesn't compile on most of the lab computers. Uncomment this line
+	// and comment the above lines to use VLD. If recommiting this file, leave
+	// this line commented out.
+	//#include <vld.h>
+#endif
+
 // Convenience macro for releasing a COM object
 // Use this for releasing GPU resources.
 #define ReleaseMacro(x) { if(x){ x->Release(); x = 0; } }
