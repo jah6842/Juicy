@@ -1,0 +1,25 @@
+#ifndef _CONSTANT_BUFFER_H
+#define _CONSTANT_BUFFER_H
+
+#include <d3d11.h>
+#include <DirectXMath.h>
+
+using namespace DirectX;
+
+enum CONSTANT_BUFFER_LAYOUT {
+	CONSTANT_BUFFER_LAYOUT_VS_WVP,
+	CONSTANT_BUFFER_LAYOUT_VS_VPMATRIX
+};
+
+struct VS_CONSTANT_BUFFER_WVP
+{
+	XMFLOAT4X4 world;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 projection;
+};
+
+struct VS_CONSTANT_BUFFER_VPMATRIX {
+	XMFLOAT4X4 viewProj;
+};
+
+#endif // _CONSTANT_BUFFER_H
