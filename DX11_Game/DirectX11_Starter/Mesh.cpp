@@ -31,14 +31,8 @@ Mesh* Mesh::GetMesh(std::wstring meshName){
 Mesh::Mesh(std::wstring meshName){
 	if(meshName == L"StandardCube")
 	{
-		ConstructMesh(L"StandardCube", StandardCubeVertices, 24, VERTEX_TYPE_POS_UV, StandardCubeIndices, 36);
+		ConstructMesh(L"StandardCube", StandardCubeVertices, 24, VERTEX_TYPE_ALL, StandardCubeIndices, 36);
 		meshes[L"StandardCube"] = this;
-		return;
-	}
-	if(meshName == L"StandardQuad")
-	{
-		ConstructMesh(L"StandardQuad", StandardQuadVertices, 4, VERTEX_TYPE_POS_COLOR, StandardQuadIndices, 6);
-		meshes[L"StandardQuad"] = this;
 		return;
 	}
 };

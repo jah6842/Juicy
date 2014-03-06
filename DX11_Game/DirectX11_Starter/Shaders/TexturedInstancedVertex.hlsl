@@ -17,8 +17,10 @@ cbuffer perModel : register( b1 )
 // - This should match our input layout!
 struct VertexShaderInput
 {
-	float3 position		: POSITION;
+	float4 position		: POSITION;
 	float2 TexCoord		: TEXCOORD0;
+	float3 Normal		: NORMAL;
+	float4 Color		: COLOR;
 	matrix instancePosition : INSTANCEPOS;
 };
 
@@ -30,8 +32,9 @@ SamplerState ObjSamplerState : register(s0);
 // - Should match the pixel shader's input
 struct VS_OUTPUT
 {
-	float4 Pos : SV_POSITION;
+	float4 Pos		: SV_POSITION;
 	float2 TexCoord : TEXCOORD0;
+	float3 Normal	: NORMAL;
 };
 
 // The entry point for our vertex shader
@@ -40,12 +43,17 @@ VS_OUTPUT main( VertexShaderInput input )
 	// Set up output
 	VS_OUTPUT output;
 
+	input.position.w = 1.0f;
+
 	// Calculate output position
 	// vertex position vector * instance matrix * view/projection matrix
-	output.Pos = mul(mul(float4(input.position, 1.0f), input.instancePosition), viewProj);
+	output.Pos = mul(mul(input.position, input.instancePosition), viewProj);
 
 	// Texture UVs
 	output.TexCoord = input.TexCoord;
+
+	// Vertex normals
+	output.Normal = input.Normal;
 
 	return output;
 }

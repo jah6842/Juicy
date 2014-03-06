@@ -13,7 +13,6 @@ cbuffer perModel : register( b1 )
 	matrix world;
 };
 
-
 // Defines what kind of data to expect as input
 // - This should match our input layout!
 struct VertexShaderInput

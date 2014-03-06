@@ -59,38 +59,39 @@ private:
 ////////// HARDCODED VERTICES //////////////
 /* Until we get a model loader going :)   */
 ////////////////////////////////////////////
-static Vertex_POS_UV StandardCubeVertices[24] =
+static RenderVertex StandardCubeVertices[24] =
 {
 	// Front Face
-	Vertex_POS_UV(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-	Vertex_POS_UV(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-	Vertex_POS_UV( 1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
-	Vertex_POS_UV( 1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
+	// RenderVertex(Position, UV, Normal, Color)
+	RenderVertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f,  1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3( 1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	// Back Face
-	Vertex_POS_UV(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f),
-	Vertex_POS_UV( 1.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-	Vertex_POS_UV( 1.0f,  1.0f, 1.0f, 0.0f, 0.0f),
-	Vertex_POS_UV(-1.0f,  1.0f, 1.0f, 1.0f, 0.0f),
+	RenderVertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3( 1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f,  1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3( 1.0f,  1.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3(-1.0f,  1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(-1.0f,  1.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	// Top Face
-	Vertex_POS_UV(-1.0f, 1.0f, -1.0f, 0.0f, 1.0f),
-	Vertex_POS_UV(-1.0f, 1.0f,  1.0f, 0.0f, 0.0f),
-	Vertex_POS_UV( 1.0f, 1.0f,  1.0f, 1.0f, 0.0f),
-	Vertex_POS_UV( 1.0f, 1.0f, -1.0f, 1.0f, 1.0f),
+	RenderVertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3(-1.0f, 1.0f,  1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3(-1.0f, 1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f, 1.0f,  1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3( 1.0f, 1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3( 1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	// Bottom Face
-	Vertex_POS_UV(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
-	Vertex_POS_UV( 1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-	Vertex_POS_UV( 1.0f, -1.0f,  1.0f, 0.0f, 0.0f),
-	Vertex_POS_UV(-1.0f, -1.0f,  1.0f, 1.0f, 0.0f),
+	RenderVertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	// Left Face
-	Vertex_POS_UV(-1.0f, -1.0f,  1.0f, 0.0f, 1.0f),
-	Vertex_POS_UV(-1.0f,  1.0f,  1.0f, 0.0f, 0.0f),
-	Vertex_POS_UV(-1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
-	Vertex_POS_UV(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
+	RenderVertex(XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3(-1.0f,  1.0f,  1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3(-1.0f,  1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	// Right Face
-	Vertex_POS_UV( 1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-	Vertex_POS_UV( 1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-	Vertex_POS_UV( 1.0f,  1.0f,  1.0f, 1.0f, 0.0f),
-	Vertex_POS_UV( 1.0f, -1.0f,  1.0f, 1.0f, 1.0f),
+	RenderVertex(XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f,  1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3( 1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f,  1.0f,  1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3( 1.0f,  1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderVertex(XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 };
 static UINT StandardCubeIndices[] = {
 	// Front Face
@@ -112,18 +113,5 @@ static UINT StandardCubeIndices[] = {
 	20, 21, 22,
 	20, 22, 23
 };
-
-static XMFLOAT4 red	= XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-static XMFLOAT4 green	= XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-static XMFLOAT4 blue	= XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-
-static Vertex_POS_COLOR StandardQuadVertices[4] = 
-{
-	Vertex_POS_COLOR( XMFLOAT3(-1.0f, +1.0f, +0.0f), red),
-	Vertex_POS_COLOR( XMFLOAT3(+1.0f, -1.0f, +0.0f), red),
-	Vertex_POS_COLOR( XMFLOAT3(-1.0f, -1.0f, +0.0f), blue),
-	Vertex_POS_COLOR( XMFLOAT3(+1.0f, +1.0f, +0.0f), blue)
-};
-static UINT StandardQuadIndices[6] = { 0, 1, 2, 1, 0, 3 };
 
 #endif // _MESH_H

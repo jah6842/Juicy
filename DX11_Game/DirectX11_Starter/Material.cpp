@@ -258,18 +258,14 @@ void Material::LoadVertexShader(UINT vShaderID){
 	UINT descriptionSize = 0;
 
 	switch(vShaderID){
-	case VSHADER_COLORED:
-		description = VERTEX_DESCRIPTION_POS_COLOR;
-		descriptionSize = 2;
-		break;
-	case VSHADER_TEXTURED:
-		description = VERTEX_DESCRIPTION_POS_UV;
-		descriptionSize = 2;
-		break;
 	case VSHADER_TEXTURED_INSTANCED:
-		description = VERTEX_DESCRIPTION_POS_UV_INSTANCED;
-		descriptionSize = 6;
+		description = VERTEX_DESCRIPTION_ALL;
+		descriptionSize = 8;
 		_isInstanced = true;
+		break;
+	default:
+		LOG(L"UNSUPPORTED SHADER!");
+		break;
 	}
 
 	assert(description != nullptr);

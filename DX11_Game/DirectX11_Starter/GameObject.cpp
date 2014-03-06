@@ -43,15 +43,9 @@ GameObject::GameObject(){
 	flip++;
 	if(flip > 2)
 		flip = 0;
-
-	float randX;
-	randX = (dis(gen));
 	
 	// Set the mesh
-	//if(randX > 25)
-		mesh = Mesh::GetMesh(L"StandardCube");
-	//else
-	//	mesh = Mesh::GetMesh(L"StandardQuad");
+	mesh = Mesh::GetMesh(L"StandardCube");
 };
 
 void GameObject::Update(float dt){
