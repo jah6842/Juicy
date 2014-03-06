@@ -24,7 +24,7 @@ GameObject::GameObject(){
 	//if(flip == false)
 		//material =  Material::GetMaterial(L"TexturedInstanced", 1, L"texture.png");
 	MATERIAL_DESCRIPTION matDesc;
-	matDesc.cBufferLayout = CONSTANT_BUFFER_LAYOUT_VS_VPMATRIX;
+	matDesc.cBufferLayout = CONSTANT_BUFFER_LAYOUT_PER_MODEL;
 	matDesc.diffuseTextureID = TEXTURE_MARBLE_PNG;
 	matDesc.vShaderID = VSHADER_TEXTURED_INSTANCED;
 	matDesc.pShaderID = PSHADER_TEXTURED_INSTANCED;

@@ -16,12 +16,19 @@ class Renderer {
 private:
 	static std::unordered_set<GameObject*> registeredGOs;
 
+	static ID3D11Buffer* _perFrameConstantBuffer;
+	static bool rendererReady;
+
 	Renderer();
 	~Renderer();
 
 	// Internal drawing functions
 	static void DrawSingle(GameObject* go);
 	static void DrawBatched();
+
+	// Make sure that we are ready to render
+	static void PrepareRenderer();
+	
 
 public:
 	// Draws every registered gameobject
@@ -31,6 +38,9 @@ public:
 	// Add and remove 
 	static void RegisterGameObject(GameObject* go);
 	static void UnRegisterGameObject(GameObject* go);
+
+	// Clean up resources
+	static void Cleanup();
 };
 
 #endif // _RENDERER_H

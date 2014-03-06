@@ -1,6 +1,8 @@
 #include "Renderer.h"
 
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
+ID3D11Buffer* Renderer::_perFrameConstantBuffer = nullptr;
+bool Renderer::rendererReady = false;
 
 Renderer::Renderer(){
 
@@ -16,7 +18,39 @@ UINT instanceBufferSize;
 D3D11_BUFFER_DESC instanceBufferDesc;
 D3D11_SUBRESOURCE_DATA instanceData;
 
+void Renderer::PrepareRenderer() {
+	// Create a constant buffer for per-frame data
+	if( _perFrameConstantBuffer == nullptr) {
+		ID3D11Device* device = DeviceManager::GetCurrentDevice();
+
+		D3D11_BUFFER_DESC cBufferDesc;
+		cBufferDesc.ByteWidth			= sizeof(CONSTANT_BUFFER_PER_FRAME);
+		cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
+		cBufferDesc.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+		cBufferDesc.CPUAccessFlags		= 0;
+		cBufferDesc.MiscFlags			= 0;
+		cBufferDesc.StructureByteStride = 0;
+		HR(device->CreateBuffer( &cBufferDesc, NULL, &_perFrameConstantBuffer));
+	}
+
+	// Set the constant buffer's data
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
+	CONSTANT_BUFFER_PER_FRAME perFrameData;
+	perFrameData.proj = Camera::MainCamera.GetProjectionMatrix();
+	perFrameData.view = Camera::MainCamera.GetViewMatrix();
+	perFrameData.viewProj = Camera::MainCamera.GetViewProjMatrix();
+	deviceContext->UpdateSubresource(_perFrameConstantBuffer, 0, NULL, &perFrameData, 0, 0);
+	deviceContext->VSSetConstantBuffers(0,1,&_perFrameConstantBuffer);
+
+	rendererReady = true;
+};
+
 void Renderer::Draw(){
+	if(!rendererReady){
+		PrepareRenderer();
+	}
+
 	UINT drawnObjects = 0;
 
 	// Get the current device context
@@ -28,7 +62,6 @@ void Renderer::Draw(){
 
 	for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
-		// DISABLED FOR NOW, NOT WORKING!
 		if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
 			continue;
 			
@@ -77,7 +110,6 @@ void Renderer::Draw(){
 		//for(UINT i = 0; i < registeredGOs.size(); i++){
 		for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 			// Check if the object is in the viewing frustum
-			// DISABLED FOR NOW, NOT WORKING!
 			if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
 				continue;
 			
@@ -153,6 +185,7 @@ void Renderer::Draw(){
 	}
 
 	delete[] renderList;
+	rendererReady = false;
 	//LOG(L"Rendered objects: ", std::to_wstring(drawnObjects));
 };
 
@@ -166,4 +199,8 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 	std::unordered_set<GameObject*>::iterator itr;
 	itr = registeredGOs.find(go);
 	registeredGOs.erase(itr);
+};
+
+void Renderer::Cleanup(){
+	ReleaseMacro(_perFrameConstantBuffer);
 };

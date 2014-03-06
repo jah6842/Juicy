@@ -126,34 +126,13 @@ void Material::SetConstantBufferData(XMFLOAT4X4 world){
 	// Get the current device context
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 
-	// World, View, Projection matrices
-	if(_cBufferLayout == CONSTANT_BUFFER_LAYOUT_VS_WVP){
-		VS_CONSTANT_BUFFER_WVP wvpData;
-		wvpData.world = world;
-		wvpData.view = Camera::MainCamera.GetViewMatrix();
-		wvpData.projection = Camera::MainCamera.GetProjectionMatrix();
+	// Per model data
+	if(_cBufferLayout == CONSTANT_BUFFER_LAYOUT_PER_MODEL){
+		CONSTANT_BUFFER_PER_MODEL modelData;
+		modelData.world = world;
 
 		// Update the constant buffer itself
-		deviceContext->UpdateSubresource(_vsConstantBuffer,
-			0,			
-			NULL,		
-			&wvpData,
-			0,
-			0);
-	}
-
-	// View*Projection Matrix
-	else if(_cBufferLayout == CONSTANT_BUFFER_LAYOUT_VS_VPMATRIX){
-		VS_CONSTANT_BUFFER_VPMATRIX vpData;
-		vpData.viewProj = Camera::MainCamera.GetViewProjMatrix();
-
-		// Update the constant buffer itself
-		deviceContext->UpdateSubresource(_vsConstantBuffer,
-			0,			
-			NULL,		
-			&vpData,
-			0,
-			0);
+		deviceContext->UpdateSubresource(_vsConstantBuffer, 0, NULL, &modelData, 0, 0);
 	}
 };
 
@@ -167,7 +146,7 @@ void Material::SetInputAssemblerOptions(){
 		deviceContext->VSSetShader(_vertexShader, NULL, 0);
 	}
 	if(_vsConstantBuffer != currentConstantBuffer){
-		deviceContext->VSSetConstantBuffers(0, 1, &_vsConstantBuffer);
+		deviceContext->VSSetConstantBuffers(1, 1, &_vsConstantBuffer);
 		currentConstantBuffer = _vsConstantBuffer;
 	}
 	if(_pixelShader != currentPixelShader){
@@ -196,12 +175,10 @@ void Material::LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout){
 	D3D11_BUFFER_DESC cBufferDesc;
 
 	switch(layout){
-	case CONSTANT_BUFFER_LAYOUT_VS_WVP:
-		cBufferDesc.ByteWidth = sizeof(VS_CONSTANT_BUFFER_WVP); break;
-	case CONSTANT_BUFFER_LAYOUT_VS_VPMATRIX:
-		cBufferDesc.ByteWidth = sizeof(VS_CONSTANT_BUFFER_VPMATRIX); break;
+	case CONSTANT_BUFFER_LAYOUT_PER_MODEL:
+		cBufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_PER_MODEL); break;
 	default:
-		LOG(L"INVALID CONSTANT BUFFER TYPE");
+		LOG(L"INVALID CONSTANT BUFFER TYPE! ", __FILEW__, L", ", std::to_wstring(__LINE__));
 	}
 
 	cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;

@@ -1,13 +1,18 @@
 
+// The constant buffer that holds our "per frame" data
+cbuffer perFrame : register( b0 )
+{
+	matrix view;		// Camera view matrix
+	matrix projection;	// Camera projection matrix
+	matrix viewProj;	// Camera view*proj matrix
+};
+
 // The constant buffer that holds our "per model" data
-// - Each object you draw with this shader will probably have
-//   slightly different data (at least for the world matrix)
-cbuffer perModel : register( b0 )
+cbuffer perModel : register( b1 )
 {
 	matrix world;
-	matrix view;
-	matrix projection;
 };
+
 
 // Defines what kind of data to expect as input
 // - This should match our input layout!

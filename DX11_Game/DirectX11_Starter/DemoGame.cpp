@@ -70,6 +70,7 @@ DemoGame::~DemoGame()
 
 	Material::Cleanup();
 	Mesh::Cleanup();
+	Renderer::Cleanup();
 }
 
 #pragma endregion
