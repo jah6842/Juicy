@@ -1,7 +1,5 @@
 
-// Defines the input to this pixel shader
-// - Should match the output of our corresponding vertex shader
-
+// Constant buffer for directional light
 cbuffer DirectionalLight : register(b2)
 {
 	float4 ambientColor;
@@ -10,18 +8,19 @@ cbuffer DirectionalLight : register(b2)
     float padding;
 };
 
-struct VS_OUTPUT
+// Should match VS_OUTPUT
+struct PS_INPUT
 {
-	float4 Pos		: SV_POSITION;
-	float2 TexCoord : TEXCOORD0;
-	float3 Normal	: NORMAL;
+	float4 pos		: SV_POSITION;
+	float2 texCoord : TEXCOORD0;
+	float3 normal	: NORMAL;
 };
 
 Texture2D ObjTexture;
 SamplerState ObjSamplerState;
 
 // Entry point for this pixel shader
-float4 main(VS_OUTPUT input) : SV_TARGET
+float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 textureColor;
     float3 lightDir;
@@ -29,7 +28,7 @@ float4 main(VS_OUTPUT input) : SV_TARGET
     float4 color;
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    textureColor = ObjTexture.Sample( ObjSamplerState, input.TexCoord );
+    textureColor = ObjTexture.Sample( ObjSamplerState, input.texCoord );
 
 	// Set the default output color to the ambient light value for all pixels.
 	color = ambientColor;
@@ -38,7 +37,7 @@ float4 main(VS_OUTPUT input) : SV_TARGET
     lightDir = -lightDirection;
 
 	// Calculate the amount of light on this pixel.
-    lightIntensity = saturate(dot(input.Normal, lightDir));
+    lightIntensity = saturate(dot(input.normal, lightDir));
 
 	// Check if the N dot L is greater than zero. 
 	// If it is then add the diffuse color to the ambient color. 

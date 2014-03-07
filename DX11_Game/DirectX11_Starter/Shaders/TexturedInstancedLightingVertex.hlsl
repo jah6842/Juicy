@@ -15,7 +15,7 @@ cbuffer perModel : register( b1 )
 
 // Defines what kind of data to expect as input
 // - This should match our input layout!
-struct VertexShaderInput
+struct VS_INPUT
 {
 	float4 position		: POSITION;
 	float2 texCoord		: TEXCOORD0;
@@ -32,13 +32,13 @@ SamplerState ObjSamplerState : register(s0);
 // - Should match the pixel shader's input
 struct VS_OUTPUT
 {
-	float4 Pos		: SV_POSITION;
-	float2 TexCoord : TEXCOORD0;
-	float3 Normal	: NORMAL;
+	float4 pos		: SV_POSITION;
+	float2 texCoord : TEXCOORD0;
+	float3 normal	: NORMAL;
 };
 
 // The entry point for our vertex shader
-VS_OUTPUT main( VertexShaderInput input )
+VS_OUTPUT main( VS_INPUT input )
 {
 	// Set up output
 	VS_OUTPUT output;
@@ -47,16 +47,16 @@ VS_OUTPUT main( VertexShaderInput input )
 
 	// Calculate output position
 	// vertex position vector * instance matrix * view/projection matrix
-	output.Pos = mul(mul(input.position, input.instancePosition), viewProj);
+	output.pos = mul(mul(input.position, input.instancePosition), viewProj);
 
 	// Texture UVs
-	output.TexCoord = input.texCoord;
+	output.texCoord = input.texCoord;
 
 	// Calculate the normal vector against the world matrix
-	output.Normal = mul(input.normal, (float3x3)input.instancePosition);
+	output.normal = mul(input.normal, (float3x3)input.instancePosition);
 
 	// Normalize
-	output.Normal = normalize(output.Normal);
+	output.normal = normalize(output.normal);
 
 	return output;
 }
