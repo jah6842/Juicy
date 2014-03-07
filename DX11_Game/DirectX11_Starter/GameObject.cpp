@@ -26,9 +26,9 @@ GameObject::GameObject(){
 	MATERIAL_DESCRIPTION matDesc;
 	matDesc.cBufferLayout = CONSTANT_BUFFER_LAYOUT_PER_MODEL;
 	matDesc.diffuseTextureID = TEXTURE_MARBLE_PNG;
-	matDesc.vShaderID = VSHADER_TEXTURED_INSTANCED;
-	matDesc.pShaderID = PSHADER_TEXTURED_INSTANCED;
-	matDesc.materialName = L"TexturedInstanced";
+	matDesc.vShaderID = VSHADER_TEXTURED_LIT_INSTANCED;
+	matDesc.pShaderID = PSHADER_TEXTURED_LIT_INSTANCED;
+	matDesc.materialName = L"TexturedInstancedLighting";
 
 	if(flip == 0){
 		material = Material::GetMaterial(matDesc);
@@ -49,7 +49,7 @@ GameObject::GameObject(){
 };
 
 void GameObject::Update(float dt){
-	
+	transform.Rotate(XMConvertToRadians(10.0f*dt), XMConvertToRadians(10.0f*dt), 0);
 };
 
 GameObject::~GameObject(){

@@ -10,13 +10,15 @@ const WCHAR* Material::textureNames[] = {
 const WCHAR* Material::vShaderNames[] = {
 	L"ColoredVertex.cso",
 	L"TexturedVertex.cso",
-	L"TexturedInstancedVertex.cso"
+	L"TexturedInstancedVertex.cso",
+	L"TexturedInstancedLightingVertex.cso"
 };
 
 const WCHAR* Material::pShaderNames[] = {
 	L"ColoredPixel.cso",
 	L"TexturedPixel.cso",
-	L"TexturedInstancedPixel.cso"
+	L"TexturedInstancedPixel.cso",
+	L"TexturedInstancedLightingPixel.cso"
 };
 
 // Static variables
@@ -258,6 +260,7 @@ void Material::LoadVertexShader(UINT vShaderID){
 	UINT descriptionSize = 0;
 
 	switch(vShaderID){
+	case VSHADER_TEXTURED_LIT_INSTANCED:
 	case VSHADER_TEXTURED_INSTANCED:
 		description = VERTEX_DESCRIPTION_ALL;
 		descriptionSize = 8;

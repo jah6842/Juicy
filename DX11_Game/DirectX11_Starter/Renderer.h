@@ -2,6 +2,7 @@
 #define _RENDERER_H
 
 #include <d3d11.h>
+#include <DirectXColors.h>
 #include <map>
 #include <unordered_set>
 #include <vector>
@@ -17,6 +18,7 @@ private:
 	static std::unordered_set<GameObject*> registeredGOs;
 
 	static ID3D11Buffer* _perFrameConstantBuffer;
+	static ID3D11Buffer* _directionalLightBuffer;
 	static bool rendererReady;
 
 	Renderer();
@@ -28,7 +30,6 @@ private:
 
 	// Make sure that we are ready to render
 	static void PrepareRenderer();
-	
 
 public:
 	// Draws every registered gameobject

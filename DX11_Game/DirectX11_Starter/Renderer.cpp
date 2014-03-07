@@ -2,6 +2,7 @@
 
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
 ID3D11Buffer* Renderer::_perFrameConstantBuffer = nullptr;
+ID3D11Buffer* Renderer::_directionalLightBuffer = nullptr;
 bool Renderer::rendererReady = false;
 
 Renderer::Renderer(){
@@ -19,10 +20,12 @@ D3D11_BUFFER_DESC instanceBufferDesc;
 D3D11_SUBRESOURCE_DATA instanceData;
 
 void Renderer::PrepareRenderer() {
+
+	ID3D11Device* device = DeviceManager::GetCurrentDevice();
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
 	// Create a constant buffer for per-frame data
 	if( _perFrameConstantBuffer == nullptr) {
-		ID3D11Device* device = DeviceManager::GetCurrentDevice();
-
 		D3D11_BUFFER_DESC cBufferDesc;
 		cBufferDesc.ByteWidth			= sizeof(CONSTANT_BUFFER_PER_FRAME);
 		cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
@@ -34,14 +37,32 @@ void Renderer::PrepareRenderer() {
 	}
 
 	// Set the constant buffer's data
-	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
-
 	CONSTANT_BUFFER_PER_FRAME perFrameData;
 	perFrameData.proj = Camera::MainCamera.GetProjectionMatrix();
 	perFrameData.view = Camera::MainCamera.GetViewMatrix();
 	perFrameData.viewProj = Camera::MainCamera.GetViewProjMatrix();
 	deviceContext->UpdateSubresource(_perFrameConstantBuffer, 0, NULL, &perFrameData, 0, 0);
 	deviceContext->VSSetConstantBuffers(0,1,&_perFrameConstantBuffer);
+
+	// Set the directional light data
+	if( _directionalLightBuffer == nullptr) {
+		D3D11_BUFFER_DESC cBufferDesc;
+		cBufferDesc.ByteWidth			= sizeof(CONSTANT_BUFFER_DIRECTIONAL_LIGHT);
+		cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
+		cBufferDesc.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+		cBufferDesc.CPUAccessFlags		= 0;
+		cBufferDesc.MiscFlags			= 0;
+		cBufferDesc.StructureByteStride = 0;
+		HR(device->CreateBuffer( &cBufferDesc, NULL, &_directionalLightBuffer));
+	}
+
+	CONSTANT_BUFFER_DIRECTIONAL_LIGHT dirLight;
+	dirLight.ambientColor = XMFLOAT4(.1f,.1f,.1f,.1f);
+	dirLight.diffuseColor = XMFLOAT4(1,1,1,1);
+	dirLight.lightDirection = XMFLOAT3(1.0f, 1.0f, 0.0f);
+
+	deviceContext->UpdateSubresource(_directionalLightBuffer, 0, NULL, &dirLight, 0, 0);
+	deviceContext->PSSetConstantBuffers(2,1,&_directionalLightBuffer);
 
 	rendererReady = true;
 };
@@ -62,8 +83,8 @@ void Renderer::Draw(){
 
 	for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
-		if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
-			continue;
+		//if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
+		//	continue;
 			
 		// Check if the object is using an instanced material
 		if(!(*itr)->material->IsInstanced()){
@@ -110,8 +131,8 @@ void Renderer::Draw(){
 		//for(UINT i = 0; i < registeredGOs.size(); i++){
 		for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 			// Check if the object is in the viewing frustum
-			if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
-				continue;
+			//if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
+			//	continue;
 			
 			// Check if the object is using the current material
 			if((*itr)->material == currentRenderMaterial){
@@ -203,4 +224,5 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 
 void Renderer::Cleanup(){
 	ReleaseMacro(_perFrameConstantBuffer);
+	ReleaseMacro(_directionalLightBuffer);
 };

@@ -115,5 +115,11 @@
     <FxCompile Include="Shaders\TexturedInstancedPixel.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\TexturedInstancedLightingPixel.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\TexturedInstancedLightingVertex.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
