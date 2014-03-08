@@ -37,6 +37,14 @@ public:
 	bool PointInFrustum(float x, float y, float z);
 	bool PointInFrustum(XMFLOAT3 position);
 
+	/* TODO
+	bool CubeInFrustum(float x, float y, float z, float radius);
+	bool CubeInFrustum(XMFLOAT3 position, float radius);
+	*/
+
+	bool SphereInFrustum(float x, float y, float z, float radius);
+	bool SphereInFrustum(XMFLOAT3 position, float radius);
+
 	// A static camera
 	static Camera MainCamera;
 

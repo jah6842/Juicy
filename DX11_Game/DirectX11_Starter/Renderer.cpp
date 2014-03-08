@@ -73,6 +73,7 @@ void Renderer::Draw(){
 	}
 
 	UINT drawnObjects = 0;
+	UINT drawCalls = 0;
 
 	// Get the current device context
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
@@ -83,8 +84,8 @@ void Renderer::Draw(){
 
 	for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
-		//if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
-		//	continue;
+		if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
+			continue;
 			
 		// Check if the object is using an instanced material
 		if(!(*itr)->material->IsInstanced()){
@@ -123,20 +124,19 @@ void Renderer::Draw(){
 		currentRenderMaterial = *itr;
 
 		// Set the proper input options for this material
-		(*itr)->SetInputAssemblerOptions();
-		(*itr)->SetConstantBufferData();
+		currentRenderMaterial->SetInputAssemblerOptions();
+		currentRenderMaterial->SetConstantBufferData(Transform::Identity().WorldMatrix());
 
 		// Loop through the open list and get all of the objects with the 
 		// same material that we should add to the render list.
-		//for(UINT i = 0; i < registeredGOs.size(); i++){
-		for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
+		for(std::unordered_set<GameObject*>::iterator go = registeredGOs.begin(); go != registeredGOs.end(); ++go){
 			// Check if the object is in the viewing frustum
-			//if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
-			//	continue;
+			if(!Camera::MainCamera.SphereInFrustum((*go)->transform.Pos(), 2.0f))
+				continue;
 			
 			// Check if the object is using the current material
-			if((*itr)->material == currentRenderMaterial){
-				renderList[renderCount] = *itr;
+			if((*go)->material == currentRenderMaterial){
+				renderList[renderCount] = *go;
 				renderCount++;
 			}
 		}
@@ -202,12 +202,18 @@ void Renderer::Draw(){
 		instances = nullptr;
 		currentRenderMaterial = nullptr;
 		drawnObjects += renderCount;
+		drawCalls++;
 		renderCount = 0;
 	}
 
 	delete[] renderList;
 	rendererReady = false;
-	//LOG(L"Rendered objects: ", std::to_wstring(drawnObjects));
+	//LOG(L"Rendered objects: ", std::to_wstring(drawnObjects), L" (Draw Calls: ", std::to_wstring(drawCalls), L")");
+};
+
+// Draw a single gameobject
+void Renderer::DrawSingle(GameObject* go){
+
 };
 
 // Add a gameobject to the gameobjects list

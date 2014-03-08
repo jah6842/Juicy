@@ -126,15 +126,29 @@ void Camera::RecalcFrustum(){
 // Returns true if a point lies within the camera's frustrum
 bool Camera::PointInFrustum(float x, float y, float z){
 	int p;
-	for( p = 0; p < 6; p++ )
+	for( p = 0; p < 6; p++ ){
+		// Point is outside of frustum.
 		if( _frustum[p][0] * x + _frustum[p][1] * y + _frustum[p][2] * z + _frustum[p][3]    <= 0 )
 			return false;
+	}
 	return true;
 };
-
-// Returns true if a point lies within the camera's frustrum
 bool Camera::PointInFrustum(XMFLOAT3 position){
 	return PointInFrustum(position.x, position.y, position.z);
+};
+
+// Returns true if a sphere lies within the camera's frustrum
+bool Camera::SphereInFrustum(float x, float y, float z, float radius){
+	int p;
+	for( p = 0; p < 6; p++ ){
+		// Sphere is outside the frustum.
+		if( _frustum[p][0] * x + _frustum[p][1] * y + _frustum[p][2] * z + _frustum[p][3]    <= -radius )
+			return false;
+	}
+	return true;
+};
+bool Camera::SphereInFrustum(XMFLOAT3 position, float radius){
+	return SphereInFrustum(position.x, position.y, position.z, radius);
 };
 
 // Recalculate the projection matrix

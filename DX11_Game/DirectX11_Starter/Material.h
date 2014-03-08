@@ -67,7 +67,7 @@ public:
 	// Destructor
 	~Material();
 
-	void SetConstantBufferData(XMFLOAT4X4 world = Transform::Identity().WorldMatrix());
+	void SetConstantBufferData(XMFLOAT4X4 world);
 	void SetInputAssemblerOptions();
 	bool IsInstanced();
 
