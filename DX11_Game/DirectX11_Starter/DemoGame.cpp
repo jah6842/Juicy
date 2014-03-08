@@ -71,6 +71,7 @@ DemoGame::~DemoGame()
 	Material::Cleanup();
 	Mesh::Cleanup();
 	Renderer::Cleanup();
+	TextRenderer::Cleanup();
 }
 
 #pragma endregion
@@ -88,6 +89,9 @@ bool DemoGame::Init()
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
 	// Move the camera away from the origin
 	Camera::MainCamera.transform.SetPosition(0.0f, 0.0f, -5.0f);
+
+	// Setup the text renderer
+	TextRenderer::Setup();
 
 	DebugTimer::Start(L"TIME TAKEN TO CREATE GAMEOBJECTS");
 

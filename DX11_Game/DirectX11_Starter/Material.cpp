@@ -308,8 +308,6 @@ void Material::LoadTexture(UINT textureID){
 	// NEW DirectXTK Texture Loading
 	HR(CreateWICTextureFromFile(device, deviceContext, dTexturePath.c_str(), NULL, &_diffuseTexture));
 
-
-
 	// Describe the Sample State
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory( &sampDesc, sizeof(sampDesc) );

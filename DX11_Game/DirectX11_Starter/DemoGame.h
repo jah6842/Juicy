@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "TextRenderer.h"
 #include <vector>
 
 // For DirectX Math
