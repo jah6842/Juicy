@@ -74,6 +74,9 @@ public:
 	// Cleanup all of our static objects
 	static void Cleanup();
 
+	// Call once per frame to clear cached options
+	static void ClearOptions();
+
 private:
 
 	static const WCHAR* textureNames[];

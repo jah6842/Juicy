@@ -331,3 +331,12 @@ void Material::LoadTexture(UINT textureID){
 bool Material::IsInstanced(){
 	return _isInstanced;
 };
+
+void Material::ClearOptions(){
+	currentPixelShader = nullptr;
+	currentVertexShader = nullptr;
+	currentInputLayout = nullptr;
+	currentTexture = nullptr;
+	currentTextureSampler = nullptr;
+	currentConstantBuffer = nullptr;
+};

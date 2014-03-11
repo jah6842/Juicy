@@ -15,6 +15,7 @@ struct InstanceType {
 	XMFLOAT4X4 modelMatrix;
 };
 
+extern D3D11_INPUT_ELEMENT_DESC VERTEX_DESCRIPTION_NON_INSTANCED[];
 extern D3D11_INPUT_ELEMENT_DESC VERTEX_DESCRIPTION_ALL[];
 
 struct RenderVertex 
