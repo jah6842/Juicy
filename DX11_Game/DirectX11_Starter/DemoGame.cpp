@@ -178,9 +178,9 @@ void DemoGame::DrawScene()
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,90,48);
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,138,60);
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,198,72);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,270,90);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,480,180);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,270,90, XMFLOAT4(1,0,0,1));
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120, XMFLOAT4(0,1,0,1));
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,480,180, XMFLOAT4(0,0,1,1));
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

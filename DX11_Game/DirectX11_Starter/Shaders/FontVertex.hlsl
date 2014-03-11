@@ -25,6 +25,7 @@ struct VS_OUTPUT
 {
 	float4 pos		: SV_POSITION;
 	float2 texCoord : TEXCOORD0;
+	float4 color	: COLOR;
 };
 
 // The entry point for our vertex shader
@@ -39,6 +40,8 @@ VS_OUTPUT main( VS_INPUT input )
 
 	// Texture UVs
 	output.texCoord = input.texCoord;
+
+	output.color = input.color;
 
 	return output;
 }
