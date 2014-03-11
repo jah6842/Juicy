@@ -105,6 +105,7 @@ void TextRenderer::Cleanup(){
 	ReleaseMacro(fontVShader);
 	ReleaseMacro(fontVBuffer);
 	ReleaseMacro(fontInputLayout);
+	ReleaseMacro(fontCBuffer);
 };
 
 void TextRenderer::DrawString(char* text, float x, float y, float size){
