@@ -1,12 +1,6 @@
 
-// The constant buffer that holds our "per model" data
-cbuffer perModel : register( b1 )
-{
-	matrix world;
-};
+#include "globals.inc"
 
-// Defines what kind of data to expect as input
-// - This should match our input layout!
 struct VS_INPUT
 {
 	float4 position		: POSITION;
@@ -18,9 +12,6 @@ struct VS_INPUT
 Texture2D ObjTexture : register(t0);
 SamplerState ObjSamplerState : register(s0);
 
-// Defines the output data of our vertex shader
-// - At a minimum, you'll need an SV_POSITION
-// - Should match the pixel shader's input
 struct VS_OUTPUT
 {
 	float4 pos		: SV_POSITION;

@@ -1,21 +1,9 @@
 
-// The constant buffer that holds our "per frame" data
-cbuffer perFrame : register( b0 )
-{
-	matrix view;		// Camera view matrix
-	matrix projection;	// Camera projection matrix
-	matrix viewProj;	// Camera view*proj matrix
-};
-
-// The constant buffer that holds our "per model" data
-cbuffer perModel : register( b1 )
-{
-	matrix world;
-};
+#include "globals.inc"
 
 // Defines what kind of data to expect as input
 // - This should match our input layout!
-struct VertexShaderInput
+struct VS_INPUT
 {
 	float4 position		: POSITION;
 	float2 TexCoord		: TEXCOORD0;
@@ -38,7 +26,7 @@ struct VS_OUTPUT
 };
 
 // The entry point for our vertex shader
-VS_OUTPUT main( VertexShaderInput input )
+VS_OUTPUT main( VS_INPUT input )
 {
 	// Set up output
 	VS_OUTPUT output;

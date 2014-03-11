@@ -1,12 +1,5 @@
 
-// Constant buffer for directional light
-cbuffer DirectionalLight : register(b2)
-{
-	float4 ambientColor;
-    float4 diffuseColor;
-    float3 lightDirection;
-    float padding;
-};
+#include "globals.inc"
 
 // Should match VS_OUTPUT
 struct PS_INPUT

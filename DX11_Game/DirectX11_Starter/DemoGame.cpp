@@ -172,15 +172,15 @@ void DemoGame::DrawScene()
 
 	Renderer::Draw();
 
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,0,24);
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24);
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,30);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,54,36);
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,54,36);
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,90,48);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,138,60);
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,138,60);
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,198,72);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,270,90, XMFLOAT4(1,0,0,1));
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,270,90, XMFLOAT4(1,0,0,1));
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120, XMFLOAT4(0,1,0,1));
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,480,180, XMFLOAT4(0,0,1,1));
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,480,180, XMFLOAT4(0,0,1,1));
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

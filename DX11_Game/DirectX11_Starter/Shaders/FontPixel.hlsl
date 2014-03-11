@@ -1,4 +1,6 @@
 
+#include "globals.inc"
+
 // Should match VS_OUTPUT
 struct PS_INPUT
 {

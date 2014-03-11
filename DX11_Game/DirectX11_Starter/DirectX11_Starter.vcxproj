@@ -101,6 +101,7 @@
     <ClInclude Include="DemoGame.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />
+    <ClInclude Include="Shaders\globals.inc" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="GameObject.h" />
