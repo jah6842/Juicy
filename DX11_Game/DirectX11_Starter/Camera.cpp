@@ -47,6 +47,11 @@ XMFLOAT4X4 Camera::GetViewProjMatrix(){
 	return viewProj;
 };
 
+void Camera::GetScreenSize(UINT& width, UINT& height){
+	width = _width;
+	height = _height;
+};
+
 // Recalculate the view matrix
 void Camera::RecalcViewMatrix(){
 	// Set up view matrix (camera)

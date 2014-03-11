@@ -21,8 +21,8 @@ SamplerState ObjSamplerState;
 // Entry point for this pixel shader
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	//float4 diffuse =  ObjTexture.Sample( ObjSamplerState, input.texCoord );
-    //clip(diffuse.a - 0.25);
-	float4 diffuse = float4(input.texCoord.x,input.texCoord.y,1,1);
+	float4 diffuse =  ObjTexture.Sample( ObjSamplerState, input.texCoord );
+    clip(diffuse.a - 0.25);
+	//float4 diffuse = float4(input.texCoord.x,input.texCoord.y,0,1);
 	return diffuse;
 }

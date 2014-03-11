@@ -6,6 +6,7 @@ ID3D11Buffer*				TextRenderer::fontVBuffer		= nullptr;
 ID3D11VertexShader*			TextRenderer::fontVShader		= nullptr;
 ID3D11PixelShader*			TextRenderer::fontPShader		= nullptr;
 ID3D11InputLayout*			TextRenderer::fontInputLayout	= nullptr;
+ID3D11Buffer*				TextRenderer::fontCBuffer		= nullptr;
 int							TextRenderer::maxStringLength	= 256;
 
 void TextRenderer::Setup(){
@@ -81,6 +82,20 @@ void TextRenderer::Setup(){
 
 	// Clean up
 	ReleaseMacro(psBlob);
+
+	// Create a constant buffer
+	D3D11_BUFFER_DESC cBufferDesc;
+
+	cBufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_PER_MODEL);
+	cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
+	cBufferDesc.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+	cBufferDesc.CPUAccessFlags		= 0;
+	cBufferDesc.MiscFlags			= 0;
+	cBufferDesc.StructureByteStride = 0;
+	HR(device->CreateBuffer(
+		&cBufferDesc,
+		NULL,
+		&fontCBuffer));
 };
 
 void TextRenderer::Cleanup(){
@@ -96,8 +111,12 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
 
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 
-	float posX = x / 800.0f;
-	float posY = y / 600.0f;
+	// Get screen width and height
+	UINT width, height;
+	Camera::MainCamera.GetScreenSize(width,height);
+
+	float posX = x;
+	float posY = y;
 
     // size of one letter and string size
     int letterSize = sizeof(RenderVertex)*6;
@@ -106,12 +125,12 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
 	// cut string if its to long
 	if (textSize > maxStringLength){
         textSize = maxStringLength;
-		LOG(L"DISPLAYED STRING EXCEEDS MAX LENGTH");
+		LOG(L"STRING EXCEEDS MAX LENGTH");
 	}
 
     // size of one char on screen
-    float cScreenWidth = 1.0f;
-    float cScreenHeight = 1.0f;
+    float cScreenWidth = size;
+    float cScreenHeight = size;
 
     // texel Size
     float texelWidth = 1.0f/16.0f;
@@ -126,33 +145,38 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
     for(int i=0; i< textSize; i++)
     {
         /*Get starting position of the quad. First Quad is just the posX value , then characterwidth is added.*/
-        float thisStartX = posX +(cScreenWidth * static_cast<char>(i));
+       /* float thisStartX = posX +(cScreenWidth * static_cast<char>(i));
         float thisEndX =thisStartX + cScreenWidth;
         float thisStartY = posY;
         float thisEndY = thisStartY + cScreenHeight;
+		*/
+		float thisStartX = -1;
+        float thisEndX = 1;
+        float thisStartY = -1;
+        float thisEndY = 1;
+
+		float depth = 0.0f;
 
         // Write the position of each 6 vertices to subresource
-        sprite[0].pos = XMFLOAT3( thisEndX, thisEndY, 1.0f );
-        sprite[1].pos = XMFLOAT3( thisEndX, posY, 1.0f );
-        sprite[2].pos = XMFLOAT3( thisStartX, posY, 1.0f );
-        sprite[3].pos = XMFLOAT3( thisStartX, posY, 1.0f );
-        sprite[4].pos = XMFLOAT3( thisStartX, thisEndY, 1.0f );
-        sprite[5].pos = XMFLOAT3( thisEndX, thisEndY, 1.0f );
-
-        // calculate texture coordinates from ASCII values.
-        //int texLookup = 0;
-       // int letter = static_cast<int>(text[i]);
+        sprite[0].pos = XMFLOAT3( thisEndX, thisEndY, depth );
+        sprite[1].pos = XMFLOAT3( thisEndX, thisStartY, depth );
+        sprite[2].pos = XMFLOAT3( thisStartX, thisStartY, depth );
+        sprite[3].pos = XMFLOAT3( thisStartX, thisStartY, depth );
+        sprite[4].pos = XMFLOAT3( thisStartX, thisEndY, depth );
+        sprite[5].pos = XMFLOAT3( thisEndX, thisEndY, depth );
 
 		int row = static_cast<int>(text[i]) / 16;
 		int col = static_cast<int>(text[i]) % 16;
-
-       // float texStart = 0.0f +( texelWidth * static_cast<float>(texLookup));
-       // float texEnd = texStart + texelWidth;
-
+		/*
 		float texX = col / 16.0f;
 		float texXL = texX + texelWidth;
 		float texY = row / 16.0f;
 		float texYL = texY + texelWidth;
+		*/
+		float texX = 0;
+		float texXL = 1;
+		float texY = 0;
+		float texYL = 1;
         
         // Apply texture coordinates to subresource
         sprite[0].texCoord = XMFLOAT2( texXL, texY);
@@ -165,6 +189,12 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
         //set sprite pointer for next sprite
         sprite = sprite + 6;
 	}
+
+	// Update the constant buffer itself
+	CONSTANT_BUFFER_PER_MODEL modelData;
+	modelData.world = Transform::Identity().WorldMatrix();
+	deviceContext->VSSetConstantBuffers(1, 1, &fontCBuffer);
+	deviceContext->UpdateSubresource(fontCBuffer, 0, NULL, &modelData, 0, 0);
 
 	deviceContext->VSSetShader(fontVShader,0,0);
 	deviceContext->PSSetShader(fontPShader,0,0);

@@ -6,6 +6,8 @@
 
 #include "Utilities.h"
 #include "Vertex.h"
+#include "Camera.h"
+#include "ConstantBuffer.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <string>
@@ -25,6 +27,7 @@ private:
 	static ID3D11VertexShader*			fontVShader;
 	static ID3D11InputLayout*			fontInputLayout;
 	static ID3D11PixelShader*			fontPShader;
+	static ID3D11Buffer*				fontCBuffer;
 	static int							maxStringLength;
 };
 

@@ -29,6 +29,7 @@ public:
 	XMFLOAT4X4 GetProjectionMatrix();
 	XMFLOAT4X4 GetViewMatrix();
 	XMFLOAT4X4 GetViewProjMatrix();
+	void GetScreenSize(UINT& width, UINT& height);
 
 	// Resize the camera and recalc necessary  matrices
 	void Resize(UINT width, UINT height);

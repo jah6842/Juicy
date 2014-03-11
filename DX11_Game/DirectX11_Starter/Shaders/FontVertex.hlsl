@@ -41,7 +41,9 @@ VS_OUTPUT main( VS_INPUT input )
 	// Set up output
 	VS_OUTPUT output;
 
-	output.pos = mul(input.position, viewProj);
+	input.position.w = 1.0f;
+
+	output.pos = mul(input.position, world);
 
 	// Texture UVs
 	output.texCoord = input.texCoord;

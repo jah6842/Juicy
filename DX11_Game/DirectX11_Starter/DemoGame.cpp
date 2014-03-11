@@ -172,9 +172,9 @@ void DemoGame::DrawScene()
 
 	Renderer::Draw();
 
-	TextRenderer::DrawString("ZZZZZZZZ", -8,1,0);
-	TextRenderer::DrawString("AA", 0,1,0);
-	TextRenderer::DrawString("A", 0,2,0);
+	TextRenderer::DrawString("Z", 0,0,32);
+	//TextRenderer::DrawString("AAAA", 0,0,16);
+	//TextRenderer::DrawString("ZZZZZZZZ", 0,0,0);
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));
