@@ -7,6 +7,10 @@ ID3D11VertexShader*			TextRenderer::fontVShader		= nullptr;
 ID3D11PixelShader*			TextRenderer::fontPShader		= nullptr;
 ID3D11InputLayout*			TextRenderer::fontInputLayout	= nullptr;
 ID3D11Buffer*				TextRenderer::fontCBuffer		= nullptr;
+ID3D11BlendState*			TextRenderer::enableBlendingState = nullptr;
+ID3D11BlendState*			TextRenderer::disableBlendingState= nullptr;
+ID3D11DepthStencilState*	TextRenderer::disableStencil	= nullptr;
+ID3D11DepthStencilState*	TextRenderer::enableStencil		= nullptr;
 int							TextRenderer::maxStringLength	= 256;
 
 void TextRenderer::Setup(){
@@ -25,7 +29,7 @@ void TextRenderer::Setup(){
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     sampDesc.MinLOD = 0;
     sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
     
@@ -96,6 +100,78 @@ void TextRenderer::Setup(){
 		&cBufferDesc,
 		NULL,
 		&fontCBuffer));
+
+	// Blend states
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	device->CreateBlendState(&blendDesc, &enableBlendingState);
+
+	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	device->CreateBlendState(&blendDesc, &disableBlendingState);
+
+	
+
+	// stencil states
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	// Initialize the description of the stencil state.
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
+	// Set up the description of the stencil state.
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthStencilDesc.StencilEnable = true;
+	depthStencilDesc.StencilReadMask = 0xFF;
+	depthStencilDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front-facing.
+	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing.
+	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create the depth stencil state.
+	device->CreateDepthStencilState(&depthStencilDesc, &enableStencil);
+
+	// Clear the second depth stencil state before setting the parameters.
+	D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+
+	// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+	// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create the state using the device.
+	device->CreateDepthStencilState(&depthDisabledStencilDesc, &disableStencil);
 };
 
 void TextRenderer::Cleanup(){
@@ -106,6 +182,10 @@ void TextRenderer::Cleanup(){
 	ReleaseMacro(fontVBuffer);
 	ReleaseMacro(fontInputLayout);
 	ReleaseMacro(fontCBuffer);
+	ReleaseMacro(enableBlendingState);
+	ReleaseMacro(disableBlendingState);
+	ReleaseMacro(enableStencil);
+	ReleaseMacro(disableStencil);
 };
 
 void TextRenderer::DrawString(char* text, float x, float y, float size){
@@ -182,9 +262,21 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
         sprite[4].texCoord = XMFLOAT2( texX, texY );
         sprite[5].texCoord = XMFLOAT2( texXL, texY );
 
+		for(int j = 0; j < 6; j++){
+			sprite[j].color = XMFLOAT4(1,0,0,1);
+		}
+
         //set sprite pointer for next sprite
         sprite = sprite + 6;
 	}
+
+	float blendFactor[4];
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+	deviceContext->OMSetBlendState(enableBlendingState, blendFactor, 0xFFFFFFFF);
+	deviceContext->OMSetDepthStencilState(disableStencil, 1);
 
 	// Update the constant buffer itself
 	CONSTANT_BUFFER_PER_MODEL modelData;
@@ -205,4 +297,7 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
 
 	deviceContext->Unmap(fontVBuffer, 0);
 	deviceContext->Draw(6*textSize,0);
+
+	deviceContext->OMSetBlendState(disableBlendingState, blendFactor, 0xFFFFFFFF);
+	deviceContext->OMSetDepthStencilState(enableStencil, 1);
 };

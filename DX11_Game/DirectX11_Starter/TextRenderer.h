@@ -29,6 +29,12 @@ private:
 	static ID3D11PixelShader*			fontPShader;
 	static ID3D11Buffer*				fontCBuffer;
 	static int							maxStringLength;
+
+	static ID3D11BlendState* enableBlendingState;
+	static ID3D11BlendState* disableBlendingState;
+
+	static ID3D11DepthStencilState* disableStencil;
+	static ID3D11DepthStencilState* enableStencil;
 };
 
 #endif // _TEXT_RENDERER_H

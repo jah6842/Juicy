@@ -167,7 +167,7 @@ void DemoGame::UpdateScene(float dt)
 void DemoGame::DrawScene()
 {
 	// Clear the buffer
-	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Black);
+	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Azure);
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	Renderer::Draw();
