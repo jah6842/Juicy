@@ -167,14 +167,14 @@ void DemoGame::UpdateScene(float dt)
 void DemoGame::DrawScene()
 {
 	// Clear the buffer
-	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Aqua);
-	deviceContext->ClearDepthStencilView(
-		depthStencilView, 
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0f,
-		0);
+	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Black);
+	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	Renderer::Draw();
+
+	TextRenderer::DrawString("ZZZZZZZZ", -8,1,0);
+	TextRenderer::DrawString("AA", 0,1,0);
+	TextRenderer::DrawString("A", 0,2,0);
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

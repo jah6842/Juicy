@@ -71,6 +71,7 @@ void Renderer::Draw(){
 	if(!rendererReady){
 		PrepareRenderer();
 	}
+	return;
 
 	UINT drawnObjects = 0;
 	UINT drawCalls = 0;
