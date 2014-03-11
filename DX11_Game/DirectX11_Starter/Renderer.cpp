@@ -71,7 +71,8 @@ void Renderer::Draw(){
 	if(!rendererReady){
 		PrepareRenderer();
 	}
-	return;
+
+	Material::ClearOptions();
 
 	UINT drawnObjects = 0;
 	UINT drawCalls = 0;

@@ -172,9 +172,15 @@ void DemoGame::DrawScene()
 
 	Renderer::Draw();
 
-	TextRenderer::DrawString("Z", 0,0,32);
-	//TextRenderer::DrawString("AAAA", 0,0,16);
-	//TextRenderer::DrawString("ZZZZZZZZ", 0,0,0);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,0,24);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,30);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,54,36);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,90,48);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,138,60);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,198,72);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,270,90);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120);
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,480,180);
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

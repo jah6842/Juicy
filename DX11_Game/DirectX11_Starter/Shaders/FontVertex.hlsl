@@ -1,12 +1,4 @@
 
-// The constant buffer that holds our "per frame" data
-cbuffer perFrame : register( b0 )
-{
-	matrix view;		// Camera view matrix
-	matrix projection;	// Camera projection matrix
-	matrix viewProj;	// Camera view*proj matrix
-};
-
 // The constant buffer that holds our "per model" data
 cbuffer perModel : register( b1 )
 {

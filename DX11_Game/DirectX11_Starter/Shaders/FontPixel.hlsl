@@ -1,13 +1,4 @@
 
-// Constant buffer for directional light
-cbuffer DirectionalLight : register(b2)
-{
-	float4 ambientColor;
-    float4 diffuseColor;
-    float3 lightDirection;
-    float padding;
-};
-
 // Should match VS_OUTPUT
 struct PS_INPUT
 {
@@ -23,6 +14,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 diffuse =  ObjTexture.Sample( ObjSamplerState, input.texCoord );
     clip(diffuse.a - 0.25);
-	//float4 diffuse = float4(input.texCoord.x,input.texCoord.y,0,1);
+	//float4 diffuse = float4(input.texCoord.x,input.texCoord.y,0,1); // Debug for showing UV as color
 	return diffuse;
 }

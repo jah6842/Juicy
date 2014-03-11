@@ -115,8 +115,8 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
 	UINT width, height;
 	Camera::MainCamera.GetScreenSize(width,height);
 
-	float posX = x;
-	float posY = y;
+	float posX = (x - static_cast<float>(width)) / static_cast<float>(width);
+	float posY = -(y+size - static_cast<float>(height)) / static_cast<float>(height);
 
     // size of one letter and string size
     int letterSize = sizeof(RenderVertex)*6;
@@ -129,8 +129,8 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
 	}
 
     // size of one char on screen
-    float cScreenWidth = size;
-    float cScreenHeight = size;
+    float cScreenWidth = size / width;
+    float cScreenHeight = size / height;
 
     // texel Size
     float texelWidth = 1.0f/16.0f;
@@ -145,15 +145,15 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
     for(int i=0; i< textSize; i++)
     {
         /*Get starting position of the quad. First Quad is just the posX value , then characterwidth is added.*/
-       /* float thisStartX = posX +(cScreenWidth * static_cast<char>(i));
+        float thisStartX = posX +(cScreenWidth * i);
         float thisEndX =thisStartX + cScreenWidth;
         float thisStartY = posY;
         float thisEndY = thisStartY + cScreenHeight;
-		*/
-		float thisStartX = -1;
-        float thisEndX = 1;
-        float thisStartY = -1;
-        float thisEndY = 1;
+		
+		//float thisStartX = posX;
+        //float thisEndX = thisStartX + cScreenWidth;
+        //float thisStartY = posY;
+       // float thisEndY = thisStartY + cScreenHeight;
 
 		float depth = 0.0f;
 
@@ -167,17 +167,12 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
 
 		int row = static_cast<int>(text[i]) / 16;
 		int col = static_cast<int>(text[i]) % 16;
-		/*
+		
 		float texX = col / 16.0f;
 		float texXL = texX + texelWidth;
 		float texY = row / 16.0f;
 		float texYL = texY + texelWidth;
-		*/
-		float texX = 0;
-		float texXL = 1;
-		float texY = 0;
-		float texYL = 1;
-        
+		
         // Apply texture coordinates to subresource
         sprite[0].texCoord = XMFLOAT2( texXL, texY);
         sprite[1].texCoord = XMFLOAT2( texXL, texYL );
