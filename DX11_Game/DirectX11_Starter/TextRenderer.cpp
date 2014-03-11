@@ -188,7 +188,7 @@ void TextRenderer::Cleanup(){
 	ReleaseMacro(disableStencil);
 };
 
-void TextRenderer::DrawString(char* text, float x, float y, float size){
+void TextRenderer::DrawString(char* text, float x, float y, float size, XMFLOAT4 color){
 
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 
@@ -230,25 +230,20 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
         float thisEndX =thisStartX + cScreenWidth;
         float thisStartY = posY;
         float thisEndY = thisStartY + cScreenHeight;
-		
-		//float thisStartX = posX;
-        //float thisEndX = thisStartX + cScreenWidth;
-        //float thisStartY = posY;
-       // float thisEndY = thisStartY + cScreenHeight;
-
-		float depth = 0.0f;
 
         // Write the position of each 6 vertices to subresource
-        sprite[0].pos = XMFLOAT3( thisEndX, thisEndY, depth );
-        sprite[1].pos = XMFLOAT3( thisEndX, thisStartY, depth );
-        sprite[2].pos = XMFLOAT3( thisStartX, thisStartY, depth );
-        sprite[3].pos = XMFLOAT3( thisStartX, thisStartY, depth );
-        sprite[4].pos = XMFLOAT3( thisStartX, thisEndY, depth );
-        sprite[5].pos = XMFLOAT3( thisEndX, thisEndY, depth );
+        sprite[0].pos = XMFLOAT3( thisEndX, thisEndY, 0.0f );
+        sprite[1].pos = XMFLOAT3( thisEndX, thisStartY, 0.0f );
+        sprite[2].pos = XMFLOAT3( thisStartX, thisStartY, 0.0f );
+        sprite[3].pos = XMFLOAT3( thisStartX, thisStartY, 0.0f );
+        sprite[4].pos = XMFLOAT3( thisStartX, thisEndY, 0.0f );
+        sprite[5].pos = XMFLOAT3( thisEndX, thisEndY, 0.0f );
 
+		// Get the row and column of the texture sheet
 		int row = static_cast<int>(text[i]) / 16;
 		int col = static_cast<int>(text[i]) % 16;
 		
+		// Get the texture coordinate based on row/col in texture sheet
 		float texX = col / 16.0f;
 		float texXL = texX + texelWidth;
 		float texY = row / 16.0f;
@@ -262,8 +257,9 @@ void TextRenderer::DrawString(char* text, float x, float y, float size){
         sprite[4].texCoord = XMFLOAT2( texX, texY );
         sprite[5].texCoord = XMFLOAT2( texXL, texY );
 
+		// Set the color attribute
 		for(int j = 0; j < 6; j++){
-			sprite[j].color = XMFLOAT4(1,0,0,1);
+			sprite[j].color = color;
 		}
 
         //set sprite pointer for next sprite

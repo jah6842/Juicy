@@ -18,7 +18,10 @@ class TextRenderer {
 public:
 	static void Setup();
 	static void Cleanup();
-	static void DrawString(char* text, float x, float y, float size);
+
+	// Draws a string on screen
+	// Text to draw, x/y pixel coordinate, font size, color
+	static void DrawString(char* text, float x, float y, float size = 24, XMFLOAT4 color = XMFLOAT4(1,1,1,1));
 
 private:
 	static ID3D11ShaderResourceView*	fontTexture;
