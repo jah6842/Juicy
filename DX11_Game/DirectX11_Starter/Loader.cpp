@@ -9,6 +9,7 @@ std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vSh
 
 	ID3D11VertexShader* vertexShader = nullptr;
 	ID3D11InputLayout* inputLayout = nullptr;
+	bool instanced = false;
 
 	LOG(L"Creating vertex shader: ", std::to_wstring(vShaderID));
 
@@ -34,6 +35,7 @@ std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vSh
 	case VSHADER_TEXTURED_INSTANCED:
 		description = VERTEX_DESCRIPTION_ALL;
 		descriptionSize = 8;
+		instanced = true;
 		break;
 	default:
 		LOG(L"UNSUPPORTED SHADER!");
@@ -52,7 +54,7 @@ std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vSh
 	// Clean up
 	ReleaseMacro(vsBlob);
 
-	std::shared_ptr<VertexShader> v (new VertexShader(vertexShader, inputLayout, vShaderID));
+	std::shared_ptr<VertexShader> v (new VertexShader(vertexShader, inputLayout, vShaderID, instanced));
 	vShaders[vShaderID] = v;
 
 	return vShaders[vShaderID];
@@ -112,6 +114,10 @@ std::shared_ptr<ConstantBuffer> LoadConstantBuffer(ID3D11Device* device, CBUFFER
 	case CONSTANT_BUFFER_LAYOUT_PER_MODEL:
 		cBufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_PER_MODEL);
 		slot = 1;
+		break;
+	case CONSTANT_BUFFER_LAYOUT_DIRECTIONAL_LIGHT:
+		cBufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_DIRECTIONAL_LIGHT);
+		slot = 2;
 		break;
 	default:
 		LOG(L"INVALID CONSTANT BUFFER TYPE! ");

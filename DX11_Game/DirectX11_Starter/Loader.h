@@ -9,16 +9,16 @@
 #include "Vertex.h"
 #include "Utilities.h"
 #include "Constants.h"
-#include "ConstantBuffer.h"
 
 struct VertexShader {
 	ID3D11VertexShader* vShader;
 	ID3D11InputLayout*  vShaderInputLayout;
 	VSHADER vShaderID;
+	bool isInstanced;
 
 	VertexShader(){}
-	VertexShader(ID3D11VertexShader* v, ID3D11InputLayout* i, VSHADER id) : 
-		vShader(v), vShaderInputLayout(i), vShaderID(id){}
+	VertexShader(ID3D11VertexShader* v, ID3D11InputLayout* i, VSHADER id, bool b) : 
+		vShader(v), vShaderInputLayout(i), vShaderID(id), isInstanced(b){}
 	~VertexShader(){ 
 		// Make sure to release resources when the pointer gets deleted
 		ReleaseMacro(vShader); 

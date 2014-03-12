@@ -16,26 +16,6 @@
 class GameObject;
 
 class Renderer {
-private:
-	static std::unordered_set<GameObject*> registeredGOs;
-
-	static TextureManager* textureManager;
-	//static ID3D11Buffer* _perFrameConstantBuffer;
-	static ID3D11Buffer* _directionalLightBuffer;
-	
-	static std::shared_ptr<ConstantBuffer> _perFrameConstantBuffer;
-	static bool rendererReady;
-
-	Renderer();
-	~Renderer();
-
-	// Internal drawing functions
-	static void DrawSingle(GameObject* go);
-	static void DrawBatched();
-
-	// Make sure that we are ready to render
-	static void PrepareRenderer();
-
 public:
 	// Draws every registered gameobject
 	// Call this once per frame
@@ -47,6 +27,21 @@ public:
 
 	// Clean up resources
 	static void Cleanup();
+
+private:
+	static std::unordered_set<GameObject*> registeredGOs;
+	static TextureManager* textureManager;
+	
+	static std::shared_ptr<ConstantBuffer> _perFrameConstantBuffer;
+	static std::shared_ptr<ConstantBuffer> _directionalLightBuffer;
+	static bool rendererReady;
+
+	Renderer();
+	~Renderer();
+
+	// Make sure that we are ready to render
+	static void PrepareRenderer();
+	static void PrepareLighting();
 };
 
 #endif // _RENDERER_H

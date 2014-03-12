@@ -1,12 +1,5 @@
 #include "TextureManager.h"
 
-// Make sure this matches with the enum in the header!
-const WCHAR* textureNames[TM_NUM_TEXTURES] = { 
-	L"marble.png", 
-	L"sand.jpg",
-	L"scales.png"
-};
-
 //Texture TEXTURE_MARBLE = { L"marble.png", TM_TEXTURE_MARBLE, nullptr, true, false, false };
 //Texture TEXTURE_SAND = { L"sand.jpg", TM_TEXTURE_SAND, nullptr, true, false, false };
 //Texture TEXTURE_SCALES = { L"scales.png", TM_TEXTURE_SCALES, nullptr, true, false, false };

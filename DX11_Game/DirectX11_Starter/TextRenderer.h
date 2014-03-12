@@ -7,7 +7,7 @@
 #include "Utilities.h"
 #include "Vertex.h"
 #include "Camera.h"
-#include "ConstantBuffer.h"
+#include "Constants.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <string>

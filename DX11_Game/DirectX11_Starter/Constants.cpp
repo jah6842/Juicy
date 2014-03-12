@@ -13,3 +13,9 @@ const WCHAR* pShaderNames[] = {
 	L"TexturedInstancedPixel.cso",
 	L"TexturedInstancedLightingPixel.cso"
 };
+
+const WCHAR* textureNames[TM_NUM_TEXTURES] = { 
+	L"marble.png", 
+	L"sand.jpg",
+	L"scales.png"
+};

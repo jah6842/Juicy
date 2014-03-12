@@ -2,7 +2,7 @@
 
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
 std::shared_ptr<ConstantBuffer> Renderer::_perFrameConstantBuffer = nullptr;
-ID3D11Buffer* Renderer::_directionalLightBuffer = nullptr;
+std::shared_ptr<ConstantBuffer> Renderer::_directionalLightBuffer = nullptr;
 TextureManager* Renderer::textureManager = nullptr;
 bool Renderer::rendererReady = false;
 
@@ -21,10 +21,10 @@ D3D11_BUFFER_DESC instanceBufferDesc;
 D3D11_SUBRESOURCE_DATA instanceData;
 
 void Renderer::PrepareRenderer() {
-
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 	
+	// Check if the texture manager has been created
 	if(textureManager == nullptr){
 		textureManager = new TextureManager();
 		textureManager->Init();
@@ -32,19 +32,7 @@ void Renderer::PrepareRenderer() {
 
 	// Create a constant buffer for per-frame data
 	if( _perFrameConstantBuffer == nullptr) {
-
 		_perFrameConstantBuffer = LoadConstantBuffer(device, CONSTANT_BUFFER_LAYOUT_PER_FRAME);
-
-		/*
-		D3D11_BUFFER_DESC cBufferDesc;
-		cBufferDesc.ByteWidth			= sizeof(CONSTANT_BUFFER_PER_FRAME);
-		cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
-		cBufferDesc.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
-		cBufferDesc.CPUAccessFlags		= 0;
-		cBufferDesc.MiscFlags			= 0;
-		cBufferDesc.StructureByteStride = 0;
-		HR(device->CreateBuffer( &cBufferDesc, NULL, &_perFrameConstantBuffer));
-		*/
 	}
 
 	// Set the constant buffer's data
@@ -55,16 +43,18 @@ void Renderer::PrepareRenderer() {
 	deviceContext->UpdateSubresource(_perFrameConstantBuffer->cBuffer, 0, NULL, &perFrameData, 0, 0);
 	deviceContext->VSSetConstantBuffers(_perFrameConstantBuffer->slot,1,&_perFrameConstantBuffer->cBuffer);
 
+	PrepareLighting();
+
+	rendererReady = true;
+};
+
+void Renderer::PrepareLighting(){
+	ID3D11Device* device = DeviceManager::GetCurrentDevice();
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
 	// Set the directional light data
 	if( _directionalLightBuffer == nullptr) {
-		D3D11_BUFFER_DESC cBufferDesc;
-		cBufferDesc.ByteWidth			= sizeof(CONSTANT_BUFFER_DIRECTIONAL_LIGHT);
-		cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
-		cBufferDesc.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
-		cBufferDesc.CPUAccessFlags		= 0;
-		cBufferDesc.MiscFlags			= 0;
-		cBufferDesc.StructureByteStride = 0;
-		HR(device->CreateBuffer( &cBufferDesc, NULL, &_directionalLightBuffer));
+		_directionalLightBuffer = LoadConstantBuffer(device, CONSTANT_BUFFER_LAYOUT_DIRECTIONAL_LIGHT);
 	}
 
 	CONSTANT_BUFFER_DIRECTIONAL_LIGHT dirLight;
@@ -72,10 +62,8 @@ void Renderer::PrepareRenderer() {
 	dirLight.diffuseColor = XMFLOAT4(1,1,1,1);
 	dirLight.lightDirection = XMFLOAT3(1.0f, 1.0f, 0.0f);
 
-	deviceContext->UpdateSubresource(_directionalLightBuffer, 0, NULL, &dirLight, 0, 0);
-	deviceContext->PSSetConstantBuffers(2,1,&_directionalLightBuffer);
-
-	rendererReady = true;
+	deviceContext->UpdateSubresource(_directionalLightBuffer->cBuffer, 0, NULL, &dirLight, 0, 0);
+	deviceContext->PSSetConstantBuffers(_directionalLightBuffer->slot,1,&_directionalLightBuffer->cBuffer);
 };
 
 void Renderer::Draw(){
@@ -98,13 +86,15 @@ void Renderer::Draw(){
 	GameObject** renderList = new GameObject*[registeredGOs.size()];
 	UINT renderCount = 0;
 
+	std::list<Material*> _materials; 
+
 	for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
 		if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
 			continue;
 			
 		// Check if the object is using an instanced material
-		if(!(*itr)->material->isInstanced){
+		if(!(*itr)->material->_vertexShader->isInstanced){
 			(*itr)->material->SetConstantBufferData((*itr)->transform.WorldMatrix());
 
 			// Set the current vertex buffer
@@ -123,16 +113,19 @@ void Renderer::Draw(){
 				0,
 				0); 
 			drawnObjects++;
+		} else {
+			_materials.push_back((*itr)->material);
 		}
 	}
 
+	
+
 	Material* currentRenderMaterial = nullptr;
 	// Get all gameobjects with a certain material and draw them
-	for(std::list<Material*>::iterator itr = Material::_materials.begin();
-			itr != Material::_materials.end(); itr++){
+	for(std::list<Material*>::iterator itr = _materials.begin(); itr != _materials.end(); itr++){
 
 		// Check if the material is not instanced, if so it was already rendered
-		if(!(*itr)->isInstanced)
+		if(!(*itr)->_vertexShader->isInstanced)
 			continue;
 
 		// Get the first material from the render list
@@ -245,11 +238,6 @@ void Renderer::Draw(){
 	//LOG(L"Rendered objects: ", std::to_wstring(drawnObjects), L" (Draw Calls: ", std::to_wstring(drawCalls), L")");
 };
 
-// Draw a single gameobject
-void Renderer::DrawSingle(GameObject* go){
-
-};
-
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
 	registeredGOs.insert(go);
@@ -262,8 +250,7 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 	registeredGOs.erase(itr);
 };
 
+// Clean up resources
 void Renderer::Cleanup(){
-	//ReleaseMacro(_perFrameConstantBuffer);
-	ReleaseMacro(_directionalLightBuffer);
 	textureManager->Cleanup();
 };
