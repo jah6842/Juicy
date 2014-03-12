@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
-ID3D11Buffer* Renderer::_perFrameConstantBuffer = nullptr;
+std::shared_ptr<ConstantBuffer> Renderer::_perFrameConstantBuffer = nullptr;
 ID3D11Buffer* Renderer::_directionalLightBuffer = nullptr;
 TextureManager* Renderer::textureManager = nullptr;
 bool Renderer::rendererReady = false;
@@ -32,6 +32,10 @@ void Renderer::PrepareRenderer() {
 
 	// Create a constant buffer for per-frame data
 	if( _perFrameConstantBuffer == nullptr) {
+
+		_perFrameConstantBuffer = LoadConstantBuffer(device, CONSTANT_BUFFER_LAYOUT_PER_FRAME);
+
+		/*
 		D3D11_BUFFER_DESC cBufferDesc;
 		cBufferDesc.ByteWidth			= sizeof(CONSTANT_BUFFER_PER_FRAME);
 		cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
@@ -40,6 +44,7 @@ void Renderer::PrepareRenderer() {
 		cBufferDesc.MiscFlags			= 0;
 		cBufferDesc.StructureByteStride = 0;
 		HR(device->CreateBuffer( &cBufferDesc, NULL, &_perFrameConstantBuffer));
+		*/
 	}
 
 	// Set the constant buffer's data
@@ -47,8 +52,8 @@ void Renderer::PrepareRenderer() {
 	perFrameData.proj = Camera::MainCamera.GetProjectionMatrix();
 	perFrameData.view = Camera::MainCamera.GetViewMatrix();
 	perFrameData.viewProj = Camera::MainCamera.GetViewProjMatrix();
-	deviceContext->UpdateSubresource(_perFrameConstantBuffer, 0, NULL, &perFrameData, 0, 0);
-	deviceContext->VSSetConstantBuffers(0,1,&_perFrameConstantBuffer);
+	deviceContext->UpdateSubresource(_perFrameConstantBuffer->cBuffer, 0, NULL, &perFrameData, 0, 0);
+	deviceContext->VSSetConstantBuffers(_perFrameConstantBuffer->slot,1,&_perFrameConstantBuffer->cBuffer);
 
 	// Set the directional light data
 	if( _directionalLightBuffer == nullptr) {
@@ -142,9 +147,9 @@ void Renderer::Draw(){
 			currentInputLayout = currentRenderMaterial->_vertexShader->vShaderInputLayout;
 			deviceContext->IASetInputLayout(currentRenderMaterial->_vertexShader->vShaderInputLayout);
 		}
-		if(currentRenderMaterial->_vsConstantBuffer != currentConstantBuffer){
-			deviceContext->VSSetConstantBuffers(1, 1, &currentRenderMaterial->_vsConstantBuffer);
-			currentConstantBuffer = currentRenderMaterial->_vsConstantBuffer;
+		if(currentRenderMaterial->_constantBuffer->cBuffer != currentConstantBuffer){
+			deviceContext->VSSetConstantBuffers(1, 1, &currentRenderMaterial->_constantBuffer->cBuffer);
+			currentConstantBuffer = currentRenderMaterial->_constantBuffer->cBuffer;
 		}
 		if( currentRenderMaterial->_pixelShader->pShader != currentPixelShader){
 			currentPixelShader =currentRenderMaterial->_pixelShader->pShader;
@@ -258,7 +263,7 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 };
 
 void Renderer::Cleanup(){
-	ReleaseMacro(_perFrameConstantBuffer);
+	//ReleaseMacro(_perFrameConstantBuffer);
 	ReleaseMacro(_directionalLightBuffer);
 	textureManager->Cleanup();
 };

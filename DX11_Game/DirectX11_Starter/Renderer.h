@@ -20,8 +20,10 @@ private:
 	static std::unordered_set<GameObject*> registeredGOs;
 
 	static TextureManager* textureManager;
-	static ID3D11Buffer* _perFrameConstantBuffer;
+	//static ID3D11Buffer* _perFrameConstantBuffer;
 	static ID3D11Buffer* _directionalLightBuffer;
+	
+	static std::shared_ptr<ConstantBuffer> _perFrameConstantBuffer;
 	static bool rendererReady;
 
 	Renderer();

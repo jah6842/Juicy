@@ -50,14 +50,14 @@ Material::Material(MATERIAL_DESCRIPTION description){
 	LoadShaders(description.vShaderID, description.pShaderID);
 
 	// Load the constant buffer
-	LoadConstantBuffer(description.cBufferLayout);
+	LoadfConstantBuffer(description.cBufferLayout);
 
 	_materials.push_back(this);
 };
 
 Material::~Material(){
 	// Most releases are handled by the Material Cleanup() function called when the application exits.
-	ReleaseMacro(_vsConstantBuffer);
+	//ReleaseMacro(_vsConstantBuffer);
 };
 
 void Material::SetConstantBufferData(XMFLOAT4X4 world){
@@ -69,15 +69,18 @@ void Material::SetConstantBufferData(XMFLOAT4X4 world){
 		CONSTANT_BUFFER_PER_MODEL modelData;
 		modelData.world = world;
 
-		// Update the constant buffer itself
-		deviceContext->UpdateSubresource(_vsConstantBuffer, 0, NULL, &modelData, 0, 0);
+		// Update the constant buffer
+		deviceContext->UpdateSubresource(_constantBuffer->cBuffer, 0, NULL, &modelData, 0, 0);
 	}
 };
 
-void Material::LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout){
+void Material::LoadfConstantBuffer(CBUFFER_LAYOUT layout){
 	// Get the current device
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 
+	_constantBuffer = LoadConstantBuffer(device, layout);
+
+	/*
 	// Create a constant buffer
 	D3D11_BUFFER_DESC cBufferDesc;
 
@@ -97,6 +100,7 @@ void Material::LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout){
 		&cBufferDesc,
 		NULL,
 		&_vsConstantBuffer));
+		*/
 };
 
 void Material::LoadShaders(VSHADER vShader, PSHADER pShader){

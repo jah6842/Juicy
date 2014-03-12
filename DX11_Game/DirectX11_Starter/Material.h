@@ -25,7 +25,7 @@ struct MATERIAL_DESCRIPTION {
 	PSHADER pShaderID;
 	TM_TEXTURE diffuseTexture;
 	TM_FILTER_MODE textureFilter;
-	CONSTANT_BUFFER_LAYOUT cBufferLayout;
+	CBUFFER_LAYOUT cBufferLayout;
 };
 
 class Material {
@@ -53,14 +53,15 @@ public:
 	TM_FILTER_MODE textureFilter;
 	std::shared_ptr<PixelShader> _pixelShader;
 	std::shared_ptr<VertexShader> _vertexShader;
+	std::shared_ptr<ConstantBuffer> _constantBuffer;
 	bool isInstanced;
 
-	ID3D11Buffer* _vsConstantBuffer;
-	CONSTANT_BUFFER_LAYOUT _cBufferLayout;
+	//ID3D11Buffer* _vsConstantBuffer;
+	CBUFFER_LAYOUT _cBufferLayout;
 
 private:
 	void LoadShaders(VSHADER vShader, PSHADER pShader);
-	void LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout);
+	void LoadfConstantBuffer(CBUFFER_LAYOUT layout);
 };
 
 #endif // _MATERIAL_H

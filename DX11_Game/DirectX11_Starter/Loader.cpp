@@ -91,4 +91,43 @@ std::shared_ptr<PixelShader> LoadPixelShader(ID3D11Device* device, PSHADER pShad
 	return pShaders[pShaderID];
 };
 
+// Returns the desired constant buffer
+std::shared_ptr<ConstantBuffer> LoadConstantBuffer(ID3D11Device* device, CBUFFER_LAYOUT layout){
 
+	if(cBuffers[layout] != nullptr){
+		return cBuffers[layout];
+	}
+
+	ID3D11Buffer* constantBuffer;
+	UINT slot;
+
+	// Create a constant buffer
+	D3D11_BUFFER_DESC cBufferDesc;
+
+	switch(layout){
+	case CONSTANT_BUFFER_LAYOUT_PER_FRAME:
+		cBufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_PER_FRAME);
+		slot = 0;
+		break;
+	case CONSTANT_BUFFER_LAYOUT_PER_MODEL:
+		cBufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_PER_MODEL);
+		slot = 1;
+		break;
+	default:
+		LOG(L"INVALID CONSTANT BUFFER TYPE! ");
+	}
+
+	cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
+	cBufferDesc.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
+	cBufferDesc.CPUAccessFlags		= 0;
+	cBufferDesc.MiscFlags			= 0;
+	cBufferDesc.StructureByteStride = 0;
+
+	// Create the buffer
+	HR(device->CreateBuffer( &cBufferDesc, NULL, &constantBuffer));
+
+	std::shared_ptr<ConstantBuffer> c (new ConstantBuffer(constantBuffer, layout, slot));
+	cBuffers[layout] = c;
+
+	return cBuffers[layout];
+};
