@@ -1,13 +1,9 @@
 #ifndef _MATERIAL_H
 #define _MATERIAL_H
 
-// A path to search for resources relative to the .exe
-#define SHADER_PATH L"../Resources/Shaders/";
-
 #include <map>
 #include <string>
 #include <d3d11.h>
-#include <WICTextureLoader.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include "Utilities.h"
@@ -15,32 +11,18 @@
 #include "Vertex.h"
 #include <iostream>
 #include <list>
+#include <memory>
 #include "Camera.h"
 #include "TextureManager.h"
+#include "Loader.h"
 
 using namespace DirectX;
-
-// Vertex shaders
-enum {
-	VSHADER_COLORED,
-	VSHADER_TEXTURED,
-	VSHADER_TEXTURED_INSTANCED,
-	VSHADER_TEXTURED_LIT_INSTANCED
-};
-
-// Pixel shaders
-enum {
-	PSHADER_COLORED,
-	PSHADER_TEXTURED,
-	PSHADER_TEXTURED_INSTANCED,
-	PSHADER_TEXTURED_LIT_INSTANCED
-};
 
 // A description of a material to be created
 struct MATERIAL_DESCRIPTION {
 	std::wstring materialName;
-	UINT vShaderID;
-	UINT pShaderID;
+	VSHADER vShaderID;
+	PSHADER pShaderID;
 	TM_TEXTURE diffuseTexture;
 	TM_FILTER_MODE textureFilter;
 	CONSTANT_BUFFER_LAYOUT cBufferLayout;
@@ -76,12 +58,8 @@ public:
 
 private:
 
-	static const WCHAR* vShaderNames[];
-	static const WCHAR* pShaderNames[];
-
 	// Static containers so we don't end up with duplicates
 	static std::map<UINT, ID3D11VertexShader*> _vertexShaders;
-	static std::map<UINT, ID3D11PixelShader*> _pixelShaders;
 	static std::map<UINT, ID3D11InputLayout*> _inputLayouts;
 	
 	static ID3D11InputLayout* currentInputLayout;
@@ -89,18 +67,17 @@ private:
 	static ID3D11PixelShader* currentPixelShader;
 	static ID3D11Buffer* currentConstantBuffer;
 
-	void LoadVertexShader(UINT vShaderID);
-	void LoadPixelShader(UINT pShaderID);
+	void LoadShaders(VSHADER vShader, PSHADER pShader);
 	void LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout);
 
 	std::wstring _materialName;
 
-	UINT _vShaderID;
-	UINT _pShaderID;
-	ID3D11PixelShader* _pixelShader;
-	ID3D11VertexShader* _vertexShader;
+	std::shared_ptr<PixelShader> _pixelShader;
+	std::shared_ptr<VertexShader> _vertexShader;
 
-	ID3D11InputLayout* _inputLayout;
+	//ID3D11VertexShader* _vertexShader;
+	//ID3D11InputLayout* _inputLayout;
+
 	ID3D11Buffer* _vsConstantBuffer;
 	CONSTANT_BUFFER_LAYOUT _cBufferLayout;
 

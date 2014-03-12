@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Constants.cpp" />
     <ClCompile Include="DemoGame.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DXGame.cpp" />
@@ -100,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="DemoGame.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />

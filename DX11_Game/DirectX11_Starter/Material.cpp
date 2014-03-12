@@ -1,24 +1,7 @@
 #include "Material.h"
 
-const WCHAR* Material::vShaderNames[] = {
-	L"ColoredVertex.cso",
-	L"TexturedVertex.cso",
-	L"TexturedInstancedVertex.cso",
-	L"TexturedInstancedLightingVertex.cso"
-};
-
-const WCHAR* Material::pShaderNames[] = {
-	L"ColoredPixel.cso",
-	L"TexturedPixel.cso",
-	L"TexturedInstancedPixel.cso",
-	L"TexturedInstancedLightingPixel.cso"
-};
-
 // Static variables
 std::list<Material*> Material::_materials;
-std::map<UINT, ID3D11PixelShader*> Material::_pixelShaders;
-std::map<UINT, ID3D11VertexShader*> Material::_vertexShaders;
-std::map<UINT, ID3D11InputLayout*> Material::_inputLayouts;
 
 ID3D11PixelShader* Material::currentPixelShader = nullptr;
 ID3D11VertexShader* Material::currentVertexShader = nullptr;
@@ -31,21 +14,6 @@ void Material::Cleanup(){
 	for(matItr iterator = _materials.begin(); iterator != _materials.end(); iterator++) {
 		LOG(L"Deleting material: ", (*iterator)->_materialName);
 		delete *iterator;
-	}
-	typedef std::map<UINT, ID3D11PixelShader*>::iterator pixelItr;
-	for(pixelItr iterator = _pixelShaders.begin(); iterator != _pixelShaders.end(); iterator++) {
-		ReleaseMacro(iterator->second);
-		LOG(L"  Released Pixel Shader: ", std::to_wstring(iterator->first));
-	}
-	typedef std::map<UINT, ID3D11VertexShader*>::iterator vertexItr;
-	for(vertexItr iterator = _vertexShaders.begin(); iterator != _vertexShaders.end(); iterator++) {
-		ReleaseMacro(iterator->second);
-		LOG(L"  Released Vertex Shader: ", std::to_wstring(iterator->first));
-	}
-	typedef std::map<UINT, ID3D11InputLayout*>::iterator inputItr;
-	for(inputItr iterator = _inputLayouts.begin(); iterator != _inputLayouts.end(); iterator++) {
-		ReleaseMacro(iterator->second);
-		LOG(L"  Released Input Layout: ", std::to_wstring(iterator->first));
 	}
 };
 
@@ -63,9 +31,8 @@ Material* Material::GetMaterial(MATERIAL_DESCRIPTION description){
 
 // Compare two shaders, returns a boolean if they are the same
 bool Material::Compare(MATERIAL_DESCRIPTION description){
+	
 	if(_materialName == description.materialName &&
-		_vShaderID == description.vShaderID &&
-		_pShaderID == description.pShaderID &&
 		diffuseTexture == description.diffuseTexture &&
 		textureFilter == description.textureFilter && 
 		_cBufferLayout == description.cBufferLayout){
@@ -79,17 +46,13 @@ bool Material::Compare(MATERIAL_DESCRIPTION description){
 Material::Material(MATERIAL_DESCRIPTION description){
 	_isInstanced = false;
 	_materialName = description.materialName;
-	_vShaderID = description.vShaderID;
-	_pShaderID = description.pShaderID;
 	_cBufferLayout = description.cBufferLayout;
+
 	diffuseTexture = description.diffuseTexture;
 	textureFilter = description.textureFilter;
 
 	// Load the vertex shader
-	LoadVertexShader(description.vShaderID);
-
-	// Load the pixel shader
-	LoadPixelShader(description.pShaderID);
+	LoadShaders(description.vShaderID, description.pShaderID);
 
 	// Load the constant buffer
 	LoadConstantBuffer(description.cBufferLayout);
@@ -121,34 +84,21 @@ void Material::SetInputAssemblerOptions(){
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 
 	// Check if we need to change state, if not use the current state.
-	if(_vertexShader != currentVertexShader){
-		currentVertexShader = _vertexShader;
-		deviceContext->VSSetShader(_vertexShader, NULL, 0);
+	if(_vertexShader->vShader != currentVertexShader){
+		currentVertexShader = _vertexShader->vShader;
+		deviceContext->VSSetShader(_vertexShader->vShader, NULL, 0);
+	}
+	if(_vertexShader->vShaderInputLayout != currentInputLayout){
+		currentInputLayout = _vertexShader->vShaderInputLayout;
+		deviceContext->IASetInputLayout(_vertexShader->vShaderInputLayout);
 	}
 	if(_vsConstantBuffer != currentConstantBuffer){
 		deviceContext->VSSetConstantBuffers(1, 1, &_vsConstantBuffer);
 		currentConstantBuffer = _vsConstantBuffer;
 	}
-	if(_pixelShader != currentPixelShader){
-		currentPixelShader = _pixelShader;
-		deviceContext->PSSetShader(_pixelShader, NULL, 0);
-	}
-
-	/*
-	if(_diffuseTexture != currentTexture){
-		currentTexture = _diffuseTexture;
-		deviceContext->PSSetShaderResources(0,1,&_diffuseTexture);
-	}
-	if(_diffuseTextureSamplerState != currentTextureSampler){
-		currentTextureSampler = _diffuseTextureSamplerState;
-		deviceContext->PSSetSamplers(0,1,&_diffuseTextureSamplerState);
-	}*/
-
-
-
-	if(_inputLayout != currentInputLayout){
-		currentInputLayout = _inputLayout;
-		deviceContext->IASetInputLayout(_inputLayout);
+	if( _pixelShader->pShader != currentPixelShader){
+		currentPixelShader =_pixelShader->pShader;
+		deviceContext->PSSetShader(_pixelShader->pShader, NULL, 0);
 	}
 };
 
@@ -177,100 +127,18 @@ void Material::LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout){
 		&_vsConstantBuffer));
 };
 
-void Material::LoadPixelShader(UINT pShaderID){
-
-	// Check if the shader already exists
-	if(_pixelShaders.count(pShaderID)){
-		_pixelShader = _pixelShaders[pShaderID];
-		return;
-	}
-
+void Material::LoadShaders(VSHADER vShader, PSHADER pShader){
 	// Get the current device
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 
-	// Load Pixel Shader ---------------------------------------
-	ID3DBlob* psBlob;
-	std::wstring pShaderPath = SHADER_PATH;
-	pShaderPath += pShaderNames[pShaderID];
-	D3DReadFileToBlob(pShaderPath.c_str(), &psBlob);
+	// Get the pixel shader
+	_pixelShader = LoadPixelShader(device, pShader);
 
-	// Create the shader on the device
-	HR(device->CreatePixelShader(
-		psBlob->GetBufferPointer(),
-		psBlob->GetBufferSize(),
-		NULL,
-		&_pixelShader));
+	// Get the vertex shader
+	_vertexShader = LoadVertexShader(device, vShader);
 
-	// Clean up
-	ReleaseMacro(psBlob);
-
-	// Add it to the static list
-	_pixelShaders[pShaderID] = _pixelShader;
-};
-
-// Loads shaders from compiled shader object (.cso) files, and uses the
-// vertex shader to create an input layout which is needed when sending
-// vertex data to the device
-void Material::LoadVertexShader(UINT vShaderID){
-
-	// Check if the shader already exists
-	if(_vertexShaders.count(vShaderID)){
-		_vertexShader = _vertexShaders[vShaderID];
-		_inputLayout = _inputLayouts[vShaderID];
-		_isInstanced = true;
-		return;
-	}
-
-	LOG(L"Creating vertex shader: ", std::to_wstring(vShaderID));
-
-	// Get the current device
-	ID3D11Device* device = DeviceManager::GetCurrentDevice();
-
-	// Load Vertex Shader --------------------------------------
-	ID3DBlob* vsBlob;
-	std::wstring vShaderPath = SHADER_PATH;
-	vShaderPath += vShaderNames[vShaderID];
-	D3DReadFileToBlob(vShaderPath.c_str(), &vsBlob);
-
-	// Create the shader on the device
-	HR(device->CreateVertexShader(
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		NULL,
-		&_vertexShader));
-	
-	D3D11_INPUT_ELEMENT_DESC* description = nullptr;
-	UINT descriptionSize = 0;
-
-	switch(vShaderID){
-	case VSHADER_TEXTURED_LIT_INSTANCED:
-	case VSHADER_TEXTURED_INSTANCED:
-		description = VERTEX_DESCRIPTION_ALL;
-		descriptionSize = 8;
-		_isInstanced = true;
-		break;
-	default:
-		LOG(L"UNSUPPORTED SHADER!");
-		break;
-	}
-
-	assert(description != nullptr);
-	assert(descriptionSize != 0);
-
-	// Before cleaning up the data, create the input layout
-	HR(device->CreateInputLayout(
-		description,
-		descriptionSize,
-		vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(),
-		&_inputLayout));
-
-	// Clean up
-	ReleaseMacro(vsBlob);
-
-	// Add it to the static list
-	_vertexShaders[vShaderID] = _vertexShader;
-	_inputLayouts[vShaderID] = _inputLayout;
+	// Move this to VertexShader structure
+	_isInstanced = true;
 };
 
 bool Material::IsInstanced(){
