@@ -17,6 +17,7 @@
 #include <iostream>
 #include <list>
 #include "Camera.h"
+#include "TextureManager.h"
 
 using namespace DirectX;
 
@@ -36,19 +37,12 @@ enum {
 	PSHADER_TEXTURED_LIT_INSTANCED
 };
 
-// Textures
-enum {
-	TEXTURE_MARBLE_PNG,
-	TEXTURE_SAND_JPG,
-	TEXTURE_SCALES_PNG
-};
-
 // A description of a material to be created
 struct MATERIAL_DESCRIPTION {
 	std::wstring materialName;
 	UINT vShaderID;
 	UINT pShaderID;
-	UINT diffuseTextureID;
+	TEXTURE_NAME diffuseTextureID;
 	CONSTANT_BUFFER_LAYOUT cBufferLayout;
 };
 
@@ -79,7 +73,6 @@ public:
 
 private:
 
-	static const WCHAR* textureNames[];
 	static const WCHAR* vShaderNames[];
 	static const WCHAR* pShaderNames[];
 

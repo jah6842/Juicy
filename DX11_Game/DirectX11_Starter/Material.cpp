@@ -1,12 +1,5 @@
 #include "Material.h"
 
-// Texture names (SHOULD BE IN THE SAME ORDER AS THE TEXTURE ENUM IN THE HEADER!)
-const WCHAR* Material::textureNames[] = { 
-	L"marble.png", 
-	L"sand.jpg",
-	L"scales.png" 
-};
-
 const WCHAR* Material::vShaderNames[] = {
 	L"ColoredVertex.cso",
 	L"TexturedVertex.cso",

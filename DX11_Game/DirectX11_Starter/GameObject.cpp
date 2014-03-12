@@ -17,7 +17,7 @@ GameObject::GameObject(){
 
 	MATERIAL_DESCRIPTION matDesc;
 	matDesc.cBufferLayout = CONSTANT_BUFFER_LAYOUT_PER_MODEL;
-	matDesc.diffuseTextureID = TEXTURE_MARBLE_PNG;
+	matDesc.diffuseTextureID = TM_TEXTURE_MARBLE;
 	matDesc.vShaderID = VSHADER_TEXTURED_LIT_INSTANCED;
 	matDesc.pShaderID = PSHADER_TEXTURED_LIT_INSTANCED;
 	matDesc.materialName = L"TexturedInstancedLighting";
@@ -25,10 +25,10 @@ GameObject::GameObject(){
 	if(flip == 0){
 		material = Material::GetMaterial(matDesc);
 	} else if(flip == 1){
-		matDesc.diffuseTextureID = TEXTURE_SAND_JPG;
+		matDesc.diffuseTextureID = TM_TEXTURE_SAND;
 		material =  Material::GetMaterial(matDesc);
 	} else if(flip == 2){
-		matDesc.diffuseTextureID = TEXTURE_SCALES_PNG;
+		matDesc.diffuseTextureID = TM_TEXTURE_SCALES;
 		material =  Material::GetMaterial(matDesc);
 	}
 	
