@@ -3,6 +3,7 @@
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
 ID3D11Buffer* Renderer::_perFrameConstantBuffer = nullptr;
 ID3D11Buffer* Renderer::_directionalLightBuffer = nullptr;
+TextureManager* Renderer::textureManager = nullptr;
 bool Renderer::rendererReady = false;
 
 Renderer::Renderer(){
@@ -23,6 +24,11 @@ void Renderer::PrepareRenderer() {
 
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
+	if(textureManager == nullptr){
+		textureManager = new TextureManager();
+		textureManager->Init();
+	}
 
 	// Create a constant buffer for per-frame data
 	if( _perFrameConstantBuffer == nullptr) {
@@ -128,6 +134,9 @@ void Renderer::Draw(){
 		// Set the proper input options for this material
 		currentRenderMaterial->SetInputAssemblerOptions();
 		currentRenderMaterial->SetConstantBufferData(Transform::Identity().WorldMatrix());
+
+		textureManager->SetActiveTexture(currentRenderMaterial->diffuseTexture);
+		textureManager->SetActiveFilterMode(currentRenderMaterial->textureFilter);
 
 		// Loop through the open list and get all of the objects with the 
 		// same material that we should add to the render list.

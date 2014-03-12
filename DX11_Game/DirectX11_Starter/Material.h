@@ -3,7 +3,6 @@
 
 // A path to search for resources relative to the .exe
 #define SHADER_PATH L"../Resources/Shaders/";
-#define TEXTURE_PATH L"../Resources/Textures/";
 
 #include <map>
 #include <string>
@@ -42,7 +41,8 @@ struct MATERIAL_DESCRIPTION {
 	std::wstring materialName;
 	UINT vShaderID;
 	UINT pShaderID;
-	TEXTURE_NAME diffuseTextureID;
+	TM_TEXTURE diffuseTexture;
+	TM_FILTER_MODE textureFilter;
 	CONSTANT_BUFFER_LAYOUT cBufferLayout;
 };
 
@@ -71,6 +71,9 @@ public:
 	// Call once per frame to clear cached options
 	static void ClearOptions();
 
+	TM_TEXTURE diffuseTexture;
+	TM_FILTER_MODE textureFilter;
+
 private:
 
 	static const WCHAR* vShaderNames[];
@@ -93,7 +96,6 @@ private:
 	void LoadVertexShader(UINT vShaderID);
 	void LoadPixelShader(UINT pShaderID);
 	void LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout);
-	void LoadTexture(UINT textureID);
 
 	std::wstring _materialName;
 
@@ -102,9 +104,7 @@ private:
 	ID3D11PixelShader* _pixelShader;
 	ID3D11VertexShader* _vertexShader;
 
-	UINT _diffuseTextureID;
-	ID3D11ShaderResourceView* _diffuseTexture;
-	ID3D11SamplerState* _diffuseTextureSamplerState;
+	
 
 	ID3D11InputLayout* _inputLayout;
 	ID3D11Buffer* _vsConstantBuffer;

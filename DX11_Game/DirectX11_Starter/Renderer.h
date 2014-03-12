@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include "GameObject.h"
+#include "TextureManager.h"
 
 class GameObject;
 
@@ -17,6 +18,7 @@ class Renderer {
 private:
 	static std::unordered_set<GameObject*> registeredGOs;
 
+	static TextureManager* textureManager;
 	static ID3D11Buffer* _perFrameConstantBuffer;
 	static ID3D11Buffer* _directionalLightBuffer;
 	static bool rendererReady;

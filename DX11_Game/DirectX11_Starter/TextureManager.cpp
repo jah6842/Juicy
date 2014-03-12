@@ -1,14 +1,24 @@
 #include "TextureManager.h"
 
-// Matches with enum in header
-const WCHAR* textureNames[] = { 
+// Make sure this matches with the enum in the header!
+const WCHAR* textureNames[TM_NUM_TEXTURES] = { 
 	L"marble.png", 
 	L"sand.jpg",
 	L"scales.png"
 };
 
-TextureManager::TextureManager(){
+//Texture TEXTURE_MARBLE = { L"marble.png", TM_TEXTURE_MARBLE, nullptr, true, false, false };
+//Texture TEXTURE_SAND = { L"sand.jpg", TM_TEXTURE_SAND, nullptr, true, false, false };
+//Texture TEXTURE_SCALES = { L"scales.png", TM_TEXTURE_SCALES, nullptr, true, false, false };
 
+TextureManager::TextureManager(){
+	samplerStatePoint = nullptr;
+	samplerStateLinear = nullptr;
+	samplerStateAnisotropic1X = nullptr;
+	samplerStateAnisotropic2X = nullptr;
+	samplerStateAnisotropic4X = nullptr;
+	samplerStateAnisotropic8X = nullptr;
+	samplerStateAnisotropic16X = nullptr;
 };
 
 TextureManager::~TextureManager(){
@@ -17,6 +27,45 @@ TextureManager::~TextureManager(){
 
 void TextureManager::Init(){
 	InitSamplerStates();
+	LoadTextures();
+};
+
+void TextureManager::Cleanup(){
+
+};
+
+void TextureManager::SetActiveTexture(TM_TEXTURE t, TM_TEXTURE_TYPE type){
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+	deviceContext->PSSetShaderResources(type,1,&textures[t].resourceView);
+};
+
+void TextureManager::SetActiveFilterMode(TM_FILTER_MODE m){
+	
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+	
+	switch(m){
+	case TM_FILTER_POINT:
+		deviceContext->PSSetSamplers(0,1,&samplerStatePoint);
+		break;
+	case TM_FILTER_LINEAR:
+		deviceContext->PSSetSamplers(0,1,&samplerStateLinear);
+		break;
+	case TM_FILTER_ANISO_1X:
+		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic1X);
+		break;
+	case TM_FILTER_ANISO_2X:
+		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic2X);
+		break;
+	case TM_FILTER_ANISO_4X:
+		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic4X);
+		break;
+	case TM_FILTER_ANISO_8X:
+		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic8X);
+		break;
+	case TM_FILTER_ANISO_16X:
+		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic16X);
+		break;
+	}
 };
 
 // Create all of the sampler states that we will need
@@ -68,4 +117,24 @@ void TextureManager::InitSamplerStates(){
 // Load all of the textures that we're going to need
 void TextureManager::LoadTextures(){
 
+	ID3D11Device* device = DeviceManager::GetCurrentDevice();
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
+	for(UINT i = 0; i < TM_NUM_TEXTURES; i++){
+
+		// Set up a texture struct
+		Texture tempTex;
+		tempTex.isDiffuseMap = true;
+		tempTex.name = textureNames[i];
+		tempTex.textureID = i;
+
+		std::wstring wTexturePath = TEXTURE_PATH;
+		wTexturePath += textureNames[i];
+
+		// DirectXTK Texture Loading
+		HR(CreateWICTextureFromFile(device, deviceContext, wTexturePath.c_str(), NULL, &tempTex.resourceView));
+
+		// Add the texture to the list
+		textures[i] = tempTex;
+	}
 };

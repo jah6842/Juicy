@@ -80,7 +80,8 @@ bool Material::Compare(MATERIAL_DESCRIPTION description){
 	if(_materialName == description.materialName &&
 		_vShaderID == description.vShaderID &&
 		_pShaderID == description.pShaderID &&
-		_diffuseTextureID == description.diffuseTextureID &&
+		diffuseTexture == description.diffuseTexture &&
+		textureFilter == description.textureFilter && 
 		_cBufferLayout == description.cBufferLayout){
 		return true;
 	}
@@ -95,7 +96,8 @@ Material::Material(MATERIAL_DESCRIPTION description){
 	_vShaderID = description.vShaderID;
 	_pShaderID = description.pShaderID;
 	_cBufferLayout = description.cBufferLayout;
-	_diffuseTextureID = description.diffuseTextureID;
+	diffuseTexture = description.diffuseTexture;
+	textureFilter = description.textureFilter;
 
 	// Load the vertex shader
 	LoadVertexShader(description.vShaderID);
@@ -105,9 +107,6 @@ Material::Material(MATERIAL_DESCRIPTION description){
 
 	// Load the constant buffer
 	LoadConstantBuffer(description.cBufferLayout);
-
-	// Load textures
-	LoadTexture(description.diffuseTextureID);
 
 	_materials.push_back(this);
 };
@@ -148,6 +147,8 @@ void Material::SetInputAssemblerOptions(){
 		currentPixelShader = _pixelShader;
 		deviceContext->PSSetShader(_pixelShader, NULL, 0);
 	}
+
+	/*
 	if(_diffuseTexture != currentTexture){
 		currentTexture = _diffuseTexture;
 		deviceContext->PSSetShaderResources(0,1,&_diffuseTexture);
@@ -155,7 +156,10 @@ void Material::SetInputAssemblerOptions(){
 	if(_diffuseTextureSamplerState != currentTextureSampler){
 		currentTextureSampler = _diffuseTextureSamplerState;
 		deviceContext->PSSetSamplers(0,1,&_diffuseTextureSamplerState);
-	}
+	}*/
+
+
+
 	if(_inputLayout != currentInputLayout){
 		currentInputLayout = _inputLayout;
 		deviceContext->IASetInputLayout(_inputLayout);
@@ -281,44 +285,6 @@ void Material::LoadVertexShader(UINT vShaderID){
 	// Add it to the static list
 	_vertexShaders[vShaderID] = _vertexShader;
 	_inputLayouts[vShaderID] = _inputLayout;
-};
-
-void Material::LoadTexture(UINT textureID){
-	// Check if the texture already exists
-	if(_textures.count(textureID)){
-		_diffuseTexture = _textures[textureID];
-		_diffuseTextureSamplerState = _textureSamplers[textureID];
-		return;
-	}
-
-	// Get the current device
-	ID3D11Device* device = DeviceManager::GetCurrentDevice();
-	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
-
-	std::wstring dTexturePath = TEXTURE_PATH;
-	dTexturePath += textureNames[textureID];
-
-	// NEW DirectXTK Texture Loading
-	HR(CreateWICTextureFromFile(device, deviceContext, dTexturePath.c_str(), NULL, &_diffuseTexture));
-
-	// Describe the Sample State
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory( &sampDesc, sizeof(sampDesc) );
-	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	sampDesc.MaxAnisotropy = 8;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    sampDesc.MinLOD = 0;
-    sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    
-	//Create the Sample State
-	device->CreateSamplerState( &sampDesc, &_diffuseTextureSamplerState );
-
-	// Add it to the static list
-	_textures[textureID] = _diffuseTexture;
-	_textureSamplers[textureID] = _diffuseTextureSamplerState;
 };
 
 bool Material::IsInstanced(){
