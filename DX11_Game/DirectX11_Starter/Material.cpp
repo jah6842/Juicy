@@ -19,14 +19,10 @@ std::list<Material*> Material::_materials;
 std::map<UINT, ID3D11PixelShader*> Material::_pixelShaders;
 std::map<UINT, ID3D11VertexShader*> Material::_vertexShaders;
 std::map<UINT, ID3D11InputLayout*> Material::_inputLayouts;
-std::map<UINT, ID3D11ShaderResourceView*> Material::_textures;
-std::map<UINT, ID3D11SamplerState*> Material::_textureSamplers;
 
 ID3D11PixelShader* Material::currentPixelShader = nullptr;
 ID3D11VertexShader* Material::currentVertexShader = nullptr;
 ID3D11InputLayout* Material::currentInputLayout = nullptr;
-ID3D11ShaderResourceView* Material::currentTexture = nullptr;
-ID3D11SamplerState* Material::currentTextureSampler = nullptr;
 ID3D11Buffer* Material::currentConstantBuffer = nullptr;
 
 // Static class to cleanup all necessary items
@@ -50,16 +46,6 @@ void Material::Cleanup(){
 	for(inputItr iterator = _inputLayouts.begin(); iterator != _inputLayouts.end(); iterator++) {
 		ReleaseMacro(iterator->second);
 		LOG(L"  Released Input Layout: ", std::to_wstring(iterator->first));
-	}
-	typedef std::map<UINT, ID3D11ShaderResourceView*>::iterator texItr;
-	for(texItr iterator = _textures.begin(); iterator != _textures.end(); iterator++) {
-		ReleaseMacro(iterator->second);
-		LOG(L"  Released Shader Resource View: ", std::to_wstring(iterator->first));
-	}
-	typedef std::map<UINT, ID3D11SamplerState*>::iterator texSampItr;
-	for(texSampItr iterator = _textureSamplers.begin(); iterator != _textureSamplers.end(); iterator++) {
-		ReleaseMacro(iterator->second);
-		LOG(L"  Released Sampler State: ", std::to_wstring(iterator->first));
 	}
 };
 
@@ -295,7 +281,5 @@ void Material::ClearOptions(){
 	currentPixelShader = nullptr;
 	currentVertexShader = nullptr;
 	currentInputLayout = nullptr;
-	currentTexture = nullptr;
-	currentTextureSampler = nullptr;
 	currentConstantBuffer = nullptr;
 };

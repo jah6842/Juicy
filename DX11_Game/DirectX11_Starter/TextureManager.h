@@ -59,7 +59,9 @@ public:
 private:
 
 	void InitSamplerStates();
-	void LoadTextures();
+	void InitTextures();
+	void ReleaseSamplerStates();
+	void ReleaseTextures();
 
 	// <TM_TEXTURE, Texture> container
 	std::map<UINT, Texture> textures;

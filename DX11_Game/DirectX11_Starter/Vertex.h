@@ -8,6 +8,7 @@ using namespace DirectX;
 
 enum VERTEX_TYPE
 {
+	VERTEX_TYPE_NON_INSTANCED,
 	VERTEX_TYPE_ALL
 };
 
@@ -40,7 +41,6 @@ namespace Vertex {
 		assert(vertexSize != 0);
 		return vertexSize;
 	};
-
 }
 
 #endif // _VERTEX_H

@@ -27,11 +27,12 @@ TextureManager::~TextureManager(){
 
 void TextureManager::Init(){
 	InitSamplerStates();
-	LoadTextures();
+	InitTextures();
 };
 
 void TextureManager::Cleanup(){
-
+	ReleaseSamplerStates();
+	ReleaseTextures();
 };
 
 void TextureManager::SetActiveTexture(TM_TEXTURE t, TM_TEXTURE_TYPE type){
@@ -115,13 +116,12 @@ void TextureManager::InitSamplerStates(){
 };
 
 // Load all of the textures that we're going to need
-void TextureManager::LoadTextures(){
+void TextureManager::InitTextures(){
 
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 
 	for(UINT i = 0; i < TM_NUM_TEXTURES; i++){
-
 		// Set up a texture struct
 		Texture tempTex;
 		tempTex.isDiffuseMap = true;
@@ -137,4 +137,22 @@ void TextureManager::LoadTextures(){
 		// Add the texture to the list
 		textures[i] = tempTex;
 	}
+};
+
+void TextureManager::ReleaseSamplerStates(){
+	ReleaseMacro(samplerStatePoint);
+	ReleaseMacro(samplerStateLinear);
+	ReleaseMacro(samplerStateAnisotropic1X);
+	ReleaseMacro(samplerStateAnisotropic2X);
+	ReleaseMacro(samplerStateAnisotropic4X);
+	ReleaseMacro(samplerStateAnisotropic8X);
+	ReleaseMacro(samplerStateAnisotropic16X);
+};
+
+void TextureManager::ReleaseTextures(){
+	for(UINT i = 0; i < TM_NUM_TEXTURES; i++){
+		ReleaseMacro(textures[i].resourceView);
+	}
+	textures.clear();
+	delete &textures;
 };

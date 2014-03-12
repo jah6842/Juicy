@@ -85,6 +85,7 @@
     <ClCompile Include="DemoGame.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DXGame.cpp" />
+    <ClCompile Include="Loader.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Utilities.cpp" />
@@ -102,6 +103,7 @@
     <ClInclude Include="DemoGame.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />
+    <ClInclude Include="Loader.h" />
     <ClInclude Include="Shaders\globals.inc" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="TextureManager.h" />

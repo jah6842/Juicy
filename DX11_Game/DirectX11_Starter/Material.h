@@ -83,11 +83,7 @@ private:
 	static std::map<UINT, ID3D11VertexShader*> _vertexShaders;
 	static std::map<UINT, ID3D11PixelShader*> _pixelShaders;
 	static std::map<UINT, ID3D11InputLayout*> _inputLayouts;
-	static std::map<UINT, ID3D11ShaderResourceView*> _textures;
-	static std::map<UINT, ID3D11SamplerState*> _textureSamplers;
 	
-	static ID3D11SamplerState* currentTextureSampler;
-	static ID3D11ShaderResourceView* currentTexture;
 	static ID3D11InputLayout* currentInputLayout;
 	static ID3D11VertexShader* currentVertexShader;
 	static ID3D11PixelShader* currentPixelShader;
@@ -103,8 +99,6 @@ private:
 	UINT _pShaderID;
 	ID3D11PixelShader* _pixelShader;
 	ID3D11VertexShader* _vertexShader;
-
-	
 
 	ID3D11InputLayout* _inputLayout;
 	ID3D11Buffer* _vsConstantBuffer;

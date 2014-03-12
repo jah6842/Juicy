@@ -242,4 +242,5 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 void Renderer::Cleanup(){
 	ReleaseMacro(_perFrameConstantBuffer);
 	ReleaseMacro(_directionalLightBuffer);
+	textureManager->Cleanup();
 };
