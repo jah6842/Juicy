@@ -3,11 +3,6 @@
 // Static variables
 std::list<Material*> Material::_materials;
 
-ID3D11PixelShader* Material::currentPixelShader = nullptr;
-ID3D11VertexShader* Material::currentVertexShader = nullptr;
-ID3D11InputLayout* Material::currentInputLayout = nullptr;
-ID3D11Buffer* Material::currentConstantBuffer = nullptr;
-
 // Static class to cleanup all necessary items
 void Material::Cleanup(){
 	typedef std::list<Material*>::iterator matItr;
@@ -44,7 +39,7 @@ bool Material::Compare(MATERIAL_DESCRIPTION description){
 
 // Constructor
 Material::Material(MATERIAL_DESCRIPTION description){
-	_isInstanced = false;
+	isInstanced = false;
 	_materialName = description.materialName;
 	_cBufferLayout = description.cBufferLayout;
 
@@ -79,29 +74,6 @@ void Material::SetConstantBufferData(XMFLOAT4X4 world){
 	}
 };
 
-void Material::SetInputAssemblerOptions(){
-	// Get the current device context
-	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
-
-	// Check if we need to change state, if not use the current state.
-	if(_vertexShader->vShader != currentVertexShader){
-		currentVertexShader = _vertexShader->vShader;
-		deviceContext->VSSetShader(_vertexShader->vShader, NULL, 0);
-	}
-	if(_vertexShader->vShaderInputLayout != currentInputLayout){
-		currentInputLayout = _vertexShader->vShaderInputLayout;
-		deviceContext->IASetInputLayout(_vertexShader->vShaderInputLayout);
-	}
-	if(_vsConstantBuffer != currentConstantBuffer){
-		deviceContext->VSSetConstantBuffers(1, 1, &_vsConstantBuffer);
-		currentConstantBuffer = _vsConstantBuffer;
-	}
-	if( _pixelShader->pShader != currentPixelShader){
-		currentPixelShader =_pixelShader->pShader;
-		deviceContext->PSSetShader(_pixelShader->pShader, NULL, 0);
-	}
-};
-
 void Material::LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout){
 	// Get the current device
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
@@ -113,7 +85,7 @@ void Material::LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout){
 	case CONSTANT_BUFFER_LAYOUT_PER_MODEL:
 		cBufferDesc.ByteWidth = sizeof(CONSTANT_BUFFER_PER_MODEL); break;
 	default:
-		LOG(L"INVALID CONSTANT BUFFER TYPE! ", __FILEW__, L", ", std::to_wstring(__LINE__));
+		LOG(L"INVALID CONSTANT BUFFER TYPE! ");
 	}
 
 	cBufferDesc.Usage				= D3D11_USAGE_DEFAULT;
@@ -138,16 +110,5 @@ void Material::LoadShaders(VSHADER vShader, PSHADER pShader){
 	_vertexShader = LoadVertexShader(device, vShader);
 
 	// Move this to VertexShader structure
-	_isInstanced = true;
-};
-
-bool Material::IsInstanced(){
-	return _isInstanced;
-};
-
-void Material::ClearOptions(){
-	currentPixelShader = nullptr;
-	currentVertexShader = nullptr;
-	currentInputLayout = nullptr;
-	currentConstantBuffer = nullptr;
+	isInstanced = true;
 };

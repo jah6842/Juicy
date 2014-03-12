@@ -44,44 +44,23 @@ public:
 	~Material();
 
 	void SetConstantBufferData(XMFLOAT4X4 world);
-	void SetInputAssemblerOptions();
-	bool IsInstanced();
 
 	// Cleanup all of our static objects
 	static void Cleanup();
 
-	// Call once per frame to clear cached options
-	static void ClearOptions();
-
+	std::wstring _materialName;
 	TM_TEXTURE diffuseTexture;
 	TM_FILTER_MODE textureFilter;
-
-private:
-
-	// Static containers so we don't end up with duplicates
-	static std::map<UINT, ID3D11VertexShader*> _vertexShaders;
-	static std::map<UINT, ID3D11InputLayout*> _inputLayouts;
-	
-	static ID3D11InputLayout* currentInputLayout;
-	static ID3D11VertexShader* currentVertexShader;
-	static ID3D11PixelShader* currentPixelShader;
-	static ID3D11Buffer* currentConstantBuffer;
-
-	void LoadShaders(VSHADER vShader, PSHADER pShader);
-	void LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout);
-
-	std::wstring _materialName;
-
 	std::shared_ptr<PixelShader> _pixelShader;
 	std::shared_ptr<VertexShader> _vertexShader;
-
-	//ID3D11VertexShader* _vertexShader;
-	//ID3D11InputLayout* _inputLayout;
+	bool isInstanced;
 
 	ID3D11Buffer* _vsConstantBuffer;
 	CONSTANT_BUFFER_LAYOUT _cBufferLayout;
 
-	bool _isInstanced;
+private:
+	void LoadShaders(VSHADER vShader, PSHADER pShader);
+	void LoadConstantBuffer(CONSTANT_BUFFER_LAYOUT layout);
 };
 
 #endif // _MATERIAL_H

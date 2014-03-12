@@ -24,7 +24,7 @@ void Renderer::PrepareRenderer() {
 
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
-
+	
 	if(textureManager == nullptr){
 		textureManager = new TextureManager();
 		textureManager->Init();
@@ -78,7 +78,10 @@ void Renderer::Draw(){
 		PrepareRenderer();
 	}
 
-	Material::ClearOptions();
+	ID3D11PixelShader* currentPixelShader = nullptr;
+	ID3D11VertexShader* currentVertexShader = nullptr;
+	ID3D11InputLayout* currentInputLayout = nullptr;
+	ID3D11Buffer* currentConstantBuffer = nullptr;
 
 	UINT drawnObjects = 0;
 	UINT drawCalls = 0;
@@ -96,8 +99,7 @@ void Renderer::Draw(){
 			continue;
 			
 		// Check if the object is using an instanced material
-		if(!(*itr)->material->IsInstanced()){
-			(*itr)->material->SetInputAssemblerOptions();
+		if(!(*itr)->material->isInstanced){
 			(*itr)->material->SetConstantBufferData((*itr)->transform.WorldMatrix());
 
 			// Set the current vertex buffer
@@ -125,14 +127,30 @@ void Renderer::Draw(){
 			itr != Material::_materials.end(); itr++){
 
 		// Check if the material is not instanced, if so it was already rendered
-		if(!(*itr)->IsInstanced())
+		if(!(*itr)->isInstanced)
 			continue;
 
 		// Get the first material from the render list
 		currentRenderMaterial = *itr;
 
-		// Set the proper input options for this material
-		currentRenderMaterial->SetInputAssemblerOptions();
+		// Check if we need to change state, if not use the current state.
+		if(currentRenderMaterial->_vertexShader->vShader != currentVertexShader){
+			currentVertexShader = currentRenderMaterial->_vertexShader->vShader;
+			deviceContext->VSSetShader(currentRenderMaterial->_vertexShader->vShader, NULL, 0);
+		}
+		if(currentRenderMaterial->_vertexShader->vShaderInputLayout != currentInputLayout){
+			currentInputLayout = currentRenderMaterial->_vertexShader->vShaderInputLayout;
+			deviceContext->IASetInputLayout(currentRenderMaterial->_vertexShader->vShaderInputLayout);
+		}
+		if(currentRenderMaterial->_vsConstantBuffer != currentConstantBuffer){
+			deviceContext->VSSetConstantBuffers(1, 1, &currentRenderMaterial->_vsConstantBuffer);
+			currentConstantBuffer = currentRenderMaterial->_vsConstantBuffer;
+		}
+		if( currentRenderMaterial->_pixelShader->pShader != currentPixelShader){
+			currentPixelShader =currentRenderMaterial->_pixelShader->pShader;
+			deviceContext->PSSetShader(currentRenderMaterial->_pixelShader->pShader, NULL, 0);
+		}
+
 		currentRenderMaterial->SetConstantBufferData(Transform::Identity().WorldMatrix());
 
 		textureManager->SetActiveTexture(currentRenderMaterial->diffuseTexture);
