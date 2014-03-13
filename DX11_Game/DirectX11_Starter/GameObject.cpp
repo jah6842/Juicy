@@ -26,4 +26,6 @@ void GameObject::Update(float dt){
 GameObject::~GameObject(){
 	// Unregister this GameObject from the renderer
 	Renderer::UnRegisterGameObject(this);
+	// Free resources
+	delete material;
 };
