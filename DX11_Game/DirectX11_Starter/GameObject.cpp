@@ -9,7 +9,7 @@ GameObject::GameObject(MESHES m, MATERIAL_DESCRIPTION mat){
 	mesh = LoadMesh(device, m);
 
 	// Set the material
-	material = new Material(mat);
+	material = new std::shared_ptr<Material>(new Material(mat));
 };
 
 GameObject::GameObject(){
@@ -27,5 +27,5 @@ GameObject::~GameObject(){
 	// Unregister this GameObject from the renderer
 	Renderer::UnRegisterGameObject(this);
 	// Free resources
-	delete material;
+	//delete material;
 };

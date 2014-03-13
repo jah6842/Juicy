@@ -5,6 +5,7 @@
 #include "Utilities.h"
 #include <iostream>
 #include <list>
+#include <map>
 #include <memory>
 #include "Loader.h"
 

@@ -158,6 +158,7 @@ std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
 		m->numVertices = 36;
 		m->vertexType = VERTEX_TYPE_ALL;
 		m->name = L"Cube";
+		m->meshID = mesh;
 		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	}
 

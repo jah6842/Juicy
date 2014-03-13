@@ -14,7 +14,8 @@ class GameObject {
 public:
 	Transform transform;
 	std::shared_ptr<Mesh> mesh;
-	Material* material;
+	std::shared_ptr<Material> material;
+	//Material* material;
 
 	GameObject();
 	GameObject(MESHES m, MATERIAL_DESCRIPTION mat);

@@ -7,11 +7,13 @@
 #include "Utilities.h"
 #include <map>
 #include <string>
+#include "Constants.h"
 
 using namespace DirectX;
 
 struct Mesh {
 	std::wstring name;
+	MESHES meshID;
 	VERTEX_TYPE vertexType;
 	ID3D11Buffer* indexBuffer;
 	ID3D11Buffer* vertexBuffer;
@@ -24,6 +26,19 @@ struct Mesh {
 	bool hasNormals;
 	bool hasColor;
 
+	Mesh(){
+		name = L"UNINITIALIZED_MESH_NAME";
+		vertexType = VERTEX_TYPE_ALL;
+		indexBuffer = nullptr;
+		vertexBuffer = nullptr;
+		numIndices = 0;
+		numVertices = 0;
+		topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		hasColor = false;
+		hasNormals = false;
+		hasTexCoord = false;
+		hasPosition = false;
+	}
 	~Mesh(){
 		ReleaseMacro(vertexBuffer);
 		ReleaseMacro(indexBuffer);

@@ -17,6 +17,16 @@ bool Material::Compare(Material* mat){
 	return false;
 };
 
+static std::map<MATERIAL_DESCRIPTION, std::shared_ptr<Material>> _materials;
+std::shared_ptr<Material> LoadMaterial(ID3D11Device* device, MATERIAL_DESCRIPTION desc){
+	if(_materials[desc] != nullptr)
+		return _materials[desc];
+
+	std::shared_ptr<Material> m (new Material(desc));
+	_materials[desc] = m;
+	return _materials[desc];
+};
+
 // Constructor
 Material::Material(MATERIAL_DESCRIPTION description){
 	materialName = description.materialName;

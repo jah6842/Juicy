@@ -5,6 +5,7 @@ std::shared_ptr<ConstantBuffer> Renderer::_perFrameConstantBuffer = nullptr;
 std::shared_ptr<ConstantBuffer> Renderer::_directionalLightBuffer = nullptr;
 TextureManager* Renderer::textureManager = nullptr;
 bool Renderer::rendererReady = false;
+std::map<MESHES, std::vector<GameObject*>> Renderer::renderBuckets = std::map<MESHES, std::vector<GameObject*>>();
 
 Renderer::Renderer(){
 
@@ -124,37 +125,43 @@ void Renderer::Draw(){
 	GameObject** renderList = new GameObject*[registeredGOs.size()];
 	UINT renderCount = 0;
 
-	std::list<Material*> _materials; 
+	std::vector<Material*> _materials;
 
-	for(std::unordered_set<GameObject*>::iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
+	std::map<MESHES, std::vector<GameObject*>> renderBuckets;
+
+	for(std::unordered_set<GameObject*>::const_iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
 		if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
 			continue;
+
+		GameObject* go = *itr;
 			
 		// Check if the object is using an instanced material
-		if(!(*itr)->material->vertexShader->isInstanced){
-			PrepareMaterial(*itr, (*itr)->material);
+		if(!go->material->vertexShader->isInstanced){
+			PrepareMaterial(go, go->material);
 
 			// Set the current vertex buffer
-			UINT stride = Vertex::VertexSize((*itr)->mesh->vertexType);
+			UINT stride = Vertex::VertexSize(go->mesh->vertexType);
 			UINT offset = 0;
-			ID3D11Buffer* vBuffer = (*itr)->mesh->vertexBuffer;
+			ID3D11Buffer* vBuffer = go->mesh->vertexBuffer;
 			deviceContext->IASetVertexBuffers(0, 1, &vBuffer, &stride, &offset);
 			// Set the current index buffer
-			deviceContext->IASetIndexBuffer((*itr)->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			deviceContext->IASetIndexBuffer(go->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			// Set the topology
-			deviceContext->IASetPrimitiveTopology((*itr)->mesh->topology);
+			deviceContext->IASetPrimitiveTopology(go->mesh->topology);
 	
 			// Draw individual model
 			deviceContext->DrawIndexed(
-				(*itr)->mesh->numIndices,	// The number of indices we're using in this draw
+				go->mesh->numIndices,	// The number of indices we're using in this draw
 				0,
 				0); 
 			drawnObjects++;
-		} else {
+		} 
+		else {
 			bool found = false;
-			for(std::list<Material*>::iterator mat = _materials.begin(); mat != _materials.end(); mat++){
-				if((*mat)->Compare((*itr)->material)){
+			
+			for(std::vector<Material*>::const_iterator mat = _materials.begin(); mat != _materials.end(); mat++){
+				if((*mat)->Compare(go->material)){
 					found = true;
 					break;
 				}
@@ -165,9 +172,9 @@ void Renderer::Draw(){
 	}
 
 	Material* currentRenderMaterial = nullptr;
-
+	
 	// Get all gameobjects with a certain material and draw them
-	for(std::list<Material*>::iterator itr = _materials.begin(); itr != _materials.end(); itr++){
+	for(std::vector<Material*>::const_iterator itr = _materials.begin(); itr != _materials.end(); itr++){
 
 		// Check if the material is not instanced, if so it was already rendered
 		if(!(*itr)->vertexShader->isInstanced)
@@ -262,12 +269,15 @@ void Renderer::Draw(){
 
 	delete[] renderList;
 	rendererReady = false;
+
 	//LOG(L"Rendered objects: ", std::to_wstring(drawnObjects), L" (Draw Calls: ", std::to_wstring(drawCalls), L")");
 };
 
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
 	registeredGOs.insert(go);
+
+	//renderBuckets[go->mesh->meshID].push_back(go);
 };
 
 // Remove a gameobject from the gameobjects list

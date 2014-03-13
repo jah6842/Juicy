@@ -36,6 +36,8 @@ private:
 	static std::shared_ptr<ConstantBuffer> _directionalLightBuffer;
 	static bool rendererReady;
 
+	static std::map<MESHES, std::vector<GameObject*>> renderBuckets;
+
 	Renderer();
 	~Renderer();
 
