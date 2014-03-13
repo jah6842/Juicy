@@ -9,8 +9,6 @@ GameObject::GameObject(MESHES m, MATERIALS mat){
 	mesh = LoadMesh(device, m);
 
 	// Set the material
-	//std::shared_ptr<Material> newM (new Material(mat));
-	//material = newM;
 	material = Material::LoadMaterial(device, mat);
 };
 
@@ -22,12 +20,11 @@ GameObject::GameObject(){
 };
 
 void GameObject::Update(float dt){
+	transform.Update(dt);
 	//transform.Rotate(XMConvertToRadians(10.0f*dt), XMConvertToRadians(10.0f*dt), 0);
 };
 
 GameObject::~GameObject(){
 	// Unregister this GameObject from the renderer
 	Renderer::UnRegisterGameObject(this);
-	// Free resources
-	//delete material;
 };

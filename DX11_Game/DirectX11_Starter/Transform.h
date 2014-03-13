@@ -12,11 +12,16 @@ public:
 	Transform();
 	~Transform();
 
+	// Update velocities
+	void Update(float dt);
+
 	// Getters
 	XMFLOAT3 Pos();
 	float PosX();
 	float PosY();
 	float PosZ();
+
+	XMFLOAT3 Velocity();
 
 	// Setters
 	void SetPosition(float x, float y, float z);
@@ -25,6 +30,13 @@ public:
 	void SetRotation(XMFLOAT3 rotRad);
 	void SetScale(float x, float y, float z);
 	void SetScale(XMFLOAT3 sca);
+	void SetVelocity(float x, float y, float z);
+	void SetVelocity(XMFLOAT3 vel);
+
+	// Velocity functions
+	void AddVelocity(float x, float y, float z);
+	void AddVelocity(XMFLOAT3 vel);
+	void ClearVelocity();
 
 	// Movement functions
 	void Move(float x, float y, float z);
@@ -59,6 +71,8 @@ private:
 	XMFLOAT3 _position;
 	XMFLOAT3 _rotation;
 	XMFLOAT3 _scale;
+	XMFLOAT3 _velocity;
+	//XMFLOAT3 _rotationalVelocity;
 	bool _dirty;
 };
 

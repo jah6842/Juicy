@@ -38,6 +38,8 @@ private:
 
 	Renderer* renderer;
 
+	GameObject* player;
+
 	// Keeps track of the old mouse position.  Useful for 
 	// determining how far the mouse moved in a single frame.
 	POINT prevMousePos;

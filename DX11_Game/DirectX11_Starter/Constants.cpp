@@ -15,6 +15,7 @@ const WCHAR* pShaderNames[] = {
 };
 
 const WCHAR* textureNames[TM_NUM_TEXTURES] = { 
+	L"default.png",
 	L"marble.png", 
 	L"sand.jpg",
 	L"scales.png"
@@ -24,7 +25,6 @@ const WCHAR* meshNames[] = {
 	L"Cube", 
 };
 
-
 MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[] = {
 	// PUT MATERIALS HERE
 	{ 
@@ -32,7 +32,7 @@ MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[] = {
 		MATERIAL_DEFAULT,
 		VSHADER_TEXTURED_LIT_INSTANCED,
 		PSHADER_TEXTURED_LIT_INSTANCED,
-		TM_TEXTURE_MARBLE,
+		TM_TEXTURE_DEFAULT,
 		TM_FILTER_ANISO_4X,
 		CONSTANT_BUFFER_LAYOUT_PER_MODEL 
 	},

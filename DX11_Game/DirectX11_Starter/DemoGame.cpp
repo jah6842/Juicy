@@ -67,6 +67,7 @@ DemoGame::~DemoGame()
 		delete gameobjects.back();
 		gameobjects.pop_back();
 	}
+	delete player;
 
 	TextRenderer::Cleanup();
 	delete renderer;
@@ -109,6 +110,8 @@ bool DemoGame::Init()
 		}
 	}
 
+	player = new GameObject(MESH_CUBE, MATERIAL_MARBLE);
+
 	DebugTimer::Stop();
 
 	return true;
@@ -134,10 +137,10 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
+	std::random_device rd;
+	std::default_random_engine rnd(rd());
+	std::uniform_int_distribution<int> uInt(-50, 50);
 	if(GetAsyncKeyState(VK_ADD)){
-		std::random_device rd;
-		std::default_random_engine rnd(rd());
-		std::uniform_int_distribution<int> uInt(-50, 50);
 		GameObject* go = new GameObject();
 		go->transform.SetPosition(uInt(rnd), uInt(rnd), uInt(rnd));
 		gameobjects.push_back(go);
@@ -151,19 +154,41 @@ void DemoGame::UpdateScene(float dt)
 
 	float speed = 10.0f;
 	if(GetAsyncKeyState('W'))
+	{
 		Camera::MainCamera.transform.Move(0, speed * dt, 0);
+		player->transform.Move(0, speed * dt, 0);
+	}
 	if(GetAsyncKeyState('S'))
+	{
 		Camera::MainCamera.transform.Move(0, -speed * dt, 0);
+		player->transform.Move(0, -speed * dt, 0);
+	}
 	if(GetAsyncKeyState('A'))
+	{
 		Camera::MainCamera.transform.Move(-speed * dt, 0, 0);
+		player->transform.Move(-speed * dt, 0, 0);
+	}
 	if(GetAsyncKeyState('D'))
-		Camera::MainCamera.transform.Move(speed * dt, 0, 0);
+	{
+		Camera::MainCamera.transform.Move(speed * dt, 0, 0); 
+		player->transform.Move(speed * dt, 0, 0); 
+	}
+
+	if(GetAsyncKeyState(VK_SPACE)){
+		GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
+		go->transform.SetScale(.5f,.5f,.5f);
+		go->transform.SetPosition(player->transform.Pos());
+		go->transform.SetVelocity(uInt(rnd), uInt(rnd), uInt(rnd));
+		gameobjects.push_back(go);
+	}
 
 	Camera::MainCamera.Update(dt);
 
-	for(UINT i = 0; i < gameobjects.size(); i++){
+	for(int i = 0; i < gameobjects.size(); i++){
 		gameobjects[i]->Update(dt);
 	}
+
+	player->Update(dt);
 }
 
 // Clear the screen, redraw everything, present

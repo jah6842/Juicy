@@ -4,11 +4,17 @@ Transform::Transform(){
 	_position = XMFLOAT3(0,0,0);
 	_rotation = XMFLOAT3(0,0,0);
 	_scale    = XMFLOAT3(1,1,1);
+	_velocity = XMFLOAT3(0,0,0);
 	_dirty = true;
 };
 
 Transform::~Transform(){
 
+};
+
+// Update velocities
+void Transform::Update(float dt){
+	Move(_velocity.x * dt,_velocity.y * dt,_velocity.z * dt);
 };
 
 // Getters
@@ -23,6 +29,10 @@ float Transform::PosY(){
 };
 float Transform::PosZ(){
 	return _position.z;
+};
+
+XMFLOAT3 Transform::Velocity(){
+	return _velocity;
 };
 
 // Setters
@@ -53,6 +63,26 @@ void Transform::SetScale(float x, float y, float z){
 void Transform::SetScale(XMFLOAT3 sca){
 	_scale = sca;
 	_dirty = true;
+};
+
+void Transform::SetVelocity(float x, float y, float z){
+	_velocity = XMFLOAT3(x,y,z);
+};
+void Transform::SetVelocity(XMFLOAT3 vel){
+	SetVelocity(vel.x, vel.y, vel.z);
+};
+
+// Velocity functions
+void Transform::AddVelocity(float x, float y, float z){
+	_velocity.x += x;
+	_velocity.y += y;
+	_velocity.z += z;
+};
+void Transform::AddVelocity(XMFLOAT3 vel){
+	AddVelocity(vel.x, vel.y, vel.z);
+};
+void Transform::ClearVelocity(){
+	_velocity = XMFLOAT3(0,0,0);
 };
 
 // Movement functions
