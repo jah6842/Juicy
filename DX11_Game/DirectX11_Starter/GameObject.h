@@ -18,7 +18,7 @@ public:
 	//Material* material;
 
 	GameObject();
-	GameObject(MESHES m, MATERIAL_DESCRIPTION mat);
+	GameObject(MESHES m, MATERIALS mat);
 	~GameObject();
 
 	void Update(float dt);

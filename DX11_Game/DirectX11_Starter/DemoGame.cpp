@@ -100,27 +100,8 @@ bool DemoGame::Init()
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
 
-				// Set the material
-				MATERIAL_DESCRIPTION matDesc;
-				matDesc.cBufferLayout = CONSTANT_BUFFER_LAYOUT_PER_MODEL;
-				matDesc.textureFilter = TM_FILTER_ANISO_8X;
-				matDesc.vShaderID = VSHADER_TEXTURED_LIT_INSTANCED;
-				matDesc.pShaderID = PSHADER_TEXTURED_LIT_INSTANCED;
-				matDesc.materialName = L"TexturedInstancedLighting";
-
-				if(flip == 0){
-					matDesc.diffuseTexture = TM_TEXTURE_MARBLE;
-				} else if(flip == 1){
-					matDesc.diffuseTexture = TM_TEXTURE_SAND;
-				} else if(flip == 2){
-					matDesc.diffuseTexture = TM_TEXTURE_SCALES;
-				}
-	
-				flip++;
-				if(flip > 2)
-					flip = 0;
-
-				GameObject* g = new GameObject(MESH_CUBE, matDesc);
+				MATERIALS mat = MATERIAL_DEFAULT;
+				GameObject* g = new GameObject(MESH_CUBE, mat);
 				g->transform.SetPosition(i * 5.0f, j * 5.0f, k * 5.0f);
 				gameobjects.push_back(g);
 			}
@@ -193,12 +174,6 @@ void DemoGame::DrawScene()
 
 	Renderer::Draw();
 
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,30);
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,54,36);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,90,48);
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,138,60);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,198,72);
 	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,270,90, XMFLOAT4(1,0,0,1));
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120, XMFLOAT4(0,1,0,1));
 	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,480,180, XMFLOAT4(0,0,1,1));

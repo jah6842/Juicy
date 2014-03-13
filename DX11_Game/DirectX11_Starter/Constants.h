@@ -106,4 +106,24 @@ const WCHAR* meshNames[]; // defined in CPP
 
 #pragma endregion
 
+enum MATERIALS {
+	MATERIAL_DEFAULT,
+	MATERIAL_MARBLE,
+	// Add more materials here
+	NUM_MATERIALS
+};
+
+// A description of a material to be created
+struct MATERIAL_DESCRIPTION {
+	std::wstring materialName;
+	MATERIALS materialID;
+	VSHADER vShaderID;
+	PSHADER pShaderID;
+	TM_TEXTURE diffuseTexture;
+	TM_FILTER_MODE textureFilter;
+	CBUFFER_LAYOUT cBufferLayout;
+};
+
+extern MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[]; // defined in CPP
+
 #endif // _CONSTANTS_H

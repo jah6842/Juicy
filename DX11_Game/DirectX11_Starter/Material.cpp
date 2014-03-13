@@ -1,34 +1,20 @@
 #include "Material.h"
 
-// Compare two shaders, returns a boolean if they are the same
-bool Material::Compare(MATERIAL_DESCRIPTION description){
-	if( diffuseTexture == description.diffuseTexture &&
-		textureFilter == description.textureFilter){
-		return true;
-	}
-	return false;
-};
+std::map<UINT, std::shared_ptr<Material>> Material::allMaterials = std::map<UINT, std::shared_ptr<Material>>();
 
-bool Material::Compare(Material* mat){
-	if( diffuseTexture == mat->diffuseTexture &&
-		textureFilter == mat->textureFilter){
-		return true;
-	}
-	return false;
-};
+std::shared_ptr<Material> Material::LoadMaterial(ID3D11Device* device, MATERIALS mat){
+	if(allMaterials[mat] != nullptr)
+		return allMaterials[mat];
 
-static std::map<MATERIAL_DESCRIPTION, std::shared_ptr<Material>> _materials;
-std::shared_ptr<Material> LoadMaterial(ID3D11Device* device, MATERIAL_DESCRIPTION desc){
-	if(_materials[desc] != nullptr)
-		return _materials[desc];
-
-	std::shared_ptr<Material> m (new Material(desc));
-	_materials[desc] = m;
-	return _materials[desc];
+	std::shared_ptr<Material> m (new Material(mat));
+	allMaterials[mat] = m;
+	return allMaterials[mat];
 };
 
 // Constructor
-Material::Material(MATERIAL_DESCRIPTION description){
+Material::Material(MATERIALS mat){
+	MATERIAL_DESCRIPTION description = MATERIAL_DESCRIPTIONS[mat];
+	
 	materialName = description.materialName;
 	diffuseTexture = description.diffuseTexture;
 	textureFilter = description.textureFilter;
@@ -47,4 +33,5 @@ Material::Material(MATERIAL_DESCRIPTION description){
 };
 
 Material::~Material(){
+
 };

@@ -125,9 +125,14 @@ void Renderer::Draw(){
 	GameObject** renderList = new GameObject*[registeredGOs.size()];
 	UINT renderCount = 0;
 
-	std::vector<Material*> _materials;
+	std::vector<std::shared_ptr<Material>> materials;
 
-	std::map<MESHES, std::vector<GameObject*>> renderBuckets;
+	for(int i = 0; i < NUM_MATERIALS; i++){
+		if(Material::allMaterials[i] != nullptr)
+			materials.push_back(Material::allMaterials[i]);
+	}
+
+	//std::map<MESHES, std::vector<GameObject*>> renderBuckets;
 
 	for(std::unordered_set<GameObject*>::const_iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
@@ -138,7 +143,7 @@ void Renderer::Draw(){
 			
 		// Check if the object is using an instanced material
 		if(!go->material->vertexShader->isInstanced){
-			PrepareMaterial(go, go->material);
+			PrepareMaterial(go, go->material.get());
 
 			// Set the current vertex buffer
 			UINT stride = Vertex::VertexSize(go->mesh->vertexType);
@@ -157,33 +162,21 @@ void Renderer::Draw(){
 				0); 
 			drawnObjects++;
 		} 
-		else {
-			bool found = false;
-			
-			for(std::vector<Material*>::const_iterator mat = _materials.begin(); mat != _materials.end(); mat++){
-				if((*mat)->Compare(go->material)){
-					found = true;
-					break;
-				}
-			}
-			if(!found)
-				_materials.push_back((*itr)->material);
-		}
 	}
 
-	Material* currentRenderMaterial = nullptr;
+	std::shared_ptr<Material> currentRenderMaterial = nullptr;
 	
 	// Get all gameobjects with a certain material and draw them
-	for(std::vector<Material*>::const_iterator itr = _materials.begin(); itr != _materials.end(); itr++){
+	for(std::vector<std::shared_ptr<Material>>::const_iterator itr = materials.begin(); itr != materials.end(); itr++){
+
+		// Get the next material
+		currentRenderMaterial = (*itr);
 
 		// Check if the material is not instanced, if so it was already rendered
-		if(!(*itr)->vertexShader->isInstanced)
+		if(!currentRenderMaterial->vertexShader->isInstanced)
 			continue;
 
-		// Get the first material from the render list
-		currentRenderMaterial = *itr;
-
-		PrepareMaterial(nullptr, currentRenderMaterial);
+		PrepareMaterial(nullptr, currentRenderMaterial.get());
 
 		textureManager->SetActiveTexture(currentRenderMaterial->diffuseTexture);
 		textureManager->SetActiveFilterMode(currentRenderMaterial->textureFilter);
@@ -196,7 +189,7 @@ void Renderer::Draw(){
 				continue;
 			
 			// Check if the object is using the current material
-			if((*go)->material->Compare(currentRenderMaterial)){
+			if((*go)->material == currentRenderMaterial){
 				renderList[renderCount] = *go;
 				renderCount++;
 			}

@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(MESHES m, MATERIAL_DESCRIPTION mat){
+GameObject::GameObject(MESHES m, MATERIALS mat){
 	// Register the GameObject with the renderer
 	Renderer::RegisterGameObject(this);
 
@@ -9,7 +9,9 @@ GameObject::GameObject(MESHES m, MATERIAL_DESCRIPTION mat){
 	mesh = LoadMesh(device, m);
 
 	// Set the material
-	material = new std::shared_ptr<Material>(new Material(mat));
+	//std::shared_ptr<Material> newM (new Material(mat));
+	//material = newM;
+	material = Material::LoadMaterial(device, mat);
 };
 
 GameObject::GameObject(){

@@ -11,33 +11,24 @@
 
 using namespace DirectX;
 
-// A description of a material to be created
-struct MATERIAL_DESCRIPTION {
-	std::wstring materialName;
-	VSHADER vShaderID;
-	PSHADER pShaderID;
-	TM_TEXTURE diffuseTexture;
-	TM_FILTER_MODE textureFilter;
-	CBUFFER_LAYOUT cBufferLayout;
-};
-
 class Material {
 
 public:
-	bool Compare(MATERIAL_DESCRIPTION description);
-	bool Compare(Material*);
-
 	// Assumes vertex and pixel shaders have the same prefix, optional texture
-	Material(MATERIAL_DESCRIPTION description);
+	Material(MATERIALS mat);
 	// Destructor
 	~Material();
 
 	std::wstring materialName;
+	MATERIALS materialID;
 	TM_TEXTURE diffuseTexture;
 	TM_FILTER_MODE textureFilter;
 	std::shared_ptr<PixelShader> pixelShader;
 	std::shared_ptr<VertexShader> vertexShader;
 	std::shared_ptr<ConstantBuffer> constantBuffer;
+
+	static std::map<UINT, std::shared_ptr<Material>> allMaterials;
+	static std::shared_ptr<Material> LoadMaterial(ID3D11Device* device, MATERIALS mat);
 };
 
 #endif // _MATERIAL_H
