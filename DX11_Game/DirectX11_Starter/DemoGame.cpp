@@ -68,8 +68,8 @@ DemoGame::~DemoGame()
 		gameobjects.pop_back();
 	}
 
-
 	TextRenderer::Cleanup();
+	delete renderer;
 }
 
 #pragma endregion
@@ -102,9 +102,7 @@ bool DemoGame::Init()
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-
-				MATERIALS mat = MATERIAL_DEFAULT;
-				GameObject* g = new GameObject(MESH_CUBE, mat);
+				GameObject* g = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
 				g->transform.SetPosition(i * 5.0f, j * 5.0f, k * 5.0f);
 				gameobjects.push_back(g);
 			}
@@ -177,9 +175,9 @@ void DemoGame::DrawScene()
 
 	renderer->Draw();
 
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,270,90, XMFLOAT4(1,0,0,1));
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120, XMFLOAT4(0,1,0,1));
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,480,180, XMFLOAT4(0,0,1,1));
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24, XMFLOAT4(1,0,0,1));
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,36, XMFLOAT4(0,1,0,1));
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,50,48, XMFLOAT4(0,0,1,1));
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

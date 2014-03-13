@@ -152,10 +152,10 @@ std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
 		m->hasNormals = true;
 		m->hasPosition = true;
 		m->hasTexCoord = true;
-		m->indexBuffer = Mesh::CreateIndexBuffer(StandardCubeIndices, 24);
-		m->numIndices = 24;
-		m->vertexBuffer = Mesh::CreateVertexBuffer(StandardCubeVertices, 36, VERTEX_TYPE_ALL);
-		m->numVertices = 36;
+		m->indexBuffer = Mesh::CreateIndexBuffer(StandardCubeIndices, 36);
+		m->numIndices = 36;
+		m->vertexBuffer = Mesh::CreateVertexBuffer(StandardCubeVertices, 24, VERTEX_TYPE_ALL);
+		m->numVertices = 24;
 		m->vertexType = VERTEX_TYPE_ALL;
 		m->name = L"Cube";
 		m->meshID = mesh;
