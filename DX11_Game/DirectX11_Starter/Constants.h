@@ -3,6 +3,7 @@
 
 #define SHADER_PATH L"../Resources/Shaders/";
 #define TEXTURE_PATH L"../Resources/Textures/";
+#define MODEL_PATH "../Resources/Models/";
 
 #include "Utilities.h"
 #include <d3d11.h>
@@ -101,15 +102,17 @@ struct CONSTANT_BUFFER_DIRECTIONAL_LIGHT {
 
 // Vertex shaders
 enum MESHES{
-	MESH_CUBE
+	MESH_CUBE,
+	MESH_SHIP
 };
-const WCHAR* meshNames[]; // defined in CPP
+extern const WCHAR* meshNames[]; // defined in CPP
 
 #pragma endregion
 
 enum MATERIALS {
 	MATERIAL_DEFAULT,
 	MATERIAL_MARBLE,
+	MATERIAL_COLORED,
 	// Add more materials here
 	NUM_MATERIALS
 };

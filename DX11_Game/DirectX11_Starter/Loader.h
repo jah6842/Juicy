@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <fbxsdk.h>
 #include "Vertex.h"
 #include "Utilities.h"
 #include "Constants.h"
@@ -73,5 +74,7 @@ static std::map<CBUFFER_LAYOUT, std::shared_ptr<ConstantBuffer>> cBuffers;
 static std::map<MESHES, std::shared_ptr<Mesh>> meshes;
 
 static void ReleaseShaders();
+
+static std::shared_ptr<Mesh> LoadModel(std::wstring modelName);
 
 #endif // _LOADER_H

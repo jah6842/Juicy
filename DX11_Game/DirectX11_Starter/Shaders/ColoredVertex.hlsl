@@ -4,13 +4,18 @@
 struct VS_INPUT
 {
 	float4 position		: POSITION;
+	float2 texCoord		: TEXCOORD0;
+	float3 normal		: NORMAL;
 	float4 color		: COLOR;
+	matrix instancePosition : INSTANCEPOS;
 };
 
 struct VS_OUTPUT
 {
-	float4 position		: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
-	float4 color		: COLOR;
+	float4 position	: SV_POSITION;
+	float2 texCoord : TEXCOORD0;
+	float3 normal	: NORMAL;
+	float4 color	: COLOR;
 };
 
 // The entry point for our vertex shader

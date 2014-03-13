@@ -103,14 +103,15 @@ bool DemoGame::Init()
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-				GameObject* g = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
+				GameObject* g = new GameObject(MESH_CUBE, MATERIAL_COLORED);
 				g->transform.SetPosition(i * 5.0f, j * 5.0f, k * 5.0f);
 				gameobjects.push_back(g);
 			}
 		}
 	}
 
-	player = new GameObject(MESH_CUBE, MATERIAL_MARBLE);
+	player = new GameObject(MESH_SHIP, MATERIAL_MARBLE);
+	player->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 
 	DebugTimer::Stop();
 
@@ -160,7 +161,7 @@ void DemoGame::UpdateScene(float dt)
 	}
 
 	if(GetAsyncKeyState(VK_SPACE)){
-		GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
+		GameObject* go = new GameObject(MESH_SHIP, MATERIAL_DEFAULT);
 		go->transform.SetScale(.5f,.5f,.5f);
 		go->transform.SetPosition(player->transform.Pos());
 		go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));

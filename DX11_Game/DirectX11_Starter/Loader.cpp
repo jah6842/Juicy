@@ -33,6 +33,7 @@ std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vSh
 	switch(vShaderID){
 	case VSHADER_TEXTURED_LIT_INSTANCED:
 	case VSHADER_TEXTURED_INSTANCED:
+	case VSHADER_COLORED:
 		description = VERTEX_DESCRIPTION_ALL;
 		descriptionSize = 8;
 		instanced = true;
@@ -160,10 +161,132 @@ std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
 		m->name = L"Cube";
 		m->meshID = mesh;
 		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	} else if (mesh == MESH_SHIP){
+		m = LoadModel(L"frigate.fbx");
 	}
 
 	LOG(L"New mesh loaded: ", m->name);
 	meshes[mesh] = m;
 
 	return meshes[mesh];
+};
+
+std::shared_ptr<Mesh> LoadModel(std::wstring modelName){
+
+	std::shared_ptr<Mesh> m (new Mesh());
+
+	FbxManager* g_pFbxSdkManager = nullptr;
+
+	if(g_pFbxSdkManager == nullptr)
+	{
+		g_pFbxSdkManager = FbxManager::Create();
+
+		FbxIOSettings* pIOsettings = FbxIOSettings::Create(g_pFbxSdkManager, IOSROOT );
+		g_pFbxSdkManager->SetIOSettings(pIOsettings);
+	}
+
+	FbxImporter* pImporter = FbxImporter::Create(g_pFbxSdkManager,"");
+	FbxScene* pFbxScene = FbxScene::Create(g_pFbxSdkManager,"");
+
+	std::string modelPath = MODEL_PATH;
+	modelPath += std::string(modelName.begin(), modelName.end());
+	bool bSuccess = pImporter->Initialize(modelPath.c_str(), -1, g_pFbxSdkManager->GetIOSettings() );
+	if(!bSuccess){
+		LOG(L"Failed to load model, Step 1.");
+		assert(bSuccess == false);
+	}
+
+	bSuccess = pImporter->Import(pFbxScene);
+	if(!bSuccess){
+		LOG(L"Failed to load model, Step 2");
+		assert(bSuccess == false);
+	}
+
+	pImporter->Destroy();
+
+	FbxNode* pFbxRootNode = pFbxScene->GetRootNode();
+
+	if(pFbxRootNode)
+	{
+		for(int i = 0; i < pFbxRootNode->GetChildCount(); i++)
+		{
+			FbxNode* pFbxChildNode = pFbxRootNode->GetChild(i);
+
+			if(pFbxChildNode->GetNodeAttribute() == NULL)
+				continue;
+
+			FbxNodeAttribute::EType AttributeType = pFbxChildNode->GetNodeAttribute()->GetAttributeType();
+
+			if(AttributeType != FbxNodeAttribute::eMesh)
+				continue;
+
+			FbxMesh* pMesh = (FbxMesh*) pFbxChildNode->GetNodeAttribute();
+
+			int vertexCount = pMesh->GetControlPointsCount();
+			FbxVector4* positions = pMesh->GetControlPoints();
+
+			std::vector<RenderVertex> vertexList;
+			std::vector<UINT> indexList;
+
+			for (int j = 0; j < pMesh->GetPolygonCount(); j++)
+			{
+				int iNumVertices = pMesh->GetPolygonSize(j);
+				assert( iNumVertices == 3 );
+
+				for (int k = 0; k < iNumVertices; k++)
+				{
+					int iControlPointIndex = pMesh->GetPolygonVertex(j, k);
+
+					FbxVector4 normal;
+					pMesh->GetPolygonVertexNormal(j, vertexList.size(), normal);
+
+					indexList.push_back(pMesh->GetPolygonVertexIndex(j));
+
+					RenderVertex vertex;
+					vertex.pos.x = (float)positions[iControlPointIndex].mData[0];
+					vertex.pos.y = (float)positions[iControlPointIndex].mData[1];
+					vertex.pos.z = (float)positions[iControlPointIndex].mData[2];
+					
+					vertex.normal.x = normal.mData[0];
+					vertex.normal.y = normal.mData[1];
+					vertex.normal.z = normal.mData[2];
+
+					vertex.color.x = 1;
+					vertex.color.y = 1;
+					vertex.color.z = 1;
+					vertex.color.w = 1;
+
+					vertex.texCoord.x = 0;
+					vertex.texCoord.y = 0;
+
+					vertexList.push_back( vertex );
+				}
+			}
+
+			RenderVertex* vertices = new RenderVertex[vertexList.size()];
+			UINT* indices = new UINT[indexList.size()];
+
+			for(int i = 0; i < indexList.size(); i++){
+				indices[i] = i;
+			}
+
+			m->vertexBuffer = Mesh::CreateVertexBuffer(vertices, vertexList.size(), VERTEX_TYPE_ALL);
+			m->numVertices = vertexList.size();
+
+			m->indexBuffer = Mesh::CreateIndexBuffer(indices, indexList.size());
+			m->numIndices = indexList.size();
+
+			m->hasColor = false;
+			m->hasNormals = true;
+			m->hasPosition = true;
+			m->hasTexCoord = false;
+			m->meshID = MESH_SHIP;
+			m->name = meshNames[m->meshID];
+
+			delete[] vertices;
+			delete[] indices;
+		}
+	}
+
+	return m;
 };
