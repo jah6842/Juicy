@@ -5,6 +5,7 @@
 #include <d3dcompiler.h>
 #include <string>
 #include <map>
+#include <list>
 #include <memory>
 #include <fbxsdk.h>
 #include "Vertex.h"

@@ -12,6 +12,5 @@ struct PS_INPUT
 // Entry point for this pixel shader
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	return float4(1,0,0,1);
-	//return input.color;
+	return input.color;
 }

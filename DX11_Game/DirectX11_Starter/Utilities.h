@@ -108,8 +108,8 @@ public:
 	static void Init();
 	// Returns a random value between min and max
 	static int randInt(int min = INT_MIN, int max = INT_MAX);
-	static float randFloat(float min = FLT_MIN, float max = FLT_MAX);
-	static double randDouble(double min = DBL_MIN, double max = DBL_MAX);
+	static float randFloat(float min, float max);
+	static double randDouble(double min, double max);
 };
 
 #endif // _UTILITIES_H

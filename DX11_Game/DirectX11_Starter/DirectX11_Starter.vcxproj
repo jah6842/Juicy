@@ -41,10 +41,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ReferencePath>$(ProjectDir)\Libraries\lib\Win32;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(ProjectDir)\Libraries\lib\Win32;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;C:\Program Files\Autodesk\FBX\FBX SDK\2014.2.1\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;C:\Program Files\Autodesk\FBX\FBX SDK\2014.2.1\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ProjectDir)\Libraries\lib\Win32;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(ProjectDir)\Libraries\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -59,7 +59,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2014.2.1\lib\vs2012\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,7 +79,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2014.2.1\lib\vs2012\x86\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

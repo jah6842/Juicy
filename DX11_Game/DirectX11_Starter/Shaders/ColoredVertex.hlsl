@@ -30,8 +30,10 @@ VS_OUTPUT main( VS_INPUT input )
 	matrix worldViewProj = mul(mul(world, view), projection);
 	output.position = mul(input.position, worldViewProj);
 
-	// Pass the color through - will be interpolated per-pixel by the rasterizer
+	// Pass other values through
 	output.color = input.color;
+	output.normal = input.normal;
+	output.texCoord = input.texCoord;
 
 	return output;
 }

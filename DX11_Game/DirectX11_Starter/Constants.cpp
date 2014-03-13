@@ -18,7 +18,11 @@ const WCHAR* textureNames[TM_NUM_TEXTURES] = {
 	L"default.png",
 	L"marble.png", 
 	L"sand.jpg",
-	L"scales.png"
+	L"scales.png",
+	L"frigate/space_frigate_6_color.png",
+	L"frigate/space_frigate_6_bump.gif",
+	L"frigate/space_frigate_6_specular.png",
+	L"frigate/space_frigate_6_illumination.png",
 };
 
 const WCHAR* meshNames[] = { 
@@ -53,6 +57,15 @@ MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[] = {
 		PSHADER_COLORED,
 		TM_TEXTURE_MARBLE,
 		TM_FILTER_POINT,
+		CONSTANT_BUFFER_LAYOUT_PER_MODEL 
+	},
+	{ 
+		L"Frigate",
+		MATERIAL_FRIGATE,
+		VSHADER_TEXTURED_LIT_INSTANCED,
+		PSHADER_TEXTURED_LIT_INSTANCED,
+		TM_TEXTURE_FRIGATE_DIFFUSE,
+		TM_FILTER_ANISO_4X,
 		CONSTANT_BUFFER_LAYOUT_PER_MODEL 
 	},
 };

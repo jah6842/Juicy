@@ -64,16 +64,18 @@ void RNG::Init(){
 };
 
 int RNG::randInt(int min, int max){
-	static std::uniform_int_distribution<int> uInt(min, max);
+	std::uniform_int_distribution<int> uInt(min, max);
 	return uInt(rnd);
 };
 
 float RNG::randFloat(float min, float max){
-	static std::uniform_real_distribution<float> flt(min,max);
-	return flt(rnd);
+	rnd = std::default_random_engine(rd());
+	std::uniform_real_distribution<double> flt(min,max);
+	return static_cast<float>(flt(rnd));
 };
 
 double RNG::randDouble(double min, double max){
-	static std::uniform_real_distribution<double> dbl(min,max);
+	rnd = std::default_random_engine(rd());
+	std::uniform_real_distribution<double> dbl(min,max);
 	return dbl(rnd);
 };

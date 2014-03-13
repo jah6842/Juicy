@@ -21,7 +21,6 @@ GameObject::GameObject(){
 
 void GameObject::Update(float dt){
 	transform.Update(dt);
-	//transform.Rotate(XMConvertToRadians(10.0f*dt), XMConvertToRadians(10.0f*dt), 0);
 };
 
 GameObject::~GameObject(){

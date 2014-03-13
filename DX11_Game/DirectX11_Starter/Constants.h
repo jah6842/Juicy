@@ -41,9 +41,15 @@ enum TM_TEXTURE {
 	TM_TEXTURE_MARBLE,
 	TM_TEXTURE_SAND,
 	TM_TEXTURE_SCALES,
+
+	TM_TEXTURE_FRIGATE_DIFFUSE,
+	TM_TEXTURE_FRIGATE_BUMP,
+	TM_TEXTURE_FRIGATE_SPECULAR,
+	TM_TEXTURE_FRIGATE_ILLUMINATION,
+
 	TM_NUM_TEXTURES
 };
-const WCHAR* textureNames[]; // defined in CPP
+extern const WCHAR* textureNames[]; // defined in CPP
 
 enum TM_FILTER_MODE {
 	TM_FILTER_POINT,
@@ -103,7 +109,7 @@ struct CONSTANT_BUFFER_DIRECTIONAL_LIGHT {
 // Vertex shaders
 enum MESHES{
 	MESH_CUBE,
-	MESH_SHIP
+	MESH_FRIGATE
 };
 extern const WCHAR* meshNames[]; // defined in CPP
 
@@ -114,6 +120,7 @@ enum MATERIALS {
 	MATERIAL_MARBLE,
 	MATERIAL_COLORED,
 	// Add more materials here
+	MATERIAL_FRIGATE,
 	NUM_MATERIALS
 };
 

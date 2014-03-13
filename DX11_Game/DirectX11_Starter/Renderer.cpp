@@ -133,8 +133,6 @@ void Renderer::Draw(){
 			materials.push_back(Material::allMaterials[i]);
 	}
 
-	//std::map<MESHES, std::vector<GameObject*>> renderBuckets;
-
 	for(std::unordered_set<GameObject*>::const_iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
 		if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
@@ -268,15 +266,11 @@ void Renderer::Draw(){
 	TextRenderer::DrawString(s1.c_str(), 0, 100, 40);
 	std::string s2 = "Draw calls: " + std::to_string(drawCalls);
 	TextRenderer::DrawString(s2.c_str(), 0, 140, 40);
-
-	//LOG(L"Rendered objects: ", std::to_wstring(drawnObjects), L" (Draw Calls: ", std::to_wstring(drawCalls), L")");
 };
 
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
 	registeredGOs.insert(go);
-
-	//renderBuckets[go->mesh->meshID].push_back(go);
 };
 
 // Remove a gameobject from the gameobjects list

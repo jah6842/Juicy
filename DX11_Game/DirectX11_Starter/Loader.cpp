@@ -158,12 +158,15 @@ std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
 		m->vertexBuffer = Mesh::CreateVertexBuffer(StandardCubeVertices, 24, VERTEX_TYPE_ALL);
 		m->numVertices = 24;
 		m->vertexType = VERTEX_TYPE_ALL;
-		m->name = L"Cube";
-		m->meshID = mesh;
 		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	} else if (mesh == MESH_SHIP){
-		m = LoadModel(L"frigate.fbx");
+	} 
+	else 
+	{
+		m = LoadModel(meshNames[mesh]);
 	}
+
+	m->meshID = mesh;
+	m->name = meshNames[mesh];
 
 	LOG(L"New mesh loaded: ", m->name);
 	meshes[mesh] = m;
@@ -223,10 +226,15 @@ std::shared_ptr<Mesh> LoadModel(std::wstring modelName){
 			FbxMesh* pMesh = (FbxMesh*) pFbxChildNode->GetNodeAttribute();
 
 			int vertexCount = pMesh->GetControlPointsCount();
-			FbxVector4* positions = pMesh->GetControlPoints();
 
-			std::vector<RenderVertex> vertexList;
-			std::vector<UINT> indexList;
+			FbxVector4* positions = pMesh->GetControlPoints();
+			//FbxGeometryElementUV* lUVElement = pMesh->GetElementUV();
+			//get all UV set names
+			FbxStringList lUVSetNameList;
+			pMesh->GetUVSetNames(lUVSetNameList);
+
+			std::list<RenderVertex> vertexList;
+			std::list<UINT> indexList;
 
 			for (int j = 0; j < pMesh->GetPolygonCount(); j++)
 			{
@@ -237,8 +245,14 @@ std::shared_ptr<Mesh> LoadModel(std::wstring modelName){
 				{
 					int iControlPointIndex = pMesh->GetPolygonVertex(j, k);
 
+					// Get the normal
 					FbxVector4 normal;
-					pMesh->GetPolygonVertexNormal(j, vertexList.size(), normal);
+					pMesh->GetPolygonVertexNormal(j, k, normal);
+					// Get the UV
+					FbxVector2 uv;
+					bool b;
+					//uv = lUVElement->GetDirectArray().GetAt(j*3+k);
+					pMesh->GetPolygonVertexUV(j, k, lUVSetNameList.GetStringAt(0), uv, b);
 
 					indexList.push_back(pMesh->GetPolygonVertexIndex(j));
 
@@ -246,42 +260,46 @@ std::shared_ptr<Mesh> LoadModel(std::wstring modelName){
 					vertex.pos.x = (float)positions[iControlPointIndex].mData[0];
 					vertex.pos.y = (float)positions[iControlPointIndex].mData[1];
 					vertex.pos.z = (float)positions[iControlPointIndex].mData[2];
-					
-					vertex.normal.x = normal.mData[0];
-					vertex.normal.y = normal.mData[1];
-					vertex.normal.z = normal.mData[2];
 
-					vertex.color.x = 1;
-					vertex.color.y = 1;
-					vertex.color.z = 1;
-					vertex.color.w = 1;
+					vertex.normal.x = (float)normal.mData[0];
+					vertex.normal.y = (float)normal.mData[1];
+					vertex.normal.z = (float)normal.mData[2];
 
-					vertex.texCoord.x = 0;
-					vertex.texCoord.y = 0;
+					vertex.texCoord.x = (float)uv.mData[0];
+					vertex.texCoord.y = (float)uv.mData[1];
+
+					vertex.color.x = (float)1;
+					vertex.color.y = (float)1;
+					vertex.color.z = (float)1;
+					vertex.color.w = (float)1;
 
 					vertexList.push_back( vertex );
 				}
 			}
 
-			RenderVertex* vertices = new RenderVertex[vertexList.size()];
+			RenderVertex* vertices = new RenderVertex[vertexCount];
 			UINT* indices = new UINT[indexList.size()];
 
-			for(int i = 0; i < indexList.size(); i++){
-				indices[i] = i;
+			for(int q = 0; q < vertexCount; q++){
+				vertices[q] = vertexList.front();
+				vertexList.pop_front();
 			}
 
-			m->vertexBuffer = Mesh::CreateVertexBuffer(vertices, vertexList.size(), VERTEX_TYPE_ALL);
-			m->numVertices = vertexList.size();
+			for(int q = 0; q < indexList.size(); q++){
+				indices[q] = q;
+			}
+
+			m->vertexBuffer = Mesh::CreateVertexBuffer(vertices, vertexCount, VERTEX_TYPE_ALL);
+			m->numVertices = vertexCount;
 
 			m->indexBuffer = Mesh::CreateIndexBuffer(indices, indexList.size());
 			m->numIndices = indexList.size();
 
-			m->hasColor = false;
+			m->hasColor = true;
 			m->hasNormals = true;
 			m->hasPosition = true;
-			m->hasTexCoord = false;
-			m->meshID = MESH_SHIP;
-			m->name = meshNames[m->meshID];
+			m->hasTexCoord = true;
+			
 
 			delete[] vertices;
 			delete[] indices;

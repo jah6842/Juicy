@@ -103,15 +103,16 @@ bool DemoGame::Init()
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-				GameObject* g = new GameObject(MESH_CUBE, MATERIAL_COLORED);
-				g->transform.SetPosition(i * 5.0f, j * 5.0f, k * 5.0f);
+				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
+				g->transform.SetPosition(i * 50.0f, j * 50.0f, k * 50.0f);
+				g->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), RNG::randFloat(-2,2));
 				gameobjects.push_back(g);
 			}
 		}
 	}
 
-	player = new GameObject(MESH_SHIP, MATERIAL_MARBLE);
-	player->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
+	player = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
+	player->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), RNG::randFloat(-2,2));
 
 	DebugTimer::Stop();
 
@@ -138,7 +139,10 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
-	float speed = 10.0f;
+	float speed = 100.0f;
+	if(GetAsyncKeyState(VK_SHIFT)){
+		speed *= 3.0f;
+	}
 	if(GetAsyncKeyState('W'))
 	{
 		Camera::MainCamera.transform.Move(0, speed * dt, 0);
@@ -161,8 +165,8 @@ void DemoGame::UpdateScene(float dt)
 	}
 
 	if(GetAsyncKeyState(VK_SPACE)){
-		GameObject* go = new GameObject(MESH_SHIP, MATERIAL_DEFAULT);
-		go->transform.SetScale(.5f,.5f,.5f);
+		GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
+		go->transform.SetScale(1.0f,1.0f,1.0f);
 		go->transform.SetPosition(player->transform.Pos());
 		go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 		go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
