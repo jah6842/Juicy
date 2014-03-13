@@ -5,6 +5,7 @@ Transform::Transform(){
 	_rotation = XMFLOAT3(0,0,0);
 	_scale    = XMFLOAT3(1,1,1);
 	_velocity = XMFLOAT3(0,0,0);
+	_rotationalVelocity = XMFLOAT3(0,0,0);
 	_dirty = true;
 };
 
@@ -15,6 +16,7 @@ Transform::~Transform(){
 // Update velocities
 void Transform::Update(float dt){
 	Move(_velocity.x * dt,_velocity.y * dt,_velocity.z * dt);
+	Rotate(_rotationalVelocity.x * dt, _rotationalVelocity.y * dt, _rotationalVelocity.z * dt);
 };
 
 // Getters
@@ -33,6 +35,10 @@ float Transform::PosZ(){
 
 XMFLOAT3 Transform::Velocity(){
 	return _velocity;
+};
+
+XMFLOAT3 Transform::RotationalVelocity(){
+	return _rotationalVelocity;
 };
 
 // Setters
@@ -64,12 +70,19 @@ void Transform::SetScale(XMFLOAT3 sca){
 	_scale = sca;
 	_dirty = true;
 };
-
 void Transform::SetVelocity(float x, float y, float z){
 	_velocity = XMFLOAT3(x,y,z);
 };
 void Transform::SetVelocity(XMFLOAT3 vel){
 	SetVelocity(vel.x, vel.y, vel.z);
+};
+void Transform::SetRotationalVelocity(float x, float y, float z){
+	_rotationalVelocity.x = x;
+	_rotationalVelocity.y = y;
+	_rotationalVelocity.z = z;
+};
+void Transform::SetRotationalVelocity(XMFLOAT3 rotVel){
+	SetRotationalVelocity(rotVel.x, rotVel.y, rotVel.z);
 };
 
 // Velocity functions
@@ -83,6 +96,19 @@ void Transform::AddVelocity(XMFLOAT3 vel){
 };
 void Transform::ClearVelocity(){
 	_velocity = XMFLOAT3(0,0,0);
+};
+
+// Rotational Velocity functions
+void Transform::AddRotationalVelocity(float x, float y, float z){
+	_rotationalVelocity.x += x;
+	_rotationalVelocity.y += y;
+	_rotationalVelocity.z += z;
+};
+void Transform::AddRotationalVelocity(XMFLOAT3 rotVel){
+	AddRotationalVelocity(rotVel.x, rotVel.y, rotVel.z);
+};
+void Transform::ClearRotationalVelocity(){
+	_rotationalVelocity = XMFLOAT3(0,0,0);
 };
 
 // Movement functions
@@ -100,9 +126,12 @@ void Transform::Move(XMFLOAT3 pos){
 
 // Rotation functions
 void Transform::Rotate(float xRad, float yRad, float zRad){
-	RotateX(xRad);
-	RotateY(yRad);
-	RotateZ(zRad);
+	if(xRad != 0.0f)
+		RotateX(xRad);
+	if(yRad != 0.0f)
+		RotateY(yRad);
+	if(zRad != 0.0f)
+		RotateZ(zRad);
 };
 void Transform::Rotate(XMFLOAT3 rotRad){
 	Rotate(rotRad.x, rotRad.y, rotRad.z);

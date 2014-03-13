@@ -164,6 +164,7 @@ void DemoGame::UpdateScene(float dt)
 		go->transform.SetScale(.5f,.5f,.5f);
 		go->transform.SetPosition(player->transform.Pos());
 		go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
+		go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 		gameobjects.push_back(go);
 	}
 
