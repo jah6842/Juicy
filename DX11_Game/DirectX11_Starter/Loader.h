@@ -9,6 +9,7 @@
 #include "Vertex.h"
 #include "Utilities.h"
 #include "Constants.h"
+#include "Mesh.h"
 
 struct VertexShader {
 	ID3D11VertexShader* vShader;
@@ -53,20 +54,23 @@ struct ConstantBuffer {
 	}
 };
 
-
 // Returns a VertexShader struct
 std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vShaderID);
 
-// Returns a pixel shader pointer
+// Returns a pixel shader struct
 std::shared_ptr<PixelShader> LoadPixelShader(ID3D11Device* device, PSHADER pShaderID);
 
 // Returns the desired constant buffer
 std::shared_ptr<ConstantBuffer> LoadConstantBuffer(ID3D11Device* device, CBUFFER_LAYOUT layout);
 
+// Returns a pointer to the desired mesh
+std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh);
+
 // Keep track of which shaders we've already loaded
 static std::map<PSHADER, std::shared_ptr<PixelShader>> pShaders;
 static std::map<VSHADER, std::shared_ptr<VertexShader>> vShaders;
 static std::map<CBUFFER_LAYOUT, std::shared_ptr<ConstantBuffer>> cBuffers;
+static std::map<MESHES, std::shared_ptr<Mesh>> meshes;
 
 static void ReleaseShaders();
 

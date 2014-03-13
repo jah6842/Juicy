@@ -1,44 +1,24 @@
 #include "GameObject.h"
 
-GameObject::GameObject(std::wstring meshName){
+GameObject::GameObject(MESHES m, MATERIALS mat){
 	// Register the GameObject with the renderer
 	Renderer::RegisterGameObject(this);
 
 	// Set the mesh
-	mesh = Mesh::GetMesh(meshName);
+	ID3D11Device* device = DeviceManager::GetCurrentDevice();
+	mesh = LoadMesh(device, m);
+
+	// Set the material
+	//std::shared_ptr<Material> newM (new Material(mat));
+	//material = newM;
+	material = Material::LoadMaterial(device, mat);
 };
 
 GameObject::GameObject(){
 	// Register the GameObject with the renderer
 	Renderer::RegisterGameObject(this);
-
-	// Set the material
-	static int flip = 0;
-
-	MATERIAL_DESCRIPTION matDesc;
-	matDesc.cBufferLayout = CONSTANT_BUFFER_LAYOUT_PER_MODEL;
-	matDesc.diffuseTexture = TM_TEXTURE_MARBLE;
-	matDesc.textureFilter = TM_FILTER_POINT;
-	matDesc.vShaderID = VSHADER_TEXTURED_LIT_INSTANCED;
-	matDesc.pShaderID = PSHADER_TEXTURED_LIT_INSTANCED;
-	matDesc.materialName = L"TexturedInstancedLighting";
-
-	if(flip == 0){
-		material = Material::GetMaterial(matDesc);
-	} else if(flip == 1){
-		matDesc.diffuseTexture = TM_TEXTURE_SAND;
-		material =  Material::GetMaterial(matDesc);
-	} else if(flip == 2){
-		matDesc.diffuseTexture = TM_TEXTURE_SCALES;
-		material =  Material::GetMaterial(matDesc);
-	}
-	
-	flip++;
-	if(flip > 2)
-		flip = 0;
-	
-	// Set the mesh
-	mesh = Mesh::GetMesh(L"StandardCube");
+	mesh = nullptr;
+	material = nullptr;
 };
 
 void GameObject::Update(float dt){
@@ -48,4 +28,6 @@ void GameObject::Update(float dt){
 GameObject::~GameObject(){
 	// Unregister this GameObject from the renderer
 	Renderer::UnRegisterGameObject(this);
+	// Free resources
+	//delete material;
 };

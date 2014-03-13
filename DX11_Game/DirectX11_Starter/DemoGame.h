@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "TextRenderer.h"
 #include <vector>
+#include <random>
 
 // For DirectX Math
 using namespace DirectX;
@@ -34,6 +35,8 @@ public:
 private:
 	static const int NUM_GO = 15;
 	std::vector<GameObject*> gameobjects;
+
+	Renderer* renderer;
 
 	// Keeps track of the old mouse position.  Useful for 
 	// determining how far the mouse moved in a single frame.

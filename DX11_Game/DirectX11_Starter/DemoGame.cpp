@@ -68,9 +68,7 @@ DemoGame::~DemoGame()
 		gameobjects.pop_back();
 	}
 
-	Material::Cleanup();
-	Mesh::Cleanup();
-	Renderer::Cleanup();
+
 	TextRenderer::Cleanup();
 }
 
@@ -93,13 +91,20 @@ bool DemoGame::Init()
 	// Setup the text renderer
 	TextRenderer::Setup();
 
+	// Set up our main renderer
+	renderer = new Renderer();
+
 	DebugTimer::Start(L"TIME TAKEN TO CREATE GAMEOBJECTS");
 
+	// for cycling through textures
+	int flip = 0;
 	// Create some game objects
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-				GameObject* g = new GameObject();
+
+				MATERIALS mat = MATERIAL_DEFAULT;
+				GameObject* g = new GameObject(MESH_CUBE, mat);
 				g->transform.SetPosition(i * 5.0f, j * 5.0f, k * 5.0f);
 				gameobjects.push_back(g);
 			}
@@ -170,14 +175,8 @@ void DemoGame::DrawScene()
 	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Black);
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	Renderer::Draw();
+	renderer->Draw();
 
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,30);
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,54,36);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,90,48);
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,138,60);
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,198,72);
 	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,270,90, XMFLOAT4(1,0,0,1));
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120, XMFLOAT4(0,1,0,1));
 	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,480,180, XMFLOAT4(0,0,1,1));
