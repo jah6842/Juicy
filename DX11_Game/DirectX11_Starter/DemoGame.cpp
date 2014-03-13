@@ -68,7 +68,6 @@ DemoGame::~DemoGame()
 		gameobjects.pop_back();
 	}
 
-	Material::Cleanup();
 	Mesh::Cleanup();
 	Renderer::Cleanup();
 	TextRenderer::Cleanup();

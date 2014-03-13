@@ -42,7 +42,7 @@ private:
 	// Make sure that we are ready to render
 	static void PrepareRenderer();
 	static void PrepareLighting();
-	static void PrepareMaterial(Material* m);
+	static void PrepareMaterial(GameObject* go, Material* m);
 };
 
 #endif // _RENDERER_H

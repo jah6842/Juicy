@@ -53,11 +53,10 @@ struct ConstantBuffer {
 	}
 };
 
-
 // Returns a VertexShader struct
 std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vShaderID);
 
-// Returns a pixel shader pointer
+// Returns a pixel shader struct
 std::shared_ptr<PixelShader> LoadPixelShader(ID3D11Device* device, PSHADER pShaderID);
 
 // Returns the desired constant buffer

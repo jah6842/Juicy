@@ -70,25 +70,37 @@ ID3D11PixelShader* currentPixelShader = nullptr;
 ID3D11VertexShader* currentVertexShader = nullptr;
 ID3D11InputLayout* currentInputLayout = nullptr;
 ID3D11Buffer* currentConstantBuffer = nullptr;
-void Renderer::PrepareMaterial(Material* mat){
+void Renderer::PrepareMaterial(GameObject* go, Material* mat){
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 
 	// Check if we need to change state, if not use the current state.
-	if(mat->_vertexShader->vShader != currentVertexShader){
-		currentVertexShader = mat->_vertexShader->vShader;
-		deviceContext->VSSetShader(mat->_vertexShader->vShader, NULL, 0);
+	if(mat->vertexShader->vShader != currentVertexShader){
+		currentVertexShader = mat->vertexShader->vShader;
+		deviceContext->VSSetShader(mat->vertexShader->vShader, NULL, 0);
 	}
-	if(mat->_vertexShader->vShaderInputLayout != currentInputLayout){
-		currentInputLayout = mat->_vertexShader->vShaderInputLayout;
-		deviceContext->IASetInputLayout(mat->_vertexShader->vShaderInputLayout);
+	if(mat->vertexShader->vShaderInputLayout != currentInputLayout){
+		currentInputLayout = mat->vertexShader->vShaderInputLayout;
+		deviceContext->IASetInputLayout(mat->vertexShader->vShaderInputLayout);
 	}
-	if(mat->_constantBuffer->cBuffer != currentConstantBuffer){
-		deviceContext->VSSetConstantBuffers(1, 1, &mat->_constantBuffer->cBuffer);
-		currentConstantBuffer = mat->_constantBuffer->cBuffer;
+	if(mat->constantBuffer->cBuffer != currentConstantBuffer){
+		deviceContext->VSSetConstantBuffers(1, 1, &mat->constantBuffer->cBuffer);
+		currentConstantBuffer = mat->constantBuffer->cBuffer;
 	}
-	if( mat->_pixelShader->pShader != currentPixelShader){
-		currentPixelShader = mat->_pixelShader->pShader;
-		deviceContext->PSSetShader(mat->_pixelShader->pShader, NULL, 0);
+	if(mat->pixelShader->pShader != currentPixelShader){
+		currentPixelShader = mat->pixelShader->pShader;
+		deviceContext->PSSetShader(mat->pixelShader->pShader, NULL, 0);
+	}
+
+	if(go == nullptr)
+		return;
+
+	switch(mat->constantBuffer->layout){
+	case CONSTANT_BUFFER_LAYOUT_PER_MODEL:
+		CONSTANT_BUFFER_PER_MODEL modelData;
+		modelData.world = go->transform.WorldMatrix();
+
+		// Update the constant buffer
+		deviceContext->UpdateSubresource(mat->constantBuffer->cBuffer, 0, NULL, &modelData, 0, 0);
 	}
 };
 
@@ -120,8 +132,8 @@ void Renderer::Draw(){
 			continue;
 			
 		// Check if the object is using an instanced material
-		if(!(*itr)->material->_vertexShader->isInstanced){
-			(*itr)->material->SetConstantBufferData((*itr)->transform.WorldMatrix());
+		if(!(*itr)->material->vertexShader->isInstanced){
+			PrepareMaterial(*itr, (*itr)->material);
 
 			// Set the current vertex buffer
 			UINT stride = Vertex::VertexSize((*itr)->mesh->VertexType());
@@ -158,15 +170,13 @@ void Renderer::Draw(){
 	for(std::list<Material*>::iterator itr = _materials.begin(); itr != _materials.end(); itr++){
 
 		// Check if the material is not instanced, if so it was already rendered
-		if(!(*itr)->_vertexShader->isInstanced)
+		if(!(*itr)->vertexShader->isInstanced)
 			continue;
 
 		// Get the first material from the render list
 		currentRenderMaterial = *itr;
 
-		PrepareMaterial(currentRenderMaterial);
-
-		currentRenderMaterial->SetConstantBufferData(Transform::Identity().WorldMatrix());
+		PrepareMaterial(nullptr, currentRenderMaterial);
 
 		textureManager->SetActiveTexture(currentRenderMaterial->diffuseTexture);
 		textureManager->SetActiveFilterMode(currentRenderMaterial->textureFilter);

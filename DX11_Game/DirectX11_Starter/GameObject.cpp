@@ -24,13 +24,13 @@ GameObject::GameObject(){
 	matDesc.materialName = L"TexturedInstancedLighting";
 
 	if(flip == 0){
-		material = Material::GetMaterial(matDesc);
+		material = new Material(matDesc);
 	} else if(flip == 1){
 		matDesc.diffuseTexture = TM_TEXTURE_SAND;
-		material =  Material::GetMaterial(matDesc);
+		material =  new Material(matDesc);
 	} else if(flip == 2){
 		matDesc.diffuseTexture = TM_TEXTURE_SCALES;
-		material =  Material::GetMaterial(matDesc);
+		material =  new Material(matDesc);
 	}
 	
 	flip++;
