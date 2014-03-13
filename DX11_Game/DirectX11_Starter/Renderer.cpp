@@ -1,18 +1,18 @@
 #include "Renderer.h"
 
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
-std::shared_ptr<ConstantBuffer> Renderer::_perFrameConstantBuffer = nullptr;
-std::shared_ptr<ConstantBuffer> Renderer::_directionalLightBuffer = nullptr;
-TextureManager* Renderer::textureManager = nullptr;
-bool Renderer::rendererReady = false;
-std::map<MESHES, std::vector<GameObject*>> Renderer::renderBuckets = std::map<MESHES, std::vector<GameObject*>>();
+
+//std::map<MESHES, std::vector<GameObject*>> Renderer::renderBuckets = std::map<MESHES, std::vector<GameObject*>>();
 
 Renderer::Renderer(){
-
+	_perFrameConstantBuffer = nullptr;
+	_directionalLightBuffer = nullptr;
+	textureManager = nullptr;
+	rendererReady = false;
 };
 
 Renderer::~Renderer(){
-
+	textureManager->Cleanup();
 };
 
 ID3D11Buffer* instanceBuffer = nullptr;
@@ -278,9 +278,4 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 	std::unordered_set<GameObject*>::iterator itr;
 	itr = registeredGOs.find(go);
 	registeredGOs.erase(itr);
-};
-
-// Clean up resources
-void Renderer::Cleanup(){
-	textureManager->Cleanup();
 };

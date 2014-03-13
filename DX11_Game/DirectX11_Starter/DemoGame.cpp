@@ -68,7 +68,7 @@ DemoGame::~DemoGame()
 		gameobjects.pop_back();
 	}
 
-	Renderer::Cleanup();
+
 	TextRenderer::Cleanup();
 }
 
@@ -90,6 +90,9 @@ bool DemoGame::Init()
 
 	// Setup the text renderer
 	TextRenderer::Setup();
+
+	// Set up our main renderer
+	renderer = new Renderer();
 
 	DebugTimer::Start(L"TIME TAKEN TO CREATE GAMEOBJECTS");
 
@@ -172,7 +175,7 @@ void DemoGame::DrawScene()
 	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Black);
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	Renderer::Draw();
+	renderer->Draw();
 
 	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,270,90, XMFLOAT4(1,0,0,1));
 	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120, XMFLOAT4(0,1,0,1));
