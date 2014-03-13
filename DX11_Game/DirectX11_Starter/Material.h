@@ -26,6 +26,7 @@ public:
 	//static std::list<Material*> _materials;
 	static Material* GetMaterial(MATERIAL_DESCRIPTION description);
 	bool Compare(MATERIAL_DESCRIPTION description);
+	bool Compare(Material*);
 
 	// Assumes vertex and pixel shaders have the same prefix, optional texture
 	Material(MATERIAL_DESCRIPTION description);

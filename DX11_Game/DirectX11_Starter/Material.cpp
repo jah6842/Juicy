@@ -36,6 +36,17 @@ bool Material::Compare(MATERIAL_DESCRIPTION description){
 	return false;
 };
 
+bool Material::Compare(Material* mat){
+
+	if(//_materialName == mat->materialName &&
+		diffuseTexture == mat->diffuseTexture &&
+		textureFilter == mat->textureFilter){
+		return true;
+	}
+
+	return false;
+};
+
 // Constructor
 Material::Material(MATERIAL_DESCRIPTION description){
 	_materialName = description.materialName;

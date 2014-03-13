@@ -32,8 +32,6 @@ public:
 	
 	~Mesh();
 
-	void CreateMeshFromModel(std::wstring modelName);
-
 	void SetVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
 	void SetIndexBuffer(UINT* indices, UINT numIndices);
 	void SetTopology(D3D11_PRIMITIVE_TOPOLOGY topo);

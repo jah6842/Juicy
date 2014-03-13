@@ -66,15 +66,41 @@ void Renderer::PrepareLighting(){
 	deviceContext->PSSetConstantBuffers(_directionalLightBuffer->slot,1,&_directionalLightBuffer->cBuffer);
 };
 
+ID3D11PixelShader* currentPixelShader = nullptr;
+ID3D11VertexShader* currentVertexShader = nullptr;
+ID3D11InputLayout* currentInputLayout = nullptr;
+ID3D11Buffer* currentConstantBuffer = nullptr;
+void Renderer::PrepareMaterial(Material* mat){
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
+	// Check if we need to change state, if not use the current state.
+	if(mat->_vertexShader->vShader != currentVertexShader){
+		currentVertexShader = mat->_vertexShader->vShader;
+		deviceContext->VSSetShader(mat->_vertexShader->vShader, NULL, 0);
+	}
+	if(mat->_vertexShader->vShaderInputLayout != currentInputLayout){
+		currentInputLayout = mat->_vertexShader->vShaderInputLayout;
+		deviceContext->IASetInputLayout(mat->_vertexShader->vShaderInputLayout);
+	}
+	if(mat->_constantBuffer->cBuffer != currentConstantBuffer){
+		deviceContext->VSSetConstantBuffers(1, 1, &mat->_constantBuffer->cBuffer);
+		currentConstantBuffer = mat->_constantBuffer->cBuffer;
+	}
+	if( mat->_pixelShader->pShader != currentPixelShader){
+		currentPixelShader = mat->_pixelShader->pShader;
+		deviceContext->PSSetShader(mat->_pixelShader->pShader, NULL, 0);
+	}
+};
+
 void Renderer::Draw(){
 	if(!rendererReady){
 		PrepareRenderer();
 	}
 
-	ID3D11PixelShader* currentPixelShader = nullptr;
-	ID3D11VertexShader* currentVertexShader = nullptr;
-	ID3D11InputLayout* currentInputLayout = nullptr;
-	ID3D11Buffer* currentConstantBuffer = nullptr;
+	currentPixelShader = nullptr;
+	currentVertexShader = nullptr;
+	currentInputLayout = nullptr;
+	currentConstantBuffer = nullptr;
 
 	UINT drawnObjects = 0;
 	UINT drawCalls = 0;
@@ -114,13 +140,20 @@ void Renderer::Draw(){
 				0); 
 			drawnObjects++;
 		} else {
-			_materials.push_back((*itr)->material);
+			bool found = false;
+			for(std::list<Material*>::iterator mat = _materials.begin(); mat != _materials.end(); mat++){
+				if((*mat)->Compare((*itr)->material)){
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				_materials.push_back((*itr)->material);
 		}
 	}
 
-	
-
 	Material* currentRenderMaterial = nullptr;
+
 	// Get all gameobjects with a certain material and draw them
 	for(std::list<Material*>::iterator itr = _materials.begin(); itr != _materials.end(); itr++){
 
@@ -131,23 +164,7 @@ void Renderer::Draw(){
 		// Get the first material from the render list
 		currentRenderMaterial = *itr;
 
-		// Check if we need to change state, if not use the current state.
-		if(currentRenderMaterial->_vertexShader->vShader != currentVertexShader){
-			currentVertexShader = currentRenderMaterial->_vertexShader->vShader;
-			deviceContext->VSSetShader(currentRenderMaterial->_vertexShader->vShader, NULL, 0);
-		}
-		if(currentRenderMaterial->_vertexShader->vShaderInputLayout != currentInputLayout){
-			currentInputLayout = currentRenderMaterial->_vertexShader->vShaderInputLayout;
-			deviceContext->IASetInputLayout(currentRenderMaterial->_vertexShader->vShaderInputLayout);
-		}
-		if(currentRenderMaterial->_constantBuffer->cBuffer != currentConstantBuffer){
-			deviceContext->VSSetConstantBuffers(1, 1, &currentRenderMaterial->_constantBuffer->cBuffer);
-			currentConstantBuffer = currentRenderMaterial->_constantBuffer->cBuffer;
-		}
-		if( currentRenderMaterial->_pixelShader->pShader != currentPixelShader){
-			currentPixelShader =currentRenderMaterial->_pixelShader->pShader;
-			deviceContext->PSSetShader(currentRenderMaterial->_pixelShader->pShader, NULL, 0);
-		}
+		PrepareMaterial(currentRenderMaterial);
 
 		currentRenderMaterial->SetConstantBufferData(Transform::Identity().WorldMatrix());
 
@@ -162,7 +179,7 @@ void Renderer::Draw(){
 				continue;
 			
 			// Check if the object is using the current material
-			if((*go)->material == currentRenderMaterial){
+			if((*go)->material->Compare(currentRenderMaterial)){
 				renderList[renderCount] = *go;
 				renderCount++;
 			}
