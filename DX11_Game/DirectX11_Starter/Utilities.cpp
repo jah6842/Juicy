@@ -55,3 +55,25 @@ void LogString(std::wstring s1, std::wstring s2, std::wstring s3, std::wstring s
 	std::wcout << s1 << s2 << s3 << s4 << s5 << s6 << std::endl;
 };
 #endif
+
+std::random_device RNG::rd;
+std::default_random_engine RNG::rnd;
+
+void RNG::Init(){
+	rnd = std::default_random_engine(rd());
+};
+
+int RNG::randInt(int min, int max){
+	static std::uniform_int_distribution<int> uInt(min, max);
+	return uInt(rnd);
+};
+
+float RNG::randFloat(float min, float max){
+	static std::uniform_real_distribution<float> flt(min,max);
+	return flt(rnd);
+};
+
+double RNG::randDouble(double min, double max){
+	static std::uniform_real_distribution<double> dbl(min,max);
+	return dbl(rnd);
+};

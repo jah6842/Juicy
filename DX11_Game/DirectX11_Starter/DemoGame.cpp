@@ -137,21 +137,6 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
-	std::random_device rd;
-	std::default_random_engine rnd(rd());
-	std::uniform_int_distribution<int> uInt(-50, 50);
-	if(GetAsyncKeyState(VK_ADD)){
-		GameObject* go = new GameObject();
-		go->transform.SetPosition(uInt(rnd), uInt(rnd), uInt(rnd));
-		gameobjects.push_back(go);
-	}
-	if(GetAsyncKeyState(VK_SUBTRACT)){
-		if(gameobjects.size() > 0){
-			delete gameobjects.back();
-			gameobjects.pop_back();
-		}
-	}
-
 	float speed = 10.0f;
 	if(GetAsyncKeyState('W'))
 	{
@@ -178,7 +163,7 @@ void DemoGame::UpdateScene(float dt)
 		GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
 		go->transform.SetScale(.5f,.5f,.5f);
 		go->transform.SetPosition(player->transform.Pos());
-		go->transform.SetVelocity(uInt(rnd), uInt(rnd), uInt(rnd));
+		go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 		gameobjects.push_back(go);
 	}
 

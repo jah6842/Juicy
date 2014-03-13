@@ -8,6 +8,7 @@
 #include <d3d11.h>
 #include <string>
 #include <iostream>
+#include <random>
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
@@ -98,5 +99,17 @@ void LogString(std::wstring s1, std::wstring s2, std::wstring s3, std::wstring s
 void LogString(std::wstring s1, std::wstring s2, std::wstring s3, std::wstring s4, std::wstring s5);
 void LogString(std::wstring s1, std::wstring s2, std::wstring s3, std::wstring s4, std::wstring s5, std::wstring s6);
 #endif
+
+class RNG {
+public:
+	static std::random_device rd;
+	static std::default_random_engine rnd;
+	
+	static void Init();
+	// Returns a random value between min and max
+	static int randInt(int min = INT_MIN, int max = INT_MAX);
+	static float randFloat(float min = FLT_MIN, float max = FLT_MAX);
+	static double randDouble(double min = DBL_MIN, double max = DBL_MAX);
+};
 
 #endif // _UTILITIES_H
