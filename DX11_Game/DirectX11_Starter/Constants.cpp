@@ -19,3 +19,7 @@ const WCHAR* textureNames[TM_NUM_TEXTURES] = {
 	L"sand.jpg",
 	L"scales.png"
 };
+
+const WCHAR* meshNames[] = { 
+	L"Cube", 
+};

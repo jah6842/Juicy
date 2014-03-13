@@ -96,4 +96,14 @@ struct CONSTANT_BUFFER_DIRECTIONAL_LIGHT {
 
 #pragma endregion
 
+#pragma region Meshes
+
+// Vertex shaders
+enum MESHES{
+	MESH_CUBE
+};
+const WCHAR* meshNames[]; // defined in CPP
+
+#pragma endregion
+
 #endif // _CONSTANTS_H

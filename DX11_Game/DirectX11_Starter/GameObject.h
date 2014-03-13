@@ -7,18 +7,17 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Renderer.h"
-// Currently used to randomly move position, will have a library for this later.
-#include <random>
+#include "Mesh.h"
 
 class GameObject {
 
 public:
 	Transform transform;
-	Mesh* mesh;
+	std::shared_ptr<Mesh> mesh;
 	Material* material;
 
 	GameObject();
-	GameObject(std::wstring meshName);
+	GameObject(MESHES m, MATERIAL_DESCRIPTION mat);
 	~GameObject();
 
 	void Update(float dt);

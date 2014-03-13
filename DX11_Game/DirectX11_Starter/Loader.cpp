@@ -137,3 +137,32 @@ std::shared_ptr<ConstantBuffer> LoadConstantBuffer(ID3D11Device* device, CBUFFER
 
 	return cBuffers[layout];
 };
+
+// Returns a pointer to the desired mesh
+std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
+	// Check if mesh already exists
+	if(meshes[mesh] != nullptr){
+		return meshes[mesh];
+	}
+
+	std::shared_ptr<Mesh> m (new Mesh());
+
+	if(mesh == MESH_CUBE){
+		m->hasColor = false;
+		m->hasNormals = true;
+		m->hasPosition = true;
+		m->hasTexCoord = true;
+		m->indexBuffer = Mesh::CreateIndexBuffer(StandardCubeIndices, 24);
+		m->numIndices = 24;
+		m->vertexBuffer = Mesh::CreateVertexBuffer(StandardCubeVertices, 36, VERTEX_TYPE_ALL);
+		m->numVertices = 36;
+		m->vertexType = VERTEX_TYPE_ALL;
+		m->name = L"Cube";
+		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	}
+
+	LOG(L"New mesh loaded: ", m->name);
+	meshes[mesh] = m;
+
+	return meshes[mesh];
+};

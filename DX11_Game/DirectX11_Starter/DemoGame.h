@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "TextRenderer.h"
 #include <vector>
+#include <random>
 
 // For DirectX Math
 using namespace DirectX;

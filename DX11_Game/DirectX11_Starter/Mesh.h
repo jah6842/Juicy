@@ -10,48 +10,27 @@
 
 using namespace DirectX;
 
-class Mesh {
-public:
-	static std::map<std::wstring, Mesh*> meshes;
+struct Mesh {
+	std::wstring name;
+	VERTEX_TYPE vertexType;
+	ID3D11Buffer* indexBuffer;
+	ID3D11Buffer* vertexBuffer;
+	UINT numIndices;
+	UINT numVertices;
+	D3D_PRIMITIVE_TOPOLOGY topology;
 
-	static Mesh* GetMesh(std::wstring meshName);
+	bool hasPosition;
+	bool hasTexCoord;
+	bool hasNormals;
+	bool hasColor;
 
-	static void Cleanup();
+	~Mesh(){
+		ReleaseMacro(vertexBuffer);
+		ReleaseMacro(indexBuffer);
+	}
 
-	// Construct a mesh without vertices
-	Mesh();
-
-	// Construct a mesh by name
-	Mesh(std::wstring meshName);
-	
-	// Construct a mesh with vertices, assume clockwise indices
-	void ConstructMesh(std::wstring meshName, void* vertices, UINT numVertices, VERTEX_TYPE vertexType);
-
-	// Construct a mesh with vertices, custom indices
-	void ConstructMesh(std::wstring meshName, void* vertices, UINT numVertices, VERTEX_TYPE vertexType, UINT* indices, UINT numIndices);
-	
-	~Mesh();
-
-	void SetVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
-	void SetIndexBuffer(UINT* indices, UINT numIndices);
-	void SetTopology(D3D11_PRIMITIVE_TOPOLOGY topo);
-
-	UINT IndexCount();
-	UINT VertexCount();
-	VERTEX_TYPE VertexType();
-	ID3D11Buffer* VertexBuffer();
-	ID3D11Buffer* IndexBuffer();
-	D3D_PRIMITIVE_TOPOLOGY Topology();
-
-private:
-	ID3D11Buffer* _vertexBuffer;
-	UINT _numVertices;
-	VERTEX_TYPE _vertexType;
-	ID3D11Buffer* _indexBuffer;
-	UINT _numIndices;
-
-	// How is the data laid out? 
-	D3D_PRIMITIVE_TOPOLOGY _topology; // default is D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST 
+	static ID3D11Buffer* CreateVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
+	static ID3D11Buffer* CreateIndexBuffer(UINT* indices, UINT numIndices);
 };
 
 ////////// HARDCODED VERTICES //////////////

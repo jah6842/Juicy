@@ -136,18 +136,18 @@ void Renderer::Draw(){
 			PrepareMaterial(*itr, (*itr)->material);
 
 			// Set the current vertex buffer
-			UINT stride = Vertex::VertexSize((*itr)->mesh->VertexType());
+			UINT stride = Vertex::VertexSize((*itr)->mesh->vertexType);
 			UINT offset = 0;
-			ID3D11Buffer* vBuffer = (*itr)->mesh->VertexBuffer();
+			ID3D11Buffer* vBuffer = (*itr)->mesh->vertexBuffer;
 			deviceContext->IASetVertexBuffers(0, 1, &vBuffer, &stride, &offset);
 			// Set the current index buffer
-			deviceContext->IASetIndexBuffer((*itr)->mesh->IndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+			deviceContext->IASetIndexBuffer((*itr)->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 			// Set the topology
-			deviceContext->IASetPrimitiveTopology((*itr)->mesh->Topology());
+			deviceContext->IASetPrimitiveTopology((*itr)->mesh->topology);
 	
 			// Draw individual model
 			deviceContext->DrawIndexed(
-				(*itr)->mesh->IndexCount(),	// The number of indices we're using in this draw
+				(*itr)->mesh->numIndices,	// The number of indices we're using in this draw
 				0,
 				0); 
 			drawnObjects++;
@@ -226,25 +226,25 @@ void Renderer::Draw(){
 		UINT offsets[2];
 		ID3D11Buffer* bufferPointers[2];
 
-		strides[0] = Vertex::VertexSize(renderList[0]->mesh->VertexType());
+		strides[0] = Vertex::VertexSize(renderList[0]->mesh->vertexType);
 		strides[1] = sizeof(InstanceType);
 
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-		bufferPointers[0] = renderList[0]->mesh->VertexBuffer();	
+		bufferPointers[0] = renderList[0]->mesh->vertexBuffer;	
 		bufferPointers[1] = instanceBuffer;
 
 		// Set the current vertex buffer
 		deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 		// Set the current index buffer
-		deviceContext->IASetIndexBuffer(renderList[0]->mesh->IndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+		deviceContext->IASetIndexBuffer(renderList[0]->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		// Set the topology
-		deviceContext->IASetPrimitiveTopology(renderList[0]->mesh->Topology());
+		deviceContext->IASetPrimitiveTopology(renderList[0]->mesh->topology);
 	
 		// Do the drawing
 		deviceContext->DrawIndexedInstanced(
-			renderList[0]->mesh->IndexCount(),	// Index count per instance
+			renderList[0]->mesh->numIndices,	// Index count per instance
 			renderCount,						// # instances to render
 			0,									// Start index location
 			0,									// Start vertex location

@@ -68,7 +68,6 @@ DemoGame::~DemoGame()
 		gameobjects.pop_back();
 	}
 
-	Mesh::Cleanup();
 	Renderer::Cleanup();
 	TextRenderer::Cleanup();
 }
@@ -94,11 +93,34 @@ bool DemoGame::Init()
 
 	DebugTimer::Start(L"TIME TAKEN TO CREATE GAMEOBJECTS");
 
+	// for cycling through textures
+	int flip = 0;
 	// Create some game objects
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-				GameObject* g = new GameObject();
+
+				// Set the material
+				MATERIAL_DESCRIPTION matDesc;
+				matDesc.cBufferLayout = CONSTANT_BUFFER_LAYOUT_PER_MODEL;
+				matDesc.textureFilter = TM_FILTER_ANISO_8X;
+				matDesc.vShaderID = VSHADER_TEXTURED_LIT_INSTANCED;
+				matDesc.pShaderID = PSHADER_TEXTURED_LIT_INSTANCED;
+				matDesc.materialName = L"TexturedInstancedLighting";
+
+				if(flip == 0){
+					matDesc.diffuseTexture = TM_TEXTURE_MARBLE;
+				} else if(flip == 1){
+					matDesc.diffuseTexture = TM_TEXTURE_SAND;
+				} else if(flip == 2){
+					matDesc.diffuseTexture = TM_TEXTURE_SCALES;
+				}
+	
+				flip++;
+				if(flip > 2)
+					flip = 0;
+
+				GameObject* g = new GameObject(MESH_CUBE, matDesc);
 				g->transform.SetPosition(i * 5.0f, j * 5.0f, k * 5.0f);
 				gameobjects.push_back(g);
 			}
