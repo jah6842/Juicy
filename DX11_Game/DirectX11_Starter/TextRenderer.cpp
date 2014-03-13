@@ -188,7 +188,7 @@ void TextRenderer::Cleanup(){
 	ReleaseMacro(disableStencil);
 };
 
-void TextRenderer::DrawString(char* text, float x, float y, float size, XMFLOAT4 color){
+void TextRenderer::DrawString(const char* text, float x, float y, float size, XMFLOAT4 color){
 
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 

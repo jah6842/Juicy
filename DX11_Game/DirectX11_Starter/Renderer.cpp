@@ -58,8 +58,9 @@ void Renderer::PrepareLighting(){
 		_directionalLightBuffer = LoadConstantBuffer(device, CONSTANT_BUFFER_LAYOUT_DIRECTIONAL_LIGHT);
 	}
 
+	float ambientStrength = .5f;
 	CONSTANT_BUFFER_DIRECTIONAL_LIGHT dirLight;
-	dirLight.ambientColor = XMFLOAT4(.1f,.1f,.1f,.1f);
+	dirLight.ambientColor = XMFLOAT4(ambientStrength,ambientStrength,ambientStrength,1.0f);
 	dirLight.diffuseColor = XMFLOAT4(1,1,1,1);
 	dirLight.lightDirection = XMFLOAT3(1.0f, 1.0f, 0.0f);
 
@@ -262,6 +263,11 @@ void Renderer::Draw(){
 
 	delete[] renderList;
 	rendererReady = false;
+
+	std::string s1 = "Drawn Objects: " + std::to_string(drawnObjects);
+	TextRenderer::DrawString(s1.c_str(), 0, 100, 40);
+	std::string s2 = "Draw calls: " + std::to_string(drawCalls);
+	TextRenderer::DrawString(s2.c_str(), 0, 140, 40);
 
 	//LOG(L"Rendered objects: ", std::to_wstring(drawnObjects), L" (Draw Calls: ", std::to_wstring(drawCalls), L")");
 };

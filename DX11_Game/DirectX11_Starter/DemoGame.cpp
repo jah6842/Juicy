@@ -67,9 +67,10 @@ DemoGame::~DemoGame()
 		delete gameobjects.back();
 		gameobjects.pop_back();
 	}
-
+	delete player;
 
 	TextRenderer::Cleanup();
+	delete renderer;
 }
 
 #pragma endregion
@@ -102,14 +103,14 @@ bool DemoGame::Init()
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-
-				MATERIALS mat = MATERIAL_DEFAULT;
-				GameObject* g = new GameObject(MESH_CUBE, mat);
+				GameObject* g = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
 				g->transform.SetPosition(i * 5.0f, j * 5.0f, k * 5.0f);
 				gameobjects.push_back(g);
 			}
 		}
 	}
+
+	player = new GameObject(MESH_CUBE, MATERIAL_MARBLE);
 
 	DebugTimer::Stop();
 
@@ -136,10 +137,10 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
+	std::random_device rd;
+	std::default_random_engine rnd(rd());
+	std::uniform_int_distribution<int> uInt(-50, 50);
 	if(GetAsyncKeyState(VK_ADD)){
-		std::random_device rd;
-		std::default_random_engine rnd(rd());
-		std::uniform_int_distribution<int> uInt(-50, 50);
 		GameObject* go = new GameObject();
 		go->transform.SetPosition(uInt(rnd), uInt(rnd), uInt(rnd));
 		gameobjects.push_back(go);
@@ -153,19 +154,41 @@ void DemoGame::UpdateScene(float dt)
 
 	float speed = 10.0f;
 	if(GetAsyncKeyState('W'))
+	{
 		Camera::MainCamera.transform.Move(0, speed * dt, 0);
+		player->transform.Move(0, speed * dt, 0);
+	}
 	if(GetAsyncKeyState('S'))
+	{
 		Camera::MainCamera.transform.Move(0, -speed * dt, 0);
+		player->transform.Move(0, -speed * dt, 0);
+	}
 	if(GetAsyncKeyState('A'))
+	{
 		Camera::MainCamera.transform.Move(-speed * dt, 0, 0);
+		player->transform.Move(-speed * dt, 0, 0);
+	}
 	if(GetAsyncKeyState('D'))
-		Camera::MainCamera.transform.Move(speed * dt, 0, 0);
+	{
+		Camera::MainCamera.transform.Move(speed * dt, 0, 0); 
+		player->transform.Move(speed * dt, 0, 0); 
+	}
+
+	if(GetAsyncKeyState(VK_SPACE)){
+		GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
+		go->transform.SetScale(.5f,.5f,.5f);
+		go->transform.SetPosition(player->transform.Pos());
+		go->transform.SetVelocity(uInt(rnd), uInt(rnd), uInt(rnd));
+		gameobjects.push_back(go);
+	}
 
 	Camera::MainCamera.Update(dt);
 
-	for(UINT i = 0; i < gameobjects.size(); i++){
+	for(int i = 0; i < gameobjects.size(); i++){
 		gameobjects[i]->Update(dt);
 	}
+
+	player->Update(dt);
 }
 
 // Clear the screen, redraw everything, present
@@ -177,9 +200,9 @@ void DemoGame::DrawScene()
 
 	renderer->Draw();
 
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,270,90, XMFLOAT4(1,0,0,1));
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,360,120, XMFLOAT4(0,1,0,1));
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,480,180, XMFLOAT4(0,0,1,1));
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24, XMFLOAT4(1,0,0,1));
+	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,36, XMFLOAT4(0,1,0,1));
+	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,50,48, XMFLOAT4(0,0,1,1));
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

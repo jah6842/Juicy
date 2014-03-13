@@ -1,9 +1,5 @@
 #include "TextureManager.h"
 
-//Texture TEXTURE_MARBLE = { L"marble.png", TM_TEXTURE_MARBLE, nullptr, true, false, false };
-//Texture TEXTURE_SAND = { L"sand.jpg", TM_TEXTURE_SAND, nullptr, true, false, false };
-//Texture TEXTURE_SCALES = { L"scales.png", TM_TEXTURE_SCALES, nullptr, true, false, false };
-
 TextureManager::TextureManager(){
 	samplerStatePoint = nullptr;
 	samplerStateLinear = nullptr;

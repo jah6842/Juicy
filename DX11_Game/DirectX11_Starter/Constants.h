@@ -36,6 +36,7 @@ const WCHAR* pShaderNames[]; // defined in CPP
 
 // Textures
 enum TM_TEXTURE {
+	TM_TEXTURE_DEFAULT,
 	TM_TEXTURE_MARBLE,
 	TM_TEXTURE_SAND,
 	TM_TEXTURE_SCALES,

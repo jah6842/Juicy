@@ -11,6 +11,7 @@
 
 #include "GameObject.h"
 #include "TextureManager.h"
+#include "TextRenderer.h"
 #include "Loader.h"
 
 class GameObject;
