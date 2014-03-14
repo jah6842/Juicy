@@ -61,6 +61,9 @@
       <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)FBX\lib\debug\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -81,6 +84,9 @@
       <Profile>true</Profile>
       <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)FBX\lib\release\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
