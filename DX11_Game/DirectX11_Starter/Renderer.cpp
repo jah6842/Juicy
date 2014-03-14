@@ -58,7 +58,7 @@ void Renderer::PrepareLighting(){
 		_directionalLightBuffer = LoadConstantBuffer(device, CONSTANT_BUFFER_LAYOUT_DIRECTIONAL_LIGHT);
 	}
 
-	float ambientStrength = .5f;
+	float ambientStrength = .1f;
 	CONSTANT_BUFFER_DIRECTIONAL_LIGHT dirLight;
 	dirLight.ambientColor = XMFLOAT4(ambientStrength,ambientStrength,ambientStrength,1.0f);
 	dirLight.diffuseColor = XMFLOAT4(1,1,1,1);

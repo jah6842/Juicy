@@ -21,6 +21,10 @@ public:
 	float PosY();
 	float PosZ();
 
+	float RotX();
+	float RotY();
+	float RotZ();
+
 	XMFLOAT3 Velocity();
 	XMFLOAT3 RotationalVelocity();
 

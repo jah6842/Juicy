@@ -58,6 +58,9 @@ DemoGame::DemoGame(HINSTANCE hInstance) : DXGame(hInstance)
 	windowCaption = L"Demo DX11 Game";
 	windowWidth = 800;
 	windowHeight = 600;
+
+	prevMousePos.x = -99999;
+	prevMousePos.y = -99999;
 }
 
 DemoGame::~DemoGame()
@@ -67,7 +70,6 @@ DemoGame::~DemoGame()
 		delete gameobjects.back();
 		gameobjects.pop_back();
 	}
-	delete player;
 
 	TextRenderer::Cleanup();
 	delete renderer;
@@ -86,8 +88,6 @@ bool DemoGame::Init()
 
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
-	// Move the camera away from the origin
-	Camera::MainCamera.transform.SetPosition(0.0f, 0.0f, -5.0f);
 
 	// Setup the text renderer
 	TextRenderer::Setup();
@@ -105,14 +105,11 @@ bool DemoGame::Init()
 			for(int k = 0; k < NUM_GO; k++){
 				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
 				g->transform.SetPosition(i * 50.0f, j * 50.0f, k * 50.0f);
-				g->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), RNG::randFloat(-2,2));
+				g->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), 0.0f);
 				gameobjects.push_back(g);
 			}
 		}
 	}
-
-	player = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
-	player->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), RNG::randFloat(-2,2));
 
 	DebugTimer::Stop();
 
@@ -143,34 +140,48 @@ void DemoGame::UpdateScene(float dt)
 	if(GetAsyncKeyState(VK_SHIFT)){
 		speed *= 3.0f;
 	}
+	// Move camera with WASD
 	if(GetAsyncKeyState('W'))
 	{
-		Camera::MainCamera.transform.Move(0, speed * dt, 0);
-		player->transform.Move(0, speed * dt, 0);
+		Camera::MainCamera.Move(CameraMovement::FORWARD, speed);
 	}
 	if(GetAsyncKeyState('S'))
 	{
-		Camera::MainCamera.transform.Move(0, -speed * dt, 0);
-		player->transform.Move(0, -speed * dt, 0);
+		Camera::MainCamera.Move(CameraMovement::BACKWARD, -speed);
 	}
 	if(GetAsyncKeyState('A'))
 	{
-		Camera::MainCamera.transform.Move(-speed * dt, 0, 0);
-		player->transform.Move(-speed * dt, 0, 0);
+		Camera::MainCamera.Move(CameraMovement::LEFT, -speed);
 	}
 	if(GetAsyncKeyState('D'))
 	{
-		Camera::MainCamera.transform.Move(speed * dt, 0, 0); 
-		player->transform.Move(speed * dt, 0, 0); 
+		Camera::MainCamera.Move(CameraMovement::RIGHT, speed);
+	}
+
+	// Rotate camera with arrow keys
+	if(GetAsyncKeyState(VK_RIGHT)){
+		Camera::MainCamera.Rotate(5.0f * dt, 0.0f);
+	}
+	if(GetAsyncKeyState(VK_LEFT)){
+		Camera::MainCamera.Rotate(-5.0f * dt, 0.0f);
+	}
+	if(GetAsyncKeyState(VK_UP)){
+		Camera::MainCamera.Rotate(0.0f, -5.0f * dt);
+	}
+	if(GetAsyncKeyState(VK_DOWN)){
+		Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
 	}
 
 	if(GetAsyncKeyState(VK_SPACE)){
-		GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
-		go->transform.SetScale(1.0f,1.0f,1.0f);
-		go->transform.SetPosition(player->transform.Pos());
-		go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-		go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-		gameobjects.push_back(go);
+		int numCubes = dt * 1000;
+		for(int i = 0; i < numCubes; i++){
+			GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
+			go->transform.SetScale(1.0f,1.0f,1.0f);
+			go->transform.SetPosition(0,0,0);
+			go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
+			go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
+			gameobjects.push_back(go);
+		}
 	}
 
 	Camera::MainCamera.Update(dt);
@@ -178,8 +189,6 @@ void DemoGame::UpdateScene(float dt)
 	for(int i = 0; i < gameobjects.size(); i++){
 		gameobjects[i]->Update(dt);
 	}
-
-	player->Update(dt);
 }
 
 // Clear the screen, redraw everything, present
@@ -220,11 +229,19 @@ void DemoGame::OnMouseUp(WPARAM btnState, int x, int y)
 
 void DemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 {
+	if(prevMousePos.x == -99999 || prevMousePos.y == -99999){
+		prevMousePos.x = x;
+		prevMousePos.y = y;
+	}
+
+	Camera::MainCamera.Rotate((float)-(prevMousePos.x - x)/ 100.0f, 0.0f);
+	Camera::MainCamera.Rotate(0.0f, (float)-(prevMousePos.y - y)/ 100.0f);
+
 	prevMousePos.x = x;
 	prevMousePos.y = y;
 }
 
 void DemoGame::OnMouseScroll(WPARAM whlState, int delta){
-	Camera::MainCamera.transform.Move(0, 0, delta / 10.0f);
+	//Camera::MainCamera.transform.Move(0, 0, delta / 10.0f);
 }
 #pragma endregion

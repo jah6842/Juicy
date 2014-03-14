@@ -14,6 +14,22 @@ Camera::Camera(UINT width,
 	_nearClip = nearClip;
 	_farClip = farClip;
 
+	dV		= XMFLOAT3(0,0,1);
+	dU		= XMFLOAT3(0,1,0);
+	eye		= XMFLOAT3(0,0,0);
+	view	= XMFLOAT3(0,0,1);
+	up		= XMFLOAT3(0,1,0);
+	forward = XMFLOAT3(0,0,1);
+	right	= XMFLOAT3(1,0,0);
+	_heading = 0;
+	_pitch = 0;
+
+	//initialize movement toggles
+    movementDirections[0] = 0;
+    movementDirections[1] = 0;
+    movementDirections[2] = 0;
+    movementDirections[3] = 0;
+
 	RecalcProjMatrix();
 };
 
@@ -22,8 +38,38 @@ Camera::~Camera(){
 
 };
 
+XMFLOAT3 operator*(XMFLOAT3 a, float b) {
+    XMFLOAT3 temp = a;
+	temp.x *= b;
+	temp.y *= b;
+	temp.z *= b;
+	return temp;
+}
+
+XMFLOAT3 operator*(float b, XMFLOAT3 a) {
+    XMFLOAT3 temp = a;
+	temp.x *= b;
+	temp.y *= b;
+	temp.z *= b;
+	return temp;
+}
+
+XMFLOAT3 operator+(XMFLOAT3 a, XMFLOAT3 b){
+	XMFLOAT3 temp = a;
+	temp.x += b.x;
+	temp.y += b.y;
+	temp.z += b.z;
+	return temp;
+};
+
 // Update the camera once per frame
 void Camera::Update(float dt){
+	//update position - 1.5 unit per second
+    eye = eye +  dt * ( movementDirections[0] + movementDirections[1] ) * 1.5f * forward +
+             dt * ( movementDirections[2] + movementDirections[3] ) * 1.5f * right;
+
+	ZeroMemory(&movementDirections, sizeof(float)*4);
+
 	MainCamera.RecalcViewMatrix();
 };
 
@@ -55,14 +101,62 @@ void Camera::GetScreenSize(UINT& width, UINT& height){
 // Recalculate the view matrix
 void Camera::RecalcViewMatrix(){
 	// Set up view matrix (camera)
-	XMVECTOR position	= transform.PosToVector();
-	XMVECTOR target		= XMVectorSet(0, 0, 1, 0);
-	XMVECTOR up			= XMVectorSet(0, 1, 0, 0);
-	XMMATRIX V			= XMMatrixLookToLH(position, target, up);
+
+	//create rotation matrix
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_pitch, _heading, 0.0f);
+
+	XMVECTOR dVVec = XMVectorSet(dV.x, dV.y, dV.z, 1.0f);
+	XMVECTOR dUVec = XMVectorSet(dU.x, dU.y, dU.z, 1.0f);
+
+	//create new view and up vectors
+	XMVECTOR viewVec = XMVector3TransformCoord(dVVec, rotMat);
+	XMVECTOR upVec = XMVector3TransformCoord(dUVec, rotMat);
+
+	XMVECTOR forwardVec = XMVector3Normalize(viewVec);
+	XMVECTOR rightVec = XMVector3Cross(upVec, viewVec);
+	rightVec = XMVector3Normalize(rightVec);
+
+	XMStoreFloat3(&forward, forwardVec);
+	XMStoreFloat3(&right, rightVec);
+
+	XMVECTOR eyeVec = XMVectorSet(eye.x, eye.y, eye.z, 1.0f);
+	viewVec = XMVectorAdd(eyeVec, viewVec);
+
+	XMStoreFloat3(&view, viewVec);
+
+	XMMATRIX V = XMMatrixLookAtLH(eyeVec, viewVec, upVec);
 	XMStoreFloat4x4(&_view, XMMatrixTranspose(V));
 
 	RecalcFrustum();
 };
+
+void Camera::SetPosition(float x, float y, float z){
+	eye.x = x;
+	eye.y = y;
+	eye.z = z;
+};
+void Camera::SetDirection(float heading, float pitch){
+	_heading = heading;
+	_pitch = pitch;
+};
+void Camera::Rotate(float heading, float pitch){
+	_heading += heading;
+	_pitch += pitch;
+
+	if(_pitch > XM_PI/2){
+		_pitch = XM_PI/2;
+	}
+	if(_pitch < -XM_PI/2) {
+		_pitch = -XM_PI/2;
+	}
+};
+void Camera::Move(int i, float value){
+	movementDirections[i] = value;
+};
+
+// To implement
+//void LookAt(XMFLOAT3);
+//void RotateTowards(XMFLOAT3);
 
 // Recalculate the viewing frustum
 void Camera::RecalcFrustum(){
@@ -125,7 +219,6 @@ void Camera::RecalcFrustum(){
 		_frustum[i][2] /= length;
 		_frustum[i][3] /= length;
 	}
-
 };
 
 // Returns true if a point lies within the camera's frustrum

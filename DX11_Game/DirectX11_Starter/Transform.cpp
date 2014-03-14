@@ -33,6 +33,16 @@ float Transform::PosZ(){
 	return _position.z;
 };
 
+float Transform::RotX(){
+	return _rotation.x;
+};
+float Transform::RotY(){
+	return _rotation.y;
+};
+float Transform::RotZ(){
+	return _rotation.z;
+};
+
 XMFLOAT3 Transform::Velocity(){
 	return _velocity;
 };

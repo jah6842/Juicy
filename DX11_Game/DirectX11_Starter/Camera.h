@@ -1,11 +1,21 @@
 #ifndef _CAMERA_H
 #define _CAMERA_H
 
+// Camera class loosely based on
+// http://takinginitiative.wordpress.com/2009/12/06/3d-directx10-free-look-camera-timer-based/
+
 #include <DirectXMath.h>
 #include <d3d11.h>
 #include "Transform.h"
 
 using namespace DirectX;
+
+enum CameraMovement {
+	FORWARD,
+	BACKWARD,
+	LEFT,
+	RIGHT
+};
 
 class Camera {
 
@@ -23,7 +33,7 @@ public:
 	// For now, the static main camera is the only one updated
 	// If we have multiple later, it will be necessary to keep track of them
 	// and update appropriately.
-	static void Update(float dt);
+	void Update(float dt);
 	
 	// Getters
 	XMFLOAT4X4 GetProjectionMatrix();
@@ -49,9 +59,11 @@ public:
 	// A static camera
 	static Camera MainCamera;
 
-	// The camera's transform is public, for simplicity
-	Transform transform;
-	
+	void SetPosition(float x, float y, float z);
+	void SetDirection(float heading, float pitch);
+	void Rotate(float heading, float pitch);
+	void Move(int i, float value);
+
 private:
 	// Projection matrix
 	XMFLOAT4X4 _projection;
@@ -59,6 +71,13 @@ private:
 	XMFLOAT4X4 _view;
 	// Frustum matrix (6x4)
 	float _frustum[6][4];
+
+	// Point to look at
+	XMFLOAT3 dV, dU;
+	XMFLOAT3 eye, view, up;
+	XMFLOAT3 forward, right;
+	float _heading, _pitch;
+	float movementDirections[4];
 
 	// Near and far clip plane distances
 	float _nearClip;
