@@ -59,10 +59,10 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)FBX\lib\debug\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+      <Command>copy /y "$(SolutionDir)FBX\lib\dbg\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -82,10 +82,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\rls;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)FBX\lib\release\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+      <Command>copy /y "$(SolutionDir)FBX\lib\rls\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
