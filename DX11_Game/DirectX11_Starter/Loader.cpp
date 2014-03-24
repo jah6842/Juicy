@@ -285,7 +285,7 @@ std::shared_ptr<Mesh> LoadModel(std::wstring modelName){
 				vertexList.pop_front();
 			}
 
-			for(int q = 0; q < indexList.size(); q++){
+			for(UINT q = 0; q < indexList.size(); q++){
 				indices[q] = q;
 			}
 

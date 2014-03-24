@@ -56,24 +56,32 @@ void LogString(std::wstring s1, std::wstring s2, std::wstring s3, std::wstring s
 };
 #endif
 
+// Used to generate random numbers
 std::random_device RNG::rd;
 std::default_random_engine RNG::rnd;
 
+// Initialize the RNG engine
 void RNG::Init(){
 	rnd = std::default_random_engine(rd());
 };
 
+// Returns a random int between min and max, 
+// default paramaters are INT_MIN and INT_MAX
 int RNG::randInt(int min, int max){
 	std::uniform_int_distribution<int> uInt(min, max);
 	return uInt(rnd);
 };
 
+// Returns a random float between min and max,
+// default parameters are FLT_MIN and FLT_MAX
 float RNG::randFloat(float min, float max){
 	rnd = std::default_random_engine(rd());
-	std::uniform_real_distribution<double> flt(min,max);
-	return static_cast<float>(flt(rnd));
+	std::uniform_real_distribution<float> flt(min,max);
+	return flt(rnd);
 };
 
+// Returns a random double between min and max,
+// default parameters are DBL_MIN and DBL_MAX
 double RNG::randDouble(double min, double max){
 	rnd = std::default_random_engine(rd());
 	std::uniform_real_distribution<double> dbl(min,max);

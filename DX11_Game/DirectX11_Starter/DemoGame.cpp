@@ -173,7 +173,7 @@ void DemoGame::UpdateScene(float dt)
 	}
 
 	if(GetAsyncKeyState(VK_SPACE)){
-		int numCubes = dt * 1000;
+		int numCubes = static_cast<int>(dt * 1000.0f);
 		for(int i = 0; i < numCubes; i++){
 			GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
 			go->transform.SetScale(1.0f,1.0f,1.0f);
@@ -186,7 +186,7 @@ void DemoGame::UpdateScene(float dt)
 
 	Camera::MainCamera.Update(dt);
 
-	for(int i = 0; i < gameobjects.size(); i++){
+	for(UINT i = 0; i < gameobjects.size(); i++){
 		gameobjects[i]->Update(dt);
 	}
 }

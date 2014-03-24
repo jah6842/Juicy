@@ -100,16 +100,27 @@ void LogString(std::wstring s1, std::wstring s2, std::wstring s3, std::wstring s
 void LogString(std::wstring s1, std::wstring s2, std::wstring s3, std::wstring s4, std::wstring s5, std::wstring s6);
 #endif
 
+// A class to provide easy random number generation
 class RNG {
 public:
+	// Used to generate random numbers
 	static std::random_device rd;
 	static std::default_random_engine rnd;
 	
+	// Initialize the RNG engine
 	static void Init();
-	// Returns a random value between min and max
+
+	// Returns a random int between min and max, 
+	// default paramaters are INT_MIN and INT_MAX
 	static int randInt(int min = INT_MIN, int max = INT_MAX);
-	static float randFloat(float min, float max);
-	static double randDouble(double min, double max);
+
+	// Returns a random float between min and max,
+	// default parameters are FLT_MIN and FLT_MAX
+	static float randFloat(float min = FLT_MIN, float max = FLT_MAX);
+
+	// Returns a random double between min and max,
+	// default parameters are DBL_MIN and DBL_MAX
+	static double randDouble(double min = DBL_MIN, double max = DBL_MAX);
 };
 
 #endif // _UTILITIES_H
