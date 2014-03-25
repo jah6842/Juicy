@@ -14,13 +14,13 @@ Camera::Camera(UINT width,
 	_nearClip = nearClip;
 	_farClip = farClip;
 
-	dV		= XMFLOAT3(0,0,1);
-	dU		= XMFLOAT3(0,1,0);
-	eye		= XMFLOAT3(0,0,0);
-	view	= XMFLOAT3(0,0,1);
-	up		= XMFLOAT3(0,1,0);
-	forward = XMFLOAT3(0,0,1);
-	right	= XMFLOAT3(1,0,0);
+	_dV		= XMFLOAT3(0,0,1);
+	_dU		= XMFLOAT3(0,1,0);
+	_eye		= XMFLOAT3(0,0,0);
+	_view	= XMFLOAT3(0,0,1);
+	_up		= XMFLOAT3(0,1,0);
+	_forward = XMFLOAT3(0,0,1);
+	_right	= XMFLOAT3(1,0,0);
 	_heading = 0;
 	_pitch = 0;
 
@@ -38,13 +38,14 @@ Camera::~Camera(){
 
 };
 
+// Extra math functions for XMFLOAT3
 XMFLOAT3 operator*(XMFLOAT3 a, float b) {
     XMFLOAT3 temp = a;
 	temp.x *= b;
 	temp.y *= b;
 	temp.z *= b;
 	return temp;
-}
+};
 
 XMFLOAT3 operator*(float b, XMFLOAT3 a) {
     XMFLOAT3 temp = a;
@@ -52,7 +53,7 @@ XMFLOAT3 operator*(float b, XMFLOAT3 a) {
 	temp.y *= b;
 	temp.z *= b;
 	return temp;
-}
+};
 
 XMFLOAT3 operator+(XMFLOAT3 a, XMFLOAT3 b){
 	XMFLOAT3 temp = a;
@@ -65,8 +66,8 @@ XMFLOAT3 operator+(XMFLOAT3 a, XMFLOAT3 b){
 // Update the camera once per frame
 void Camera::Update(float dt){
 	//update position - 1.5 unit per second
-    eye = eye +  dt * ( movementDirections[0] + movementDirections[1] ) * 1.5f * forward +
-             dt * ( movementDirections[2] + movementDirections[3] ) * 1.5f * right;
+    _eye = _eye +  dt * ( movementDirections[0] + movementDirections[1] ) * 1.5f * _forward +
+             dt * ( movementDirections[2] + movementDirections[3] ) * 1.5f * _right;
 
 	ZeroMemory(&movementDirections, sizeof(float)*4);
 
@@ -75,18 +76,18 @@ void Camera::Update(float dt){
 
 // Returns the camera's projection matrix
 XMFLOAT4X4 Camera::GetProjectionMatrix(){
-	return _projection;
+	return _projectionMatrix;
 };
 
 // Returns the camera's view matrix
 XMFLOAT4X4 Camera::GetViewMatrix(){
-	return _view;
+	return _viewMatrix;
 };
 
 // Returns the camera's projection*view matrix
 XMFLOAT4X4 Camera::GetViewProjMatrix(){
-	XMMATRIX v = XMLoadFloat4x4(&_view);
-	XMMATRIX p = XMLoadFloat4x4(&_projection);
+	XMMATRIX v = XMLoadFloat4x4(&_viewMatrix);
+	XMMATRIX p = XMLoadFloat4x4(&_projectionMatrix);
 
 	XMFLOAT4X4 viewProj;
 	XMStoreFloat4x4(&viewProj, (p*v));
@@ -105,8 +106,8 @@ void Camera::RecalcViewMatrix(){
 	//create rotation matrix
 	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(_pitch, _heading, 0.0f);
 
-	XMVECTOR dVVec = XMVectorSet(dV.x, dV.y, dV.z, 1.0f);
-	XMVECTOR dUVec = XMVectorSet(dU.x, dU.y, dU.z, 1.0f);
+	XMVECTOR dVVec = XMVectorSet(_dV.x, _dV.y, _dV.z, 1.0f);
+	XMVECTOR dUVec = XMVectorSet(_dU.x, _dU.y, _dU.z, 1.0f);
 
 	//create new view and up vectors
 	XMVECTOR viewVec = XMVector3TransformCoord(dVVec, rotMat);
@@ -116,24 +117,24 @@ void Camera::RecalcViewMatrix(){
 	XMVECTOR rightVec = XMVector3Cross(upVec, viewVec);
 	rightVec = XMVector3Normalize(rightVec);
 
-	XMStoreFloat3(&forward, forwardVec);
-	XMStoreFloat3(&right, rightVec);
+	XMStoreFloat3(&_forward, forwardVec);
+	XMStoreFloat3(&_right, rightVec);
 
-	XMVECTOR eyeVec = XMVectorSet(eye.x, eye.y, eye.z, 1.0f);
+	XMVECTOR eyeVec = XMVectorSet(_eye.x, _eye.y, _eye.z, 1.0f);
 	viewVec = XMVectorAdd(eyeVec, viewVec);
 
-	XMStoreFloat3(&view, viewVec);
+	XMStoreFloat3(&_view, viewVec);
 
 	XMMATRIX V = XMMatrixLookAtLH(eyeVec, viewVec, upVec);
-	XMStoreFloat4x4(&_view, XMMatrixTranspose(V));
+	XMStoreFloat4x4(&_viewMatrix, XMMatrixTranspose(V));
 
 	RecalcFrustum();
 };
 
 void Camera::SetPosition(float x, float y, float z){
-	eye.x = x;
-	eye.y = y;
-	eye.z = z;
+	_eye.x = x;
+	_eye.y = y;
+	_eye.z = z;
 };
 void Camera::SetDirection(float heading, float pitch){
 	_heading = heading;
@@ -161,8 +162,8 @@ void Camera::Move(int i, float value){
 // Recalculate the viewing frustum
 void Camera::RecalcFrustum(){
 
-	XMMATRIX m_view = XMLoadFloat4x4(&_view);
-	XMMATRIX m_projection = XMLoadFloat4x4(&_projection);
+	XMMATRIX m_view = XMLoadFloat4x4(&_viewMatrix);
+	XMMATRIX m_projection = XMLoadFloat4x4(&_projectionMatrix);
 	XMMATRIX viewProjection = XMMatrixMultiply(m_projection, m_view);
 
 	XMFLOAT4X4 vp;// = _view * _projection;
@@ -256,7 +257,7 @@ void Camera::RecalcProjMatrix(){
 		(float)_width / (float)_height,
 		_nearClip,
 		_farClip);
-	XMStoreFloat4x4(&_projection, XMMatrixTranspose(P));
+	XMStoreFloat4x4(&_projectionMatrix, XMMatrixTranspose(P));
 };
 
 // Resize the camera

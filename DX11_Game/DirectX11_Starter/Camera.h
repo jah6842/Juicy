@@ -66,16 +66,16 @@ public:
 
 private:
 	// Projection matrix
-	XMFLOAT4X4 _projection;
+	XMFLOAT4X4 _projectionMatrix;
 	// View matrix
-	XMFLOAT4X4 _view;
+	XMFLOAT4X4 _viewMatrix;
 	// Frustum matrix (6x4)
 	float _frustum[6][4];
 
 	// Point to look at
-	XMFLOAT3 dV, dU;
-	XMFLOAT3 eye, view, up;
-	XMFLOAT3 forward, right;
+	XMFLOAT3 _dV, _dU;
+	XMFLOAT3 _eye, _view, _up;
+	XMFLOAT3 _forward, _right;
 	float _heading, _pitch;
 	float movementDirections[4];
 
