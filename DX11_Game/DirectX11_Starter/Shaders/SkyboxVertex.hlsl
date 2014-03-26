@@ -30,10 +30,11 @@ VS_OUTPUT main( VS_INPUT input )
 	// Set up output
 	VS_OUTPUT output;
 
-	// Calculate output position
+	// Calculate WVP matrix
 	matrix worldViewProj = mul(mul(world, view), projection);
+
 	//Set Pos to xyww instead of xyzw, so that z will always be 1 (furthest from camera)
-	output.Pos = mul(mul(input.position, input.instancePosition), viewProj).xyww;
+	output.Pos = mul(float4(input.position.xyz, 1.0f), worldViewProj).xyww;
 
 	// Pass on the UVs as the XYZ position
 	output.TexCoord = input.position.xyz;

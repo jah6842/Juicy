@@ -146,14 +146,17 @@ void Renderer::Draw(){
 
 	for(std::unordered_set<GameObject*>::const_iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
-		if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
-			continue;
+		//if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
+		//	continue;
 
 		GameObject* go = *itr;
 			
 		// Check if the object is using an instanced material
 		if(!go->material->vertexShader->isInstanced){
 			PrepareMaterial(go, go->material.get());
+
+			textureManager->SetActiveTexture(go->material->diffuseTexture);
+			textureManager->SetActiveFilterMode(go->material->textureFilter);
 
 			// Set the current vertex buffer
 			UINT stride = Vertex::VertexSize(go->mesh->vertexType);
