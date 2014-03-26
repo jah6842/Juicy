@@ -33,6 +33,7 @@ std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vSh
 	switch(vShaderID){
 	case VSHADER_TEXTURED_LIT_INSTANCED:
 	case VSHADER_TEXTURED_INSTANCED:
+	case VSHADER_SKYBOX:
 	case VSHADER_COLORED:
 		description = VERTEX_DESCRIPTION_ALL;
 		descriptionSize = 8;

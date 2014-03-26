@@ -15,13 +15,12 @@ public:
 	Transform transform;
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Material> material;
-	//Material* material;
 
 	GameObject();
 	GameObject(MESHES m, MATERIALS mat);
 	~GameObject();
 
-	void Update(float dt);
+	virtual void Update(float dt);
 };
 
 #endif // _GAME_OBJECT_H

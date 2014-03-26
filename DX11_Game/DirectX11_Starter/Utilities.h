@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <random>
+#include "DeviceManager.h"
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
@@ -45,28 +46,6 @@
 	#define HR(x) (x)
 	#endif
 #endif
-
-// Static class to manage DirectX devices and contexts
-// For our purposes, we'll probably only have one device and one context.
-class DeviceManager {
-private:
-	static ID3D11Device* _currentDevice;
-	static ID3D11DeviceContext* _currentDeviceContext;
-public:
-	static ID3D11Device* GetCurrentDevice(){
-		return _currentDevice;
-	};
-	static ID3D11DeviceContext* GetCurrentDeviceContext(){
-		return _currentDeviceContext;
-	};
-
-	static void SetCurrentDevice(ID3D11Device* device){
-		_currentDevice = device;
-	};
-	static void SetCurrentDeviceContext(ID3D11DeviceContext* deviceContext){
-		_currentDeviceContext = deviceContext;
-	};
-};
 
 // A timer that uses QueryPerformanceCounter
 class DebugTimer {

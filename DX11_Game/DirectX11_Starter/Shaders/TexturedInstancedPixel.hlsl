@@ -6,8 +6,8 @@ struct VS_OUTPUT
 	float2 TexCoord : TEXCOORD0;
 };
 
-Texture2D ObjTexture;
-SamplerState ObjSamplerState;
+Texture2D ObjTexture : register(t0);
+SamplerState ObjSamplerState : register(s0);
 
 // Entry point for this pixel shader
 float4 main(VS_OUTPUT input) : SV_TARGET

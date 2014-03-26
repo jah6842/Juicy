@@ -60,6 +60,7 @@ public:
 	static Camera MainCamera;
 
 	void SetPosition(float x, float y, float z);
+	XMFLOAT3 GetPosition();
 	void SetDirection(float heading, float pitch);
 	void Rotate(float heading, float pitch);
 	void Move(int i, float value);

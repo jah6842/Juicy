@@ -3,6 +3,7 @@
 
 #include <d3d11.h>
 #include <WICTextureLoader.h>
+#include <DDSTextureLoader.h>
 #include <string>
 #include <iostream>
 #include <map>
@@ -19,6 +20,8 @@ struct Texture {
 	bool isDiffuseMap;
 	bool isNormalMap; // aka bump map
 	bool isSpecularMap; // For lighting
+	bool isCubeMap; // For skybox
+	bool isIlluminationMap; // For self-illumination
 };
 
 class TextureManager {

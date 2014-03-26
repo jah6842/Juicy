@@ -92,9 +92,11 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Constants.cpp" />
     <ClCompile Include="DemoGame.cpp" />
+    <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DXGame.cpp" />
     <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Utilities.cpp" />
@@ -110,10 +112,12 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DemoGame.h" />
+    <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Shaders\globals.inc" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Utilities.h" />
@@ -149,6 +153,18 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shaders\SkyboxPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shaders\SkyboxVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shaders\TexturedInstancedLightingPixel.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
@@ -191,6 +207,9 @@
     <ProjectReference Include="..\DirectXTK\DirectXTK_Desktop_2012.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

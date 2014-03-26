@@ -171,6 +171,7 @@ bool DXGame::InitDirect3D()
 	// Set the device and device context in the device manager for use in other classes
 	DeviceManager::SetCurrentDevice(device);
 	DeviceManager::SetCurrentDeviceContext(deviceContext);
+	DeviceManager::Initialize(device);
 
 	// Check for 4X MSAA quality support
 	HR(device->CheckMultisampleQualityLevels(

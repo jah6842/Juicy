@@ -93,6 +93,17 @@ void Renderer::PrepareMaterial(GameObject* go, Material* mat){
 		deviceContext->PSSetShader(mat->pixelShader->pShader, NULL, 0);
 	}
 
+	switch(mat->materialID){
+		case MATERIAL_SKYBOX: 
+			DeviceManager::SetStencilMode(DeviceManager::GetCurrentDeviceContext(), DM_STENCIL_SKYBOX);
+			DeviceManager::SetRasterizerMode(DeviceManager::GetCurrentDeviceContext(), DM_CULL_NONE);
+			break;
+		default:
+			DeviceManager::SetStencilMode(DeviceManager::GetCurrentDeviceContext(), DM_STENCIL_ENABLE);
+			DeviceManager::SetRasterizerMode(DeviceManager::GetCurrentDeviceContext(), DM_CULL_BACK);
+			break;
+	}
+
 	if(go == nullptr)
 		return;
 

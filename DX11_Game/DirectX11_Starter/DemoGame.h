@@ -7,8 +7,8 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "TextRenderer.h"
+#include "Skybox.h"
 #include <vector>
-#include <random>
 
 // For DirectX Math
 using namespace DirectX;
@@ -35,6 +35,8 @@ public:
 private:
 	static const int NUM_GO = 15;
 	std::vector<GameObject*> gameobjects;
+
+	Skybox* skybox;
 
 	Renderer* renderer;
 

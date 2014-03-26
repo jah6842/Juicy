@@ -18,6 +18,7 @@ Material::Material(MATERIALS mat){
 	materialName = description.materialName;
 	diffuseTexture = description.diffuseTexture;
 	textureFilter = description.textureFilter;
+	materialID = description.materialID;
 
 	// Get the current device
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();

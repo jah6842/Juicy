@@ -136,6 +136,9 @@ void Camera::SetPosition(float x, float y, float z){
 	_eye.y = y;
 	_eye.z = z;
 };
+XMFLOAT3 Camera::GetPosition(){
+	return _eye;
+};
 void Camera::SetDirection(float heading, float pitch){
 	_heading = heading;
 	_pitch = pitch;

@@ -72,7 +72,11 @@ DemoGame::~DemoGame()
 	}
 
 	TextRenderer::Cleanup();
+
 	delete renderer;
+	delete skybox;
+
+	DeviceManager::Cleanup(DeviceManager::GetCurrentDevice());
 }
 
 #pragma endregion
@@ -94,6 +98,9 @@ bool DemoGame::Init()
 
 	// Set up our main renderer
 	renderer = new Renderer();
+
+	// Set up the skybox
+	skybox = new Skybox(MATERIAL_SKYBOX);
 
 	DebugTimer::Start(L"TIME TAKEN TO CREATE GAMEOBJECTS");
 
@@ -185,6 +192,8 @@ void DemoGame::UpdateScene(float dt)
 	}
 
 	Camera::MainCamera.Update(dt);
+
+	skybox->Update(dt);
 
 	for(UINT i = 0; i < gameobjects.size(); i++){
 		gameobjects[i]->Update(dt);

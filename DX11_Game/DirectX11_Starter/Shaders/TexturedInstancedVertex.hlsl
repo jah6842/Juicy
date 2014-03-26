@@ -22,7 +22,6 @@ struct VS_OUTPUT
 {
 	float4 Pos		: SV_POSITION;
 	float2 TexCoord : TEXCOORD0;
-	float3 Normal	: NORMAL;
 };
 
 // The entry point for our vertex shader
@@ -39,9 +38,6 @@ VS_OUTPUT main( VS_INPUT input )
 
 	// Texture UVs
 	output.TexCoord = input.TexCoord;
-
-	// Vertex normals
-	output.Normal = input.Normal;
 
 	return output;
 }

@@ -112,16 +112,36 @@ void TextureManager::InitTextures(){
 
 	for(UINT i = 0; i < TM_NUM_TEXTURES; i++){
 		// Set up a texture struct
+		TEXTURE_DESCRIPTION desc = TEXTURE_DESCRIPTIONS[i];
 		Texture tempTex;
-		tempTex.isDiffuseMap = true;
-		tempTex.name = textureNames[i];
+		
+		switch(desc.textureType){
+			case TM_TYPE_DIFFUSE: tempTex.isDiffuseMap = true; break;
+			case TM_TYPE_NORMAL: tempTex.isNormalMap = true; break;
+			case TM_TYPE_SPECULAR: tempTex.isSpecularMap = true; break;
+			case TM_TYPE_ILLUMINATION: tempTex.isIlluminationMap = true; break;
+			case TM_TYPE_CUBEMAP: tempTex.isCubeMap = true; break;
+		}
+
+		tempTex.name = desc.textureName;
 		tempTex.textureID = i;
 
 		std::wstring wTexturePath = TEXTURE_PATH;
-		wTexturePath += textureNames[i];
+		wTexturePath += desc.textureName;
 
 		// DirectXTK Texture Loading
-		HR(CreateWICTextureFromFile(device, deviceContext, wTexturePath.c_str(), NULL, &tempTex.resourceView));
+		switch(desc.fileType){
+			case TM_FILE_FORMAT_WIC:
+				HR(CreateWICTextureFromFile(device, deviceContext, wTexturePath.c_str(), NULL, &tempTex.resourceView));
+				break;
+			case TM_FILE_FORMAT_DDS:
+				HR(CreateDDSTextureFromFile(device, wTexturePath.c_str(), NULL, &tempTex.resourceView));
+				break;
+			case TM_FILE_FORMAT_DDS_CUBEMAP:
+				HR(CreateDDSTextureFromFileEx(device, wTexturePath.c_str(), 1, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE,
+					0, 0, true, NULL, &tempTex.resourceView));
+				break;
+		}
 
 		// Add the texture to the list
 		textures[i] = tempTex;
