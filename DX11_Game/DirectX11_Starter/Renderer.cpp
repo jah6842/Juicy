@@ -7,12 +7,14 @@ std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<Gam
 Renderer::Renderer(){
 	_perFrameConstantBuffer = nullptr;
 	_directionalLightBuffer = nullptr;
+	_textMaterial = nullptr;
 	textureManager = nullptr;
 	rendererReady = false;
 };
 
 Renderer::~Renderer(){
 	textureManager->Cleanup();
+	ReleaseMacro(fontVBuffer);
 };
 
 ID3D11Buffer* instanceBuffer = nullptr;
@@ -34,6 +36,19 @@ void Renderer::PrepareRenderer() {
 	// Create a constant buffer for per-frame data
 	if( _perFrameConstantBuffer == nullptr) {
 		_perFrameConstantBuffer = LoadConstantBuffer(device, CONSTANT_BUFFER_LAYOUT_PER_FRAME);
+	}
+
+	// Make sure we have things set up for text
+	if(_textMaterial == nullptr){
+		_textMaterial = Material::LoadMaterial(device, MATERIAL_TEXT);
+
+		D3D11_BUFFER_DESC vertexBufferDesc;
+		ZeroMemory(&vertexBufferDesc, sizeof(D3D11_BUFFER_DESC));
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		vertexBufferDesc.CPUAccessFlags= D3D11_CPU_ACCESS_WRITE;
+		vertexBufferDesc.ByteWidth = sizeof(RenderVertex)*6*1024;
+		HR(device->CreateBuffer(&vertexBufferDesc,NULL,&fontVBuffer));
 	}
 
 	// Set the constant buffer's data
@@ -277,9 +292,136 @@ void Renderer::Draw(){
 	rendererReady = false;
 
 	std::string s1 = "Drawn Objects: " + std::to_string(drawnObjects);
-	TextRenderer::DrawString(s1.c_str(), 0, 100, 40);
+	DrawString(s1.c_str(), 0, 100, 40);
 	std::string s2 = "Draw calls: " + std::to_string(drawCalls);
-	TextRenderer::DrawString(s2.c_str(), 0, 140, 40);
+	DrawString(s2.c_str(), 0, 140, 40);
+};
+
+void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOAT4 color){
+	
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
+	// Get screen width and height
+	UINT width, height;
+	Camera::MainCamera.GetScreenSize(width,height);
+
+	float posX = (x - static_cast<float>(width)) / static_cast<float>(width);
+	float posY = -(y+size - static_cast<float>(height)) / static_cast<float>(height);
+
+    // size of one letter and string size
+    int letterSize = sizeof(RenderVertex)*6;
+    int textSize = strlen(text);
+
+    // size of one char on screen
+    float cScreenWidth = size / width;
+    float cScreenHeight = size / height;
+
+    // texel Size
+    float texelWidth = 1.0f/16.0f;
+
+	D3D11_MAPPED_SUBRESOURCE mappedSub;
+	HR(deviceContext->Map(fontVBuffer,0,D3D11_MAP_WRITE_DISCARD,0,&mappedSub));
+
+	// Pointer to buffer subresource
+	RenderVertex* sprite = (RenderVertex*)mappedSub.pData;
+
+	 //loop to build the string
+    for(int i=0; i< textSize; i++)
+    {
+        /*Get starting position of the quad. First Quad is just the posX value , then characterwidth is added.*/
+        float thisStartX = posX +(cScreenWidth * i);
+        float thisEndX =thisStartX + cScreenWidth;
+        float thisStartY = posY;
+        float thisEndY = thisStartY + cScreenHeight;
+
+        // Write the position of each 6 vertices to subresource
+        sprite[0].pos = XMFLOAT3( thisEndX, thisEndY, 0.0f );
+        sprite[1].pos = XMFLOAT3( thisEndX, thisStartY, 0.0f );
+        sprite[2].pos = XMFLOAT3( thisStartX, thisStartY, 0.0f );
+        sprite[3].pos = XMFLOAT3( thisStartX, thisStartY, 0.0f );
+        sprite[4].pos = XMFLOAT3( thisStartX, thisEndY, 0.0f );
+        sprite[5].pos = XMFLOAT3( thisEndX, thisEndY, 0.0f );
+
+		// Get the row and column of the texture sheet
+		int row = static_cast<int>(text[i]) / 16;
+		int col = static_cast<int>(text[i]) % 16;
+		
+		// Get the texture coordinate based on row/col in texture sheet
+		float texX = col / 16.0f;
+		float texXL = texX + texelWidth;
+		float texY = row / 16.0f;
+		float texYL = texY + texelWidth;
+		
+        // Apply texture coordinates to subresource
+        sprite[0].texCoord = XMFLOAT2( texXL, texY);
+        sprite[1].texCoord = XMFLOAT2( texXL, texYL );
+        sprite[2].texCoord = XMFLOAT2( texX, texYL );
+        sprite[3].texCoord = XMFLOAT2( texX, texYL );
+        sprite[4].texCoord = XMFLOAT2( texX, texY );
+        sprite[5].texCoord = XMFLOAT2( texXL, texY );
+
+		// Set the color attribute
+		for(int j = 0; j < 6; j++){
+			sprite[j].color = color;
+		}
+
+        //set sprite pointer for next sprite
+        sprite = sprite + 6;
+	}
+
+	float blendFactor[4];
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	// Blend states
+	/*
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	device->CreateBlendState(&blendDesc, &enableBlendingState);
+
+	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	device->CreateBlendState(&blendDesc, &disableBlendingState);
+	*/
+
+	//deviceContext->OMSetBlendState(enableBlendingState, blendFactor, 0xFFFFFFFF);
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
+
+	// Update the constant buffer itself
+	CONSTANT_BUFFER_PER_MODEL modelData;
+	modelData.world = Transform::Identity().WorldMatrix();
+	deviceContext->UpdateSubresource(_textMaterial->constantBuffer->cBuffer, 0, NULL, &modelData, 0, 0);
+
+	// Change shaders
+	deviceContext->VSSetShader(_textMaterial->vertexShader->vShader, NULL, 0);
+	deviceContext->IASetInputLayout(_textMaterial->vertexShader->vShaderInputLayout);
+	deviceContext->VSSetConstantBuffers(1, 1, &_textMaterial->constantBuffer->cBuffer);
+	deviceContext->PSSetShader(_textMaterial->pixelShader->pShader, NULL, 0);
+
+	UINT stride = sizeof(RenderVertex);
+	UINT offset = 0;
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetVertexBuffers(0,1,&fontVBuffer,&stride,&offset);
+
+	textureManager->SetActiveTexture(_textMaterial->diffuseTexture);
+	textureManager->SetActiveFilterMode(_textMaterial->textureFilter);
+
+	deviceContext->Unmap(fontVBuffer, 0);
+	deviceContext->Draw(6*textSize,0);
+
+	//deviceContext->OMSetBlendState(disableBlendingState, blendFactor, 0xFFFFFFFF);
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);
+
 };
 
 // Add a gameobject to the gameobjects list

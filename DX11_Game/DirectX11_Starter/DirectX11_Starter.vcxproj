@@ -97,7 +97,6 @@
     <ClCompile Include="DXGame.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Skybox.cpp" />
-    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -118,7 +117,6 @@
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Shaders\globals.inc" />
     <ClInclude Include="Skybox.h" />
-    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="GameObject.h" />

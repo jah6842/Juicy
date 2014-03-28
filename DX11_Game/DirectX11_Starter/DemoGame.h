@@ -6,7 +6,6 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Renderer.h"
-#include "TextRenderer.h"
 #include "Skybox.h"
 #include <vector>
 

@@ -71,8 +71,6 @@ DemoGame::~DemoGame()
 		gameobjects.pop_back();
 	}
 
-	TextRenderer::Cleanup();
-
 	delete renderer;
 	delete skybox;
 
@@ -92,9 +90,6 @@ bool DemoGame::Init()
 
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
-
-	// Setup the text renderer
-	TextRenderer::Setup();
 
 	// Set up our main renderer
 	renderer = new Renderer();
@@ -209,9 +204,9 @@ void DemoGame::DrawScene()
 
 	renderer->Draw();
 
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24, XMFLOAT4(1,0,0,1));
-	TextRenderer::DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,36, XMFLOAT4(0,1,0,1));
-	TextRenderer::DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,50,48, XMFLOAT4(0,0,1,1));
+	renderer->DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24, XMFLOAT4(1,0,0,1));
+	renderer->DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,36, XMFLOAT4(0,1,0,1));
+	renderer->DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,50,48, XMFLOAT4(0,0,1,1));
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));

@@ -5,7 +5,8 @@ const WCHAR* vShaderNames[] = {
 	L"TexturedVertex.cso",
 	L"TexturedInstancedVertex.cso",
 	L"TexturedInstancedLightingVertex.cso",
-	L"SkyboxVertex.cso"
+	L"SkyboxVertex.cso",
+	L"FontVertex.cso"
 };
 
 const WCHAR* pShaderNames[] = {
@@ -13,7 +14,8 @@ const WCHAR* pShaderNames[] = {
 	L"TexturedPixel.cso",
 	L"TexturedInstancedPixel.cso",
 	L"TexturedInstancedLightingPixel.cso",
-	L"SkyboxPixel.cso"
+	L"SkyboxPixel.cso",
+	L"FontPixel.cso"
 };
 
 const TEXTURE_DESCRIPTION TEXTURE_DESCRIPTIONS[TM_NUM_TEXTURES] = {
@@ -30,6 +32,8 @@ const TEXTURE_DESCRIPTION TEXTURE_DESCRIPTIONS[TM_NUM_TEXTURES] = {
 
 	{ L"spaceCubemap3.dds", TM_TYPE_CUBEMAP, TM_FILE_FORMAT_DDS_CUBEMAP },
 	{ L"earth.dds", TM_TYPE_CUBEMAP, TM_FILE_FORMAT_DDS_CUBEMAP },
+
+	{ L"ascii.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC },
 };
 
 const WCHAR* meshNames[] = { 
@@ -82,6 +86,15 @@ const MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[NUM_MATERIALS] = {
 		VSHADER_SKYBOX,
 		PSHADER_SKYBOX,
 		TM_TEXTURE_SPACE_CUBEMAP,
+		TM_FILTER_ANISO_4X,
+		CONSTANT_BUFFER_LAYOUT_PER_MODEL 
+	},
+	{
+		L"Text",
+		MATERIAL_TEXT,
+		VSHADER_TEXT,
+		PSHADER_TEXT,
+		TM_TEXTURE_TEXT,
 		TM_FILTER_ANISO_4X,
 		CONSTANT_BUFFER_LAYOUT_PER_MODEL 
 	},

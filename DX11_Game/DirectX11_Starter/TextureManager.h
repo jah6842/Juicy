@@ -42,16 +42,17 @@ private:
 	void ReleaseTextures();
 
 	// <TM_TEXTURE, Texture> container
-	std::map<UINT, Texture> textures;
+	std::map<UINT, Texture> _textures;
 
 	// Filter modes that we can use
-	ID3D11SamplerState* samplerStatePoint;
-	ID3D11SamplerState* samplerStateLinear;
-	ID3D11SamplerState* samplerStateAnisotropic1X;
-	ID3D11SamplerState* samplerStateAnisotropic2X;
-	ID3D11SamplerState* samplerStateAnisotropic4X;
-	ID3D11SamplerState* samplerStateAnisotropic8X;
-	ID3D11SamplerState* samplerStateAnisotropic16X;
+	ID3D11SamplerState* _samplerStatePoint;
+	ID3D11SamplerState* _samplerStateLinear;
+	ID3D11SamplerState* _samplerStateAnisotropic1X;
+	ID3D11SamplerState* _samplerStateAnisotropic2X;
+	ID3D11SamplerState* _samplerStateAnisotropic4X;
+	ID3D11SamplerState* _samplerStateAnisotropic8X;
+	ID3D11SamplerState* _samplerStateAnisotropic16X;
+	ID3D11SamplerState* _samplerStateText;
 };
 
 #endif // _TEXTURE_MANAGER_H

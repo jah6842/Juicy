@@ -39,6 +39,7 @@ std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vSh
 		instanced = true;
 		break;
 	case VSHADER_SKYBOX:
+	case VSHADER_TEXT:
 		description = VERTEX_DESCRIPTION_ALL;
 		descriptionSize = 8;
 		instanced = false;

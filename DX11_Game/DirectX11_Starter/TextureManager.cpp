@@ -1,13 +1,14 @@
 #include "TextureManager.h"
 
 TextureManager::TextureManager(){
-	samplerStatePoint = nullptr;
-	samplerStateLinear = nullptr;
-	samplerStateAnisotropic1X = nullptr;
-	samplerStateAnisotropic2X = nullptr;
-	samplerStateAnisotropic4X = nullptr;
-	samplerStateAnisotropic8X = nullptr;
-	samplerStateAnisotropic16X = nullptr;
+	_samplerStatePoint = nullptr;
+	_samplerStateLinear = nullptr;
+	_samplerStateAnisotropic1X = nullptr;
+	_samplerStateAnisotropic2X = nullptr;
+	_samplerStateAnisotropic4X = nullptr;
+	_samplerStateAnisotropic8X = nullptr;
+	_samplerStateAnisotropic16X = nullptr;
+	_samplerStateText = nullptr;
 };
 
 TextureManager::~TextureManager(){
@@ -26,7 +27,7 @@ void TextureManager::Cleanup(){
 
 void TextureManager::SetActiveTexture(TM_TEXTURE t, TM_TEXTURE_TYPE type){
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
-	deviceContext->PSSetShaderResources(type,1,&textures[t].resourceView);
+	deviceContext->PSSetShaderResources(type,1,&_textures[t].resourceView);
 };
 
 void TextureManager::SetActiveFilterMode(TM_FILTER_MODE m){
@@ -35,25 +36,28 @@ void TextureManager::SetActiveFilterMode(TM_FILTER_MODE m){
 	
 	switch(m){
 	case TM_FILTER_POINT:
-		deviceContext->PSSetSamplers(0,1,&samplerStatePoint);
+		deviceContext->PSSetSamplers(0,1,&_samplerStatePoint);
 		break;
 	case TM_FILTER_LINEAR:
-		deviceContext->PSSetSamplers(0,1,&samplerStateLinear);
+		deviceContext->PSSetSamplers(0,1,&_samplerStateLinear);
 		break;
 	case TM_FILTER_ANISO_1X:
-		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic1X);
+		deviceContext->PSSetSamplers(0,1,&_samplerStateAnisotropic1X);
 		break;
 	case TM_FILTER_ANISO_2X:
-		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic2X);
+		deviceContext->PSSetSamplers(0,1,&_samplerStateAnisotropic2X);
 		break;
 	case TM_FILTER_ANISO_4X:
-		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic4X);
+		deviceContext->PSSetSamplers(0,1,&_samplerStateAnisotropic4X);
 		break;
 	case TM_FILTER_ANISO_8X:
-		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic8X);
+		deviceContext->PSSetSamplers(0,1,&_samplerStateAnisotropic8X);
 		break;
 	case TM_FILTER_ANISO_16X:
-		deviceContext->PSSetSamplers(0,1,&samplerStateAnisotropic16X);
+		deviceContext->PSSetSamplers(0,1,&_samplerStateAnisotropic16X);
+		break;
+	case TM_FILTER_TEXT:
+		deviceContext->PSSetSamplers(0,1,&_samplerStateText);
 		break;
 	}
 };
@@ -71,37 +75,41 @@ void TextureManager::InitSamplerStates(){
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     sampDesc.MinLOD = 0.0f;
     sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	// Create the Point Filtering Sample State
-	HR(device->CreateSamplerState( &sampDesc, &samplerStatePoint ));
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStateText ));
+
+	// Create the Point Filtering Sample State
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStatePoint ));
 
 	// Create the Linear Filtering Sample State
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	HR(device->CreateSamplerState( &sampDesc, &samplerStateLinear ));
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStateLinear ));
 
 	// Create the 1X Anisotropic Filtering Sample State
 	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	sampDesc.MaxAnisotropy = 1;
-	HR(device->CreateSamplerState( &sampDesc, &samplerStateAnisotropic1X ));
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStateAnisotropic1X ));
 
 	// Create the 2X Anisotropic Filtering Sample State
 	sampDesc.MaxAnisotropy = 2;
-	HR(device->CreateSamplerState( &sampDesc, &samplerStateAnisotropic2X ));
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStateAnisotropic2X ));
 	
 	// Create the 4X Anisotropic Filtering Sample State
 	sampDesc.MaxAnisotropy = 4;
-	HR(device->CreateSamplerState( &sampDesc, &samplerStateAnisotropic4X ));
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStateAnisotropic4X ));
 
 	// Create the 8X Anisotropic Filtering Sample State
 	sampDesc.MaxAnisotropy = 8;
-	HR(device->CreateSamplerState( &sampDesc, &samplerStateAnisotropic8X ));
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStateAnisotropic8X ));
 
 	// Create the 16X Anisotropic Filtering Sample State
 	sampDesc.MaxAnisotropy = 16;
-	HR(device->CreateSamplerState( &sampDesc, &samplerStateAnisotropic16X ));
+	HR(device->CreateSamplerState( &sampDesc, &_samplerStateAnisotropic16X ));
 };
 
 // Load all of the textures that we're going to need
@@ -144,24 +152,25 @@ void TextureManager::InitTextures(){
 		}
 
 		// Add the texture to the list
-		textures[i] = tempTex;
+		_textures[i] = tempTex;
 	}
 };
 
 void TextureManager::ReleaseSamplerStates(){
-	ReleaseMacro(samplerStatePoint);
-	ReleaseMacro(samplerStateLinear);
-	ReleaseMacro(samplerStateAnisotropic1X);
-	ReleaseMacro(samplerStateAnisotropic2X);
-	ReleaseMacro(samplerStateAnisotropic4X);
-	ReleaseMacro(samplerStateAnisotropic8X);
-	ReleaseMacro(samplerStateAnisotropic16X);
+	ReleaseMacro(_samplerStateText);
+	ReleaseMacro(_samplerStatePoint);
+	ReleaseMacro(_samplerStateLinear);
+	ReleaseMacro(_samplerStateAnisotropic1X);
+	ReleaseMacro(_samplerStateAnisotropic2X);
+	ReleaseMacro(_samplerStateAnisotropic4X);
+	ReleaseMacro(_samplerStateAnisotropic8X);
+	ReleaseMacro(_samplerStateAnisotropic16X);
 };
 
 void TextureManager::ReleaseTextures(){
 	for(UINT i = 0; i < TM_NUM_TEXTURES; i++){
-		ReleaseMacro(textures[i].resourceView);
+		ReleaseMacro(_textures[i].resourceView);
 	}
-	textures.clear();
-	delete &textures;
+	_textures.clear();
+	delete &_textures;
 };
