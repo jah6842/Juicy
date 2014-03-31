@@ -1,6 +1,6 @@
 #include "Skybox.h"
 
-Skybox::Skybox(MATERIALS mat) : GameObject(MESH_SPHERE, mat){
+Skybox::Skybox(MATERIALS mat) : GameObject(MESH_CUBE, mat){
 	transform.SetScale(5.0f, 5.0f, 5.0f);
 	
 };
