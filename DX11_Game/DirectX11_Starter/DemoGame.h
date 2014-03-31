@@ -14,10 +14,10 @@ using namespace DirectX;
 
 enum GameState
 {
-	TITLE,
-	MAIN,
-	WIN,
-	LOSE
+	GAME_STATE_TITLE,
+	GAME_STATE_MAIN,
+	GAME_STATE_WIN,
+	GAME_STATE_LOSE
 };
 
 // Demo class which extends the base DXGame class

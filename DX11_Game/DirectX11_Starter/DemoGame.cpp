@@ -115,7 +115,7 @@ bool DemoGame::Init()
 
 	DebugTimer::Stop();
 
-	state = TITLE;
+	state = GAME_STATE_TITLE;
 
 	return true;
 }
@@ -140,14 +140,17 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
-	if (state == TITLE)
+	if(GetAsyncKeyState(VK_ESCAPE)){
+		exit(0);
+	}
+	if (state == GAME_STATE_TITLE)
 	{
 		if (GetAsyncKeyState(VK_RETURN))
 		{
-			state = MAIN;
+			state = GAME_STATE_MAIN;
 		}
 	}
-	else if (state == MAIN)
+	else if (state == GAME_STATE_MAIN)
 	{
 		float speed = 100.0f;
 		if(GetAsyncKeyState(VK_SHIFT)){
@@ -216,7 +219,7 @@ void DemoGame::DrawScene()
 
 	renderer->Draw();
 
-	if (state == TITLE)
+	if (state == GAME_STATE_TITLE)
 	{
 		renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
 	}
