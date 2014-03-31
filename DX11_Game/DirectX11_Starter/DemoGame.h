@@ -12,6 +12,14 @@
 // For DirectX Math
 using namespace DirectX;
 
+enum GameState
+{
+	TITLE,
+	MAIN,
+	WIN,
+	LOSE
+};
+
 // Demo class which extends the base DXGame class
 class DemoGame : public DXGame
 {
@@ -43,4 +51,6 @@ private:
 	// determining how far the mouse moved in a single frame.
 	POINT prevMousePos;
 	POINT prevMouseScroll;
+
+	GameState state;
 };

@@ -115,6 +115,8 @@ bool DemoGame::Init()
 
 	DebugTimer::Stop();
 
+	state = TITLE;
+
 	return true;
 }
 
@@ -138,60 +140,70 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
-	float speed = 100.0f;
-	if(GetAsyncKeyState(VK_SHIFT)){
-		speed *= 3.0f;
-	}
-	// Move camera with WASD
-	if(GetAsyncKeyState('W'))
+	if (state == TITLE)
 	{
-		Camera::MainCamera.Move(CameraMovement::FORWARD, speed);
-	}
-	if(GetAsyncKeyState('S'))
-	{
-		Camera::MainCamera.Move(CameraMovement::BACKWARD, -speed);
-	}
-	if(GetAsyncKeyState('A'))
-	{
-		Camera::MainCamera.Move(CameraMovement::LEFT, -speed);
-	}
-	if(GetAsyncKeyState('D'))
-	{
-		Camera::MainCamera.Move(CameraMovement::RIGHT, speed);
-	}
-
-	// Rotate camera with arrow keys
-	if(GetAsyncKeyState(VK_RIGHT)){
-		Camera::MainCamera.Rotate(5.0f * dt, 0.0f);
-	}
-	if(GetAsyncKeyState(VK_LEFT)){
-		Camera::MainCamera.Rotate(-5.0f * dt, 0.0f);
-	}
-	if(GetAsyncKeyState(VK_UP)){
-		Camera::MainCamera.Rotate(0.0f, -5.0f * dt);
-	}
-	if(GetAsyncKeyState(VK_DOWN)){
-		Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
-	}
-
-	if(GetAsyncKeyState(VK_SPACE)){
-		int numCubes = static_cast<int>(dt * 1000.0f);
-		for(int i = 0; i < numCubes; i++){
-			GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
-			go->transform.SetScale(1.0f,1.0f,1.0f);
-			go->transform.SetPosition(0,0,0);
-			go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-			go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-			gameobjects.push_back(go);
+		if (GetAsyncKeyState(VK_RETURN))
+		{
+			state = MAIN;
 		}
 	}
+	else if (state == MAIN)
+	{
+		float speed = 100.0f;
+		if(GetAsyncKeyState(VK_SHIFT)){
+			speed *= 3.0f;
+		}
+		// Move camera with WASD
+		if(GetAsyncKeyState('W'))
+		{
+			Camera::MainCamera.Move(CameraMovement::FORWARD, speed);
+		}
+		if(GetAsyncKeyState('S'))
+		{
+			Camera::MainCamera.Move(CameraMovement::BACKWARD, -speed);
+		}
+		if(GetAsyncKeyState('A'))
+		{
+			Camera::MainCamera.Move(CameraMovement::LEFT, -speed);
+		}
+		if(GetAsyncKeyState('D'))
+		{
+			Camera::MainCamera.Move(CameraMovement::RIGHT, speed);
+		}
 
-	Camera::MainCamera.Update(dt);
+		// Rotate camera with arrow keys
+		if(GetAsyncKeyState(VK_RIGHT)){
+			Camera::MainCamera.Rotate(5.0f * dt, 0.0f);
+		}
+		if(GetAsyncKeyState(VK_LEFT)){
+			Camera::MainCamera.Rotate(-5.0f * dt, 0.0f);
+		}
+		if(GetAsyncKeyState(VK_UP)){
+			Camera::MainCamera.Rotate(0.0f, -5.0f * dt);
+		}
+		if(GetAsyncKeyState(VK_DOWN)){
+			Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
+		}
 
-	skybox->Update(dt);
+		if(GetAsyncKeyState(VK_SPACE)){
+			int numCubes = static_cast<int>(dt * 1000.0f);
+			for(int i = 0; i < numCubes; i++){
+				GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
+				go->transform.SetScale(1.0f,1.0f,1.0f);
+				go->transform.SetPosition(0,0,0);
+				go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
+				go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
+				gameobjects.push_back(go);
+			}
+		}
 
-	for(UINT i = 0; i < gameobjects.size(); i++){
-		gameobjects[i]->Update(dt);
+		Camera::MainCamera.Update(dt);
+
+		skybox->Update(dt);
+
+		for(UINT i = 0; i < gameobjects.size(); i++){
+			gameobjects[i]->Update(dt);
+		}
 	}
 }
 
@@ -204,9 +216,10 @@ void DemoGame::DrawScene()
 
 	renderer->Draw();
 
-	renderer->DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,0,24, XMFLOAT4(1,0,0,1));
-	renderer->DrawString("\"The quick brown fox jumps over the lazy dog\"", 0,24,36, XMFLOAT4(0,1,0,1));
-	renderer->DrawString("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0,50,48, XMFLOAT4(0,0,1,1));
+	if (state == TITLE)
+	{
+		renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
+	}
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));
