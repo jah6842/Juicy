@@ -116,6 +116,9 @@ bool DemoGame::Init()
 	DebugTimer::Stop();
 
 	state = GAME_STATE_TITLE;
+	pauseOptions.push_back("Resume");
+	pauseOptions.push_back("Quit");
+	pauseOption = 0;
 
 	return true;
 }
@@ -140,20 +143,22 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
-	if(GetAsyncKeyState(VK_ESCAPE)){
-		exit(0);
-	}
 	if (state == GAME_STATE_TITLE)
 	{
 		if (GetAsyncKeyState(VK_RETURN))
 		{
 			state = GAME_STATE_MAIN;
 		}
+		else if (GetAsyncKeyState(VK_ESCAPE))
+		{
+			exit(0);
+		}
 	}
 	else if (state == GAME_STATE_MAIN)
 	{
 		float speed = 100.0f;
-		if(GetAsyncKeyState(VK_SHIFT)){
+		if(GetAsyncKeyState(VK_SHIFT))
+		{
 			speed *= 3.0f;
 		}
 		// Move camera with WASD
@@ -200,12 +205,56 @@ void DemoGame::UpdateScene(float dt)
 			}
 		}
 
+		if (GetAsyncKeyState(VK_ESCAPE))
+		{
+			state = GAME_STATE_PAUSE;
+		}
+
 		Camera::MainCamera.Update(dt);
 
 		skybox->Update(dt);
 
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
+		}
+	}
+	else if (state == GAME_STATE_PAUSE)
+	{
+		if (GetAsyncKeyState(VK_ESCAPE))
+		{
+			state = GAME_STATE_MAIN;
+		}
+
+		if (GetAsyncKeyState(VK_RETURN))
+		{
+			if (pauseOptions[pauseOption] == "Resume")
+			{
+				state = GAME_STATE_MAIN;
+			}
+			else if (pauseOptions[pauseOption] == "Quit")
+			{
+				exit(0);
+			}
+		}
+
+		if (GetAsyncKeyState(VK_UP))
+		{
+			pauseOption--;
+
+			if (pauseOption < 0)
+			{
+				pauseOption = pauseOptions.size() - 1;
+			}
+		}
+
+		if (GetAsyncKeyState(VK_DOWN))
+		{
+			pauseOption++;
+			
+			if (pauseOption >= pauseOptions.size())
+			{
+				pauseOption = 0;
+			}
 		}
 	}
 }
@@ -222,6 +271,24 @@ void DemoGame::DrawScene()
 	if (state == GAME_STATE_TITLE)
 	{
 		renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
+	}
+	else if (state == GAME_STATE_PAUSE)
+	{
+		int height = 500;
+
+		for (int i = 0; i < pauseOptions.size(); i++)
+		{
+			if (i != pauseOption)
+			{
+				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f));
+			}
+			else
+			{
+				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(1, 1, 1, 1));
+			}
+
+			height += 60;
+		}
 	}
 
 	// Present the buffer

@@ -17,7 +17,8 @@ enum GameState
 	GAME_STATE_TITLE,
 	GAME_STATE_MAIN,
 	GAME_STATE_WIN,
-	GAME_STATE_LOSE
+	GAME_STATE_LOSE,
+	GAME_STATE_PAUSE
 };
 
 // Demo class which extends the base DXGame class
@@ -53,4 +54,7 @@ private:
 	POINT prevMouseScroll;
 
 	GameState state;
+
+	std::vector<char*> pauseOptions;
+	int pauseOption;
 };
