@@ -29,8 +29,8 @@ private:
 	D3D11_SUBRESOURCE_DATA	_instanceData;
 
 	std::unordered_set<GameObject*> _registeredGOs;
-	std::shared_ptr<Material*> _material;
-	std::shared_ptr<Mesh*> _mesh;
+	std::shared_ptr<Material> _material;
+	std::shared_ptr<Mesh> _mesh;
 
 	void ResizeBatch(int newSize);
 

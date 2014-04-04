@@ -36,6 +36,7 @@ public:
 
 private:
 	static std::map<std::pair<MESHES, MATERIALS>, RenderBatch*> _batches;
+	static std::unordered_set<GameObject*> _unbatchedObjects;
 	TextureManager* textureManager;
 	
 	std::shared_ptr<ConstantBuffer> _perFrameConstantBuffer;

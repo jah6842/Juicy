@@ -52,15 +52,15 @@ void RenderBatch::PrepareBatch(){
 	offsets[0] = 0;
 	offsets[1] = 0;
 
-	//bufferPointers[0] = renderList[0]->mesh->vertexBuffer;	
+	bufferPointers[0] = _mesh->vertexBuffer; 
 	bufferPointers[1] = _instanceBuffer;
 
 	// Set the current vertex buffer
 	deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 	// Set the current index buffer
-	//deviceContext->IASetIndexBuffer(renderList[0]->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetIndexBuffer(_mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	// Set the topology
-	//deviceContext->IASetPrimitiveTopology(renderList[0]->mesh->topology);
+	deviceContext->IASetPrimitiveTopology(_mesh->topology);
 };
 
 void RenderBatch::AddGameObject(GameObject* go){
