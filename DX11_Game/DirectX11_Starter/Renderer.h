@@ -12,8 +12,10 @@
 #include "GameObject.h"
 #include "TextureManager.h"
 #include "Loader.h"
+#include "RenderBatch.h"
 
 class GameObject;
+class RenderBatch;
 
 class Renderer {
 public:
@@ -33,7 +35,7 @@ public:
 	static void UnRegisterGameObject(GameObject* go);
 
 private:
-	static std::unordered_set<GameObject*> registeredGOs;
+	static std::map<std::pair<MESHES, MATERIALS>, RenderBatch*> _batches;
 	TextureManager* textureManager;
 	
 	std::shared_ptr<ConstantBuffer> _perFrameConstantBuffer;

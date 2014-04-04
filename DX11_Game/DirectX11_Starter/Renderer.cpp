@@ -1,9 +1,5 @@
 #include "Renderer.h"
 
-std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
-
-//std::map<MESHES, std::vector<GameObject*>> Renderer::renderBuckets = std::map<MESHES, std::vector<GameObject*>>();
-
 Renderer::Renderer(){
 	_perFrameConstantBuffer = nullptr;
 	_directionalLightBuffer = nullptr;
@@ -16,12 +12,6 @@ Renderer::~Renderer(){
 	textureManager->Cleanup();
 	ReleaseMacro(fontVBuffer);
 };
-
-ID3D11Buffer* instanceBuffer = nullptr;
-InstanceType* instances;
-UINT instanceBufferSize;
-D3D11_BUFFER_DESC instanceBufferDesc;
-D3D11_SUBRESOURCE_DATA instanceData;
 
 void Renderer::PrepareRenderer() {
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
@@ -110,12 +100,12 @@ void Renderer::PrepareMaterial(GameObject* go, Material* mat){
 
 	switch(mat->materialID){
 		case MATERIAL_SKYBOX: 
-			DeviceManager::SetStencilMode(DeviceManager::GetCurrentDeviceContext(), DM_STENCIL_SKYBOX);
-			DeviceManager::SetRasterizerMode(DeviceManager::GetCurrentDeviceContext(), DM_CULL_NONE);
+			DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_SKYBOX);
+			DeviceManager::SetRasterizerMode(deviceContext, DM_CULL_NONE);
 			break;
 		default:
-			DeviceManager::SetStencilMode(DeviceManager::GetCurrentDeviceContext(), DM_STENCIL_ENABLE);
-			DeviceManager::SetRasterizerMode(DeviceManager::GetCurrentDeviceContext(), DM_CULL_BACK);
+			DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);
+			DeviceManager::SetRasterizerMode(deviceContext, DM_CULL_BACK);
 			break;
 	}
 
@@ -149,7 +139,7 @@ void Renderer::Draw(){
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 
-	GameObject** renderList = new GameObject*[registeredGOs.size()];
+	//GameObject** renderList = new GameObject*[registeredGOs.size()];
 	UINT renderCount = 0;
 
 	std::vector<std::shared_ptr<Material>> materials;
@@ -158,7 +148,7 @@ void Renderer::Draw(){
 		if(Material::allMaterials[i] != nullptr)
 			materials.push_back(Material::allMaterials[i]);
 	}
-
+	/*
 	for(std::unordered_set<GameObject*>::const_iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
 		//if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
@@ -225,51 +215,11 @@ void Renderer::Draw(){
 		if(renderCount == 0)
 			continue;
 
-		// Allocate memory for all of the instance data
-		instances = new InstanceType[renderCount];
-
 		// Loop through all render items and put them into the instance array
 		for (UINT i = 0; i < renderCount; i++) {
-			instances[i].modelMatrix = renderList[i]->transform.WorldMatrix();//XMLoadFloat4x4(&wMatrix);
+			//instances[i].modelMatrix = renderList[i]->transform.WorldMatrix();//XMLoadFloat4x4(&wMatrix);
 		}
 
-		// Set up the description of the instance buffer.
-		instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		instanceBufferDesc.ByteWidth = sizeof(InstanceType) * renderCount;
-		instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		instanceBufferDesc.CPUAccessFlags = 0;
-		instanceBufferDesc.MiscFlags = 0;
-		instanceBufferDesc.StructureByteStride = 0;
-
-		// Give the subresource structure a pointer to the instance data.
-		instanceData.pSysMem = instances;
-		instanceData.SysMemPitch = 0;
-		instanceData.SysMemSlicePitch = 0;
-
-		// Create an instance buffer for the instance data
-		HR(device->CreateBuffer(&instanceBufferDesc, &instanceData, &instanceBuffer));
-
-		// Set buffers in the input assembler
-		UINT strides[2];
-		UINT offsets[2];
-		ID3D11Buffer* bufferPointers[2];
-
-		strides[0] = Vertex::VertexSize(renderList[0]->mesh->vertexType);
-		strides[1] = sizeof(InstanceType);
-
-		offsets[0] = 0;
-		offsets[1] = 0;
-
-		bufferPointers[0] = renderList[0]->mesh->vertexBuffer;	
-		bufferPointers[1] = instanceBuffer;
-
-		// Set the current vertex buffer
-		deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-		// Set the current index buffer
-		deviceContext->IASetIndexBuffer(renderList[0]->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		// Set the topology
-		deviceContext->IASetPrimitiveTopology(renderList[0]->mesh->topology);
-	
 		// Do the drawing
 		deviceContext->DrawIndexedInstanced(
 			renderList[0]->mesh->numIndices,	// Index count per instance
@@ -279,22 +229,20 @@ void Renderer::Draw(){
 			0);									// When to start using instances
 
 		// Clean up
-		ReleaseMacro(instanceBuffer);
-		delete[] instances;
-		instances = nullptr;
 		currentRenderMaterial = nullptr;
 		drawnObjects += renderCount;
 		drawCalls++;
 		renderCount = 0;
 	}
-
-	delete[] renderList;
+	*/
+	//delete[] renderList;
 	rendererReady = false;
-
+	
 	std::string s1 = "Drawn Objects: " + std::to_string(drawnObjects);
 	DrawString(s1.c_str(), 0, 100, 40);
 	std::string s2 = "Draw calls: " + std::to_string(drawCalls);
 	DrawString(s2.c_str(), 0, 140, 40);
+	
 };
 
 void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOAT4 color){
@@ -426,12 +374,19 @@ void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOA
 
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
-	registeredGOs.insert(go);
+	std::pair<MESHES,MATERIALS> object = std::make_pair(go->mesh->meshID, go->material->materialID);
+
+	// Check if a batch has been made for this pair yet
+	if(!_batches.count(object)){
+		_batches[object] = new RenderBatch(go->mesh, go->material);
+	}
+
+	// Add the gameobject to the batch
+	_batches[object]->AddGameObject(go);
 };
 
 // Remove a gameobject from the gameobjects list
 void Renderer::UnRegisterGameObject(GameObject* go){
-	std::unordered_set<GameObject*>::iterator itr;
-	itr = registeredGOs.find(go);
-	registeredGOs.erase(itr);
+	std::pair<MESHES,MATERIALS> object = std::make_pair(go->mesh->meshID, go->material->materialID);
+	_batches[object]->RemoveGameObject(go);
 };

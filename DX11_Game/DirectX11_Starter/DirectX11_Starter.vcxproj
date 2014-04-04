@@ -96,6 +96,7 @@
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DXGame.cpp" />
     <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="RenderBatch.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />
     <ClInclude Include="Loader.h" />
+    <ClInclude Include="RenderBatch.h" />
     <ClInclude Include="Shaders\globals.inc" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Skybox.h" />
