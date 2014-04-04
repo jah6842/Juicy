@@ -1,4 +1,5 @@
 #pragma once
+
 #include "gameobject.h"
 #include <vector>
 
@@ -8,6 +9,7 @@ public:
 	Ship(MESHES m, MATERIALS mat);
 	~Ship(void);
 	void Update(float dt);
+	void MoveShip(char direction);
 private:
 	std::vector<std::vector<Transform>> locations;
 	int dimensions;

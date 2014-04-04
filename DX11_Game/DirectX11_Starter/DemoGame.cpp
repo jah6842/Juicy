@@ -115,7 +115,7 @@ bool DemoGame::Init()
 		}
 	}*/
 
-	Ship* ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE);
+	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE);
 	gameobjects.push_back(ship);
 
 	DebugTimer::Stop();
@@ -148,13 +148,15 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
+	keyboard.Update(dt);
+	
 	if (state == GAME_STATE_TITLE)
 	{
-		if (GetAsyncKeyState(VK_RETURN))
+		if (keyboard.GetKeyDown(VK_RETURN))
 		{
 			state = GAME_STATE_MAIN;
 		}
-		else if (GetAsyncKeyState(VK_ESCAPE))
+		else if (keyboard.GetKeyDown(VK_ESCAPE))
 		{
 			exit(0);
 		}
@@ -162,7 +164,7 @@ void DemoGame::UpdateScene(float dt)
 	else if (state == GAME_STATE_MAIN)
 	{
 		float speed = 100.0f;
-		if(GetAsyncKeyState(VK_SHIFT))
+		if(keyboard.GetKey(VK_SHIFT))
 		{
 			speed *= 3.0f;
 		}
@@ -185,20 +187,37 @@ void DemoGame::UpdateScene(float dt)
 		}*/
 
 		// Rotate camera with arrow keys
-		if(GetAsyncKeyState(VK_RIGHT)){
+		if(keyboard.GetKey(VK_RIGHT)){
 			Camera::MainCamera.Rotate(5.0f * dt, 0.0f);
 		}
-		if(GetAsyncKeyState(VK_LEFT)){
+		if(keyboard.GetKey(VK_LEFT)){
 			Camera::MainCamera.Rotate(-5.0f * dt, 0.0f);
 		}
-		if(GetAsyncKeyState(VK_UP)){
+		if(keyboard.GetKey(VK_UP)){
 			Camera::MainCamera.Rotate(0.0f, -5.0f * dt);
 		}
-		if(GetAsyncKeyState(VK_DOWN)){
+		if(keyboard.GetKey(VK_DOWN)){
 			Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
 		}
 
-		if(GetAsyncKeyState(VK_SPACE)){
+		if (keyboard.GetKeyDown('W'))
+		{
+			ship->MoveShip('U');
+		}
+		if (keyboard.GetKeyDown('S'))
+		{
+			ship->MoveShip('D');
+		}
+		if (keyboard.GetKeyDown('A'))
+		{
+			ship->MoveShip('L');
+		}
+		if (keyboard.GetKeyDown('D'))
+		{
+			ship->MoveShip('R');
+		}
+
+		if(keyboard.GetKey(VK_SPACE)){
 			int numCubes = static_cast<int>(dt * 1000.0f);
 			for(int i = 0; i < numCubes; i++){
 				GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
@@ -210,7 +229,7 @@ void DemoGame::UpdateScene(float dt)
 			}
 		}
 
-		if (GetAsyncKeyState(VK_ESCAPE))
+		if (keyboard.GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_PAUSE;
 		}
@@ -225,12 +244,12 @@ void DemoGame::UpdateScene(float dt)
 	}
 	else if (state == GAME_STATE_PAUSE)
 	{
-		if (GetAsyncKeyState(VK_ESCAPE))
+		if (keyboard.GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_MAIN;
 		}
-
-		if (GetAsyncKeyState(VK_RETURN))
+		
+		if (keyboard.GetKeyDown(VK_RETURN))
 		{
 			if (pauseOptions[pauseOption] == "Resume")
 			{
@@ -242,7 +261,7 @@ void DemoGame::UpdateScene(float dt)
 			}
 		}
 
-		if (GetAsyncKeyState(VK_UP))
+		if (keyboard.GetKeyDown(VK_UP) || keyboard.GetKeyDown('W'))
 		{
 			pauseOption--;
 
@@ -251,8 +270,8 @@ void DemoGame::UpdateScene(float dt)
 				pauseOption = pauseOptions.size() - 1;
 			}
 		}
-
-		if (GetAsyncKeyState(VK_DOWN))
+		
+		if (keyboard.GetKeyDown(VK_DOWN) || keyboard.GetKeyDown('S'))
 		{
 			pauseOption++;
 			
@@ -285,7 +304,7 @@ void DemoGame::DrawScene()
 		{
 			if (i != pauseOption)
 			{
-				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f));
+				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.5f, 0.5f, 0.5f, 0.7f));
 			}
 			else
 			{
