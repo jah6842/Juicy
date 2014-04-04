@@ -90,6 +90,8 @@ bool DemoGame::Init()
 
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
+	Camera::MainCamera.SetPosition(-60.0f, 100.0f, -60.0f);
+	Camera::MainCamera.SetDirection(20.0f, 30.0f);
 
 	// Set up our main renderer
 	renderer = new Renderer();
@@ -102,7 +104,7 @@ bool DemoGame::Init()
 	// for cycling through textures
 	int flip = 0;
 	// Create some game objects
-	for(int i = 0; i < NUM_GO; i++){
+	/*for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
 				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
@@ -111,7 +113,10 @@ bool DemoGame::Init()
 				gameobjects.push_back(g);
 			}
 		}
-	}
+	}*/
+
+	Ship* ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE);
+	gameobjects.push_back(ship);
 
 	DebugTimer::Stop();
 
@@ -162,7 +167,7 @@ void DemoGame::UpdateScene(float dt)
 			speed *= 3.0f;
 		}
 		// Move camera with WASD
-		if(GetAsyncKeyState('W'))
+		/*if(GetAsyncKeyState('W'))
 		{
 			Camera::MainCamera.Move(CameraMovement::FORWARD, speed);
 		}
@@ -177,7 +182,7 @@ void DemoGame::UpdateScene(float dt)
 		if(GetAsyncKeyState('D'))
 		{
 			Camera::MainCamera.Move(CameraMovement::RIGHT, speed);
-		}
+		}*/
 
 		// Rotate camera with arrow keys
 		if(GetAsyncKeyState(VK_RIGHT)){

@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "Skybox.h"
 #include <vector>
+#include "Ship.h"
 
 // For DirectX Math
 using namespace DirectX;
