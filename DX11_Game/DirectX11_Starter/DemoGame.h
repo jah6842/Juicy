@@ -4,10 +4,12 @@
 #include <DirectXColors.h>
 #include "DXGame.h"
 #include "GameObject.h"
+#include "Button.h"
 #include "Camera.h"
 #include "Renderer.h"
 #include "Skybox.h"
 #include <vector>
+
 
 // For DirectX Math
 using namespace DirectX;
@@ -41,8 +43,10 @@ public:
 	void OnMouseScroll(WPARAM whlState, int delta);
 
 private:
-	static const int NUM_GO = 15;
+	static const int NUM_GO = 2;
 	std::vector<GameObject*> gameobjects;
+
+	Button* b;
 
 	Skybox* skybox;
 

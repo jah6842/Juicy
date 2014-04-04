@@ -40,6 +40,7 @@ const WCHAR* meshNames[] = {
 	L"Cube",
 	L"sphere.fbx",
 	L"frigate.fbx",
+	L"Button"
 };
 
 const MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[NUM_MATERIALS] = {

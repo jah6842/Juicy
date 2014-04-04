@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
+std::unordered_set<GameObject*> Renderer::registered2DGOs = std::unordered_set<GameObject*>();
 
 //std::map<MESHES, std::vector<GameObject*>> Renderer::renderBuckets = std::map<MESHES, std::vector<GameObject*>>();
 
@@ -297,6 +298,7 @@ void Renderer::Draw(){
 	DrawString(s2.c_str(), 0, 140, 40);
 };
 
+
 void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOAT4 color){
 	
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
@@ -424,6 +426,45 @@ void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOA
 
 };
 
+void Renderer::DrawButton(Button* b)
+{
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+
+	// Get screen width and height
+	UINT width, height;
+	Camera::MainCamera.GetScreenSize(width,height);
+
+	float posX = (b->x - static_cast<float>(width)) / static_cast<float>(width);
+	float posY = -(b->y - static_cast<float>(height)) / static_cast<float>(height);
+
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
+
+	// Update the constant buffer itself
+	CONSTANT_BUFFER_PER_MODEL modelData;
+	modelData.world = Transform::Identity().WorldMatrix();
+	deviceContext->UpdateSubresource(b->material->constantBuffer->cBuffer, 0, NULL, &modelData, 0, 0);
+
+	// Change shaders
+	deviceContext->VSSetShader(b->material->vertexShader->vShader, NULL, 0);
+	deviceContext->IASetInputLayout(b->material->vertexShader->vShaderInputLayout);
+	deviceContext->VSSetConstantBuffers(1, 1, &b->material->constantBuffer->cBuffer);
+	deviceContext->PSSetShader(b->material->pixelShader->pShader, NULL, 0);
+
+	UINT stride = sizeof(RenderVertex);
+	UINT offset = 0;
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetVertexBuffers(0,1,&b->mesh->vertexBuffer,&stride,&offset);
+
+	textureManager->SetActiveTexture(b->material->diffuseTexture);
+	textureManager->SetActiveFilterMode(b->material->textureFilter);
+
+	deviceContext->Unmap(b->mesh->vertexBuffer, 0);
+	deviceContext->Draw(60,0);
+
+	//deviceContext->OMSetBlendState(disableBlendingState, blendFactor, 0xFFFFFFFF);
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);
+};
+
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
 	registeredGOs.insert(go);
@@ -435,3 +476,60 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 	itr = registeredGOs.find(go);
 	registeredGOs.erase(itr);
 };
+
+// Add a gameobject to the 2Dgameobjects list
+void Renderer::Register2DGameObject(GameObject* go){
+	registered2DGOs.insert(go);
+};
+
+// Remove a gameobject from 2Dthe gameobjects list
+void Renderer::UnRegister2DGameObject(GameObject* go){
+	std::unordered_set<GameObject*>::iterator itr;
+	itr = registered2DGOs.find(go);
+	registered2DGOs.erase(itr);
+};
+
+/*void Renderer::draw2D(ID3D11Device* device, ID3D11DeviceContext* deviceContext){
+	UINT width, height;
+	Camera::MainCamera.GetScreenSize(width,height);
+
+	
+
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
+
+	for(std::unordered_set<GameObject*>::const_iterator itr = registered2DGOs.begin(); itr != registered2DGOs.end(); ++itr){
+
+		GameObject* go = *itr;
+			
+		// Check if the object is using an instanced material
+		if(!go->material->vertexShader->isInstanced){
+			PrepareMaterial(go, go->material.get());
+
+			textureManager->SetActiveTexture(go->material->diffuseTexture);
+			textureManager->SetActiveFilterMode(go->material->textureFilter);
+
+			// Set the current vertex buffer
+			UINT stride = Vertex::VertexSize(go->mesh->vertexType);
+			UINT offset = 0;
+			ID3D11Buffer* vBuffer = go->mesh->vertexBuffer;
+			deviceContext->IASetVertexBuffers(0, 1, &vBuffer, &stride, &offset);
+			// Set the current index buffer
+			deviceContext->IASetIndexBuffer(go->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			// Set the topology
+			deviceContext->IASetPrimitiveTopology(go->mesh->topology);
+	
+			// Draw individual model
+			deviceContext->DrawIndexed(
+				go->mesh->numIndices,	// The number of indices we're using in this draw
+				0,
+				0); 
+		}
+
+
+	}
+
+	
+
+
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);
+};*/

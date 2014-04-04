@@ -73,6 +73,7 @@ DemoGame::~DemoGame()
 
 	delete renderer;
 	delete skybox;
+	delete b;
 
 	DeviceManager::Cleanup(DeviceManager::GetCurrentDevice());
 }
@@ -105,13 +106,20 @@ bool DemoGame::Init()
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
+				/*GameObject* g = new GameObject(MESH_BUTTON, MATERIAL_FRIGATE);
 				g->transform.SetPosition(i * 50.0f, j * 50.0f, k * 50.0f);
+				g->transform.SetScale(10, 10, 10);
 				g->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), 0.0f);
-				gameobjects.push_back(g);
+				gameobjects.push_back(g);*/
 			}
 		}
 	}
+
+	b = new Button(MESH_BUTTON, MATERIAL_FRIGATE);
+	b->x = 50;
+	b->y = 50;
+	b->transform.SetPosition(50.0f,50.0f,0.0f);
+	b->transform.SetScale(10, 10, 10);
 
 	DebugTimer::Stop();
 
@@ -267,10 +275,11 @@ void DemoGame::DrawScene()
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	renderer->Draw();
+	renderer->DrawButton(b);
 
 	if (state == GAME_STATE_TITLE)
 	{
-		renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
+		renderer->DrawString("Press Enter to Begin", 150, 600, 160, XMFLOAT4(1, 1, 1, 1));
 	}
 	else if (state == GAME_STATE_PAUSE)
 	{
