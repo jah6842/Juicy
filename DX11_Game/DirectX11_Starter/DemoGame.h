@@ -9,6 +9,7 @@
 #include "Skybox.h"
 #include <vector>
 #include "Ship.h"
+#include "KeyboardInput.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -44,6 +45,7 @@ public:
 private:
 	static const int NUM_GO = 15;
 	std::vector<GameObject*> gameobjects;
+	Ship* ship;
 
 	Skybox* skybox;
 
@@ -58,4 +60,6 @@ private:
 
 	std::vector<char*> pauseOptions;
 	int pauseOption;
+
+	KeyboardInput keyboard;
 };

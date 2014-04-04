@@ -30,22 +30,28 @@ Ship::Ship(MESHES m, MATERIALS mat) : GameObject(m, mat)
 
 void Ship::Update(float dt)
 {
+	// Set position
+	transform.SetPosition(locations[rowIndex][columnIndex].Pos());
+}
+
+void Ship::MoveShip(char direction)
+{
 	// Check for input
-	if (GetAsyncKeyState('W'))
+	if (direction == 'U')
 	{
 		columnIndex++;
 	}
-	if (GetAsyncKeyState('S'))
+	if (direction == 'D')
 	{
 		columnIndex--;
 	}
-	if (GetAsyncKeyState('A'))
-	{
-		rowIndex--;
-	}
-	if (GetAsyncKeyState('D'))
+	if (direction == 'L')
 	{
 		rowIndex++;
+	}
+	if (direction == 'R')
+	{
+		rowIndex--;
 	}
 
 	// Stay in bounds and wrap
@@ -66,7 +72,4 @@ void Ship::Update(float dt)
 	{
 		rowIndex = dimensions - 1;
 	}
-
-	// Set position
-	transform.SetPosition(locations[rowIndex][columnIndex].Pos());
 }

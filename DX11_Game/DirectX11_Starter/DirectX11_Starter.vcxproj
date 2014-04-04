@@ -95,6 +95,7 @@
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DXGame.cpp" />
+    <ClCompile Include="KeyboardInput.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Skybox.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />
+    <ClInclude Include="KeyboardInput.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Shaders\globals.inc" />
     <ClInclude Include="Ship.h" />
