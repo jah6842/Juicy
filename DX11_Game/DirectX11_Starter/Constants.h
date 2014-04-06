@@ -131,7 +131,7 @@ struct CONSTANT_BUFFER_DIRECTIONAL_LIGHT {
 
 #pragma region Meshes
 
-// Vertex shaders
+// Meshes
 enum MESHES{
 	MESH_CUBE,
 	MESH_SPHERE,
