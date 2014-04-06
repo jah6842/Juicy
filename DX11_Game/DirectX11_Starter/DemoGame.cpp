@@ -115,8 +115,14 @@ bool DemoGame::Init()
 		}
 	}*/
 
+	//initialize ship
 	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE);
 	gameobjects.push_back(ship);
+
+	//enemies setup
+	numEnemies = 0;
+	//enemies[numEnemies] = new Enemy(MESH_INVADER, MATERIAL_INVADER);
+	//numEnemies++;
 
 	DebugTimer::Stop();
 

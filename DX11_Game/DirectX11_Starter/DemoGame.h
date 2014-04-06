@@ -10,6 +10,7 @@
 #include <vector>
 #include "Ship.h"
 #include "KeyboardInput.h"
+#include "Enemy.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -44,8 +45,11 @@ public:
 
 private:
 	static const int NUM_GO = 15;
+	static const int MAX_ENEMIES = 5;
 	std::vector<GameObject*> gameobjects;
 	Ship* ship;
+	//enemy array
+	Enemy *enemies[MAX_ENEMIES];
 
 	Skybox* skybox;
 
@@ -60,6 +64,7 @@ private:
 
 	std::vector<char*> pauseOptions;
 	int pauseOption;
+	int numEnemies;
 
 	KeyboardInput keyboard;
 };
