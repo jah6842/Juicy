@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+std::map<std::pair<MESHES, MATERIALS>, RenderBatch*> Renderer::_batches;
 std::unordered_set<GameObject*> Renderer::_unbatchedObjects;
 
 Renderer::Renderer(){
@@ -150,7 +151,7 @@ void Renderer::Draw(){
 		if(Material::allMaterials[i] != nullptr)
 			materials.push_back(Material::allMaterials[i]);
 	}
-	
+	/*
 	for(std::unordered_set<GameObject*>::const_iterator itr = registeredGOs.begin(); itr != registeredGOs.end(); ++itr){
 		// Check if the object is in the viewing frustum
 		//if(!Camera::MainCamera.PointInFrustum((*itr)->transform.Pos()))
@@ -236,6 +237,7 @@ void Renderer::Draw(){
 		drawCalls++;
 		renderCount = 0;
 	}
+	*/
 	
 	//delete[] renderList;
 	rendererReady = false;
@@ -377,6 +379,10 @@ void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOA
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
 
+	if(go->material == nullptr || go->mesh == nullptr){
+		return;
+	}
+
 	// If the material is not instanced, it shouldn't be added to a batch
 	if(!go->material->vertexShader->isInstanced){
 		_unbatchedObjects.insert(go);
@@ -396,6 +402,11 @@ void Renderer::RegisterGameObject(GameObject* go){
 
 // Remove a gameobject from the gameobjects list
 void Renderer::UnRegisterGameObject(GameObject* go){
+
+	if(go->material == nullptr || go->mesh == nullptr){
+		return;
+	}
+
 	if(!go->material->vertexShader->isInstanced){
 		std::unordered_set<GameObject*>::iterator itr;
 		itr = _unbatchedObjects.find(go);

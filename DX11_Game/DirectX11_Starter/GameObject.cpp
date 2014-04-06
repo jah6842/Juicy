@@ -1,22 +1,22 @@
 #include "GameObject.h"
 
 GameObject::GameObject(MESHES m, MATERIALS mat){
-	// Register the GameObject with the renderer
-	Renderer::RegisterGameObject(this);
-
 	// Set the mesh
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 	mesh = LoadMesh(device, m);
 
 	// Set the material
 	material = Material::LoadMaterial(device, mat);
+
+	// Register the GameObject with the renderer
+	Renderer::RegisterGameObject(this);
 };
 
 GameObject::GameObject(){
-	// Register the GameObject with the renderer
-	Renderer::RegisterGameObject(this);
 	mesh = nullptr;
 	material = nullptr;
+	// Register the GameObject with the renderer
+	Renderer::RegisterGameObject(this);
 };
 
 void GameObject::Update(float dt){

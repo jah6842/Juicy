@@ -4,6 +4,9 @@ RenderBatch::RenderBatch(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> m
 	_mesh = mesh;
 	_material = mat;
 
+	// Initialize gameobjects set
+	_registeredGOs = std::unordered_set<GameObject*>();
+
 	// Allocate memory for all of the instance data
 	_instances = new PerInstanceData[1000];
 
