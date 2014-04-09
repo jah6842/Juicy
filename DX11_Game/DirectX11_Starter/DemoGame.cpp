@@ -106,20 +106,20 @@ bool DemoGame::Init()
 	for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
-				/*GameObject* g = new GameObject(MESH_BUTTON, MATERIAL_FRIGATE);
+				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
 				g->transform.SetPosition(i * 50.0f, j * 50.0f, k * 50.0f);
 				g->transform.SetScale(10, 10, 10);
 				g->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), 0.0f);
-				gameobjects.push_back(g);*/
+				gameobjects.push_back(g);
 			}
 		}
 	}
 
 	b = new Button(MESH_BUTTON, MATERIAL_FRIGATE);
-	b->x = 50;
-	b->y = 50;
-	b->transform.SetPosition(50.0f,50.0f,0.0f);
-	b->transform.SetScale(10, 10, 10);
+	b->x = 0;
+	b->y = 0;
+	b->transform.SetPosition(0.0f,0.0f,0.0f);
+	b->transform.SetScale(50, 10, 10);
 
 	DebugTimer::Stop();
 

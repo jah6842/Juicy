@@ -41,3 +41,24 @@ ID3D11Buffer* Mesh::CreateIndexBuffer(UINT* indices, UINT numIndices){
 
 	return iBuffer;
 };
+
+ID3D11Buffer* Mesh::Create2DVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE vertexType){
+	// Get the curent Device
+	ID3D11Device* device = DeviceManager::GetCurrentDevice();
+
+	ID3D11Buffer* vBuffer;
+
+	// Create the vertex buffer
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage					= D3D11_USAGE_DYNAMIC;
+	vbd.ByteWidth				= Vertex::VertexSize(vertexType) * numVertices; // Number of vertices
+    vbd.BindFlags				= D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags			= D3D11_CPU_ACCESS_WRITE;
+    vbd.MiscFlags				= 0;
+	vbd.StructureByteStride		= 0;
+    D3D11_SUBRESOURCE_DATA initialVertexData;
+    initialVertexData.pSysMem	= vertices;
+    HR(device->CreateBuffer(&vbd, &initialVertexData, &vBuffer));
+
+	return vBuffer;
+};

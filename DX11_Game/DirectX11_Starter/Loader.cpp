@@ -173,7 +173,7 @@ std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
 		m->hasTexCoord = true;
 		m->indexBuffer = Mesh::CreateIndexBuffer(ButtonIndices, 6);
 		m->numIndices = 6;
-		m->vertexBuffer = Mesh::CreateVertexBuffer(ButtonVertices, 4, VERTEX_TYPE_ALL);
+		m->vertexBuffer = Mesh::Create2DVertexBuffer(ButtonVertices, 4, VERTEX_TYPE_ALL);
 		m->numVertices = 4;
 		m->vertexType = VERTEX_TYPE_ALL;
 		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;

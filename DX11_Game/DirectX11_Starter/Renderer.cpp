@@ -429,6 +429,7 @@ void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOA
 void Renderer::DrawButton(Button* b)
 {
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 
 	// Get screen width and height
 	UINT width, height;
@@ -439,7 +440,6 @@ void Renderer::DrawButton(Button* b)
 
 	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
 
-	// Update the constant buffer itself
 	CONSTANT_BUFFER_PER_MODEL modelData;
 	modelData.world = Transform::Identity().WorldMatrix();
 	deviceContext->UpdateSubresource(b->material->constantBuffer->cBuffer, 0, NULL, &modelData, 0, 0);
@@ -450,16 +450,22 @@ void Renderer::DrawButton(Button* b)
 	deviceContext->VSSetConstantBuffers(1, 1, &b->material->constantBuffer->cBuffer);
 	deviceContext->PSSetShader(b->material->pixelShader->pShader, NULL, 0);
 
-	UINT stride = sizeof(RenderVertex);
-	UINT offset = 0;
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->IASetVertexBuffers(0,1,&b->mesh->vertexBuffer,&stride,&offset);
+	
+	UINT strides = Vertex::VertexSize(b->mesh->vertexType);
+	UINT offsets = 0;
 
-	textureManager->SetActiveTexture(b->material->diffuseTexture);
-	textureManager->SetActiveFilterMode(b->material->textureFilter);
 
-	deviceContext->Unmap(b->mesh->vertexBuffer, 0);
-	deviceContext->Draw(60,0);
+	// Set the current vertex buffer
+	deviceContext->IASetVertexBuffers(0, 1, &b->mesh->vertexBuffer, &strides, &offsets);
+	// Set the current index buffer
+	deviceContext->IASetIndexBuffer(b->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	// Set the topology
+	deviceContext->IASetPrimitiveTopology(b->mesh->topology);
+
+				deviceContext->DrawIndexed(
+				b->mesh->numIndices,	// The number of indices we're using in this draw
+				0,
+				0); 
 
 	//deviceContext->OMSetBlendState(disableBlendingState, blendFactor, 0xFFFFFFFF);
 	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);

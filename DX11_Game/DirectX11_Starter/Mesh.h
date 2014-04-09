@@ -51,6 +51,7 @@ struct Mesh {
 
 	static ID3D11Buffer* CreateVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
 	static ID3D11Buffer* CreateIndexBuffer(UINT* indices, UINT numIndices);
+	static ID3D11Buffer* Create2DVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
 };
 
 ////////// HARDCODED VERTICES //////////////
