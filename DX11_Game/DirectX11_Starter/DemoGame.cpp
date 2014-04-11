@@ -88,6 +88,18 @@ bool DemoGame::Init()
 	if( !DXGame::Init() )
 		return false;
 
+	 eflags = AudioEngine_Default;
+
+#ifdef _DEBUG
+	eflags = eflags | AudioEngine_Debug;
+#endif
+
+	audioEngine.reset (new AudioEngine (eflags));
+	//MUSIC_TITLE.reset (new SoundEffect (audioEngine.get(), L"..\Resources\Sound\Title.wav"));
+
+	//auto effect = MUSIC_TITLE->CreateInstance();
+	//effect->Play(true);
+
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
 	Camera::MainCamera.SetPosition(-60.0f, 100.0f, -60.0f);
@@ -149,6 +161,14 @@ void DemoGame::OnResize()
 void DemoGame::UpdateScene(float dt)
 {
 	keyboard.Update(dt);
+
+	//if (!audioEngine->Update())
+	//{
+	//	if (audioEngine->IsCriticalError())
+	//	{
+	//		// critical error actions here
+	//	}
+	//}
 	
 	if (state == GAME_STATE_TITLE)
 	{

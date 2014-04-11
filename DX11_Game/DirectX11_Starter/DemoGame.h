@@ -10,6 +10,7 @@
 #include <vector>
 #include "Ship.h"
 #include "KeyboardInput.h"
+#include "Audio.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -22,6 +23,10 @@ enum GameState
 	GAME_STATE_LOSE,
 	GAME_STATE_PAUSE
 };
+
+AUDIO_ENGINE_FLAGS eflags;
+
+//std::unique_ptr<SoundEffect> MUSIC_TITLE;
 
 // Demo class which extends the base DXGame class
 class DemoGame : public DXGame
@@ -62,4 +67,6 @@ private:
 	int pauseOption;
 
 	KeyboardInput keyboard;
+
+	std::unique_ptr<AudioEngine> audioEngine;
 };
