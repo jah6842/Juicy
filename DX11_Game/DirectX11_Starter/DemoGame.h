@@ -10,7 +10,8 @@
 #include <vector>
 #include "Ship.h"
 #include "KeyboardInput.h"
-#include "Audio.h"
+#include "fmod.hpp"
+#include "fmod_errors.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -24,7 +25,7 @@ enum GameState
 	GAME_STATE_PAUSE
 };
 
-AUDIO_ENGINE_FLAGS eflags;
+//AUDIO_ENGINE_FLAGS eflags;
 
 //std::unique_ptr<SoundEffect> MUSIC_TITLE;
 
@@ -48,6 +49,9 @@ public:
 	void OnMouseScroll(WPARAM whlState, int delta);
 
 private:
+	void SoundErrorCheck(FMOD_RESULT result);
+	void SoundSetup();
+
 	static const int NUM_GO = 15;
 	std::vector<GameObject*> gameobjects;
 	Ship* ship;
@@ -68,5 +72,16 @@ private:
 
 	KeyboardInput keyboard;
 
-	std::unique_ptr<AudioEngine> audioEngine;
+	FMOD_RESULT fmodResult;
+	FMOD::System* fmodSystem;
+	unsigned int fmodVer;
+	int numDrivers;
+	FMOD_SPEAKERMODE speakerMode;
+	FMOD_CAPS fmodCaps;
+	char fmodName[256];
+
+	FMOD::Sound* titleMusic;
+	FMOD::Channel* musicChannel;
+	
+	//std::unique_ptr<AudioEngine> audioEngine;
 };
