@@ -97,18 +97,6 @@ bool DemoGame::Init()
 	SoundErrorCheck(fmodResult);
 	musicChannel->setMode(FMOD_LOOP_NORMAL);
 	musicChannel->setPaused(false);
-	
-	 //eflags = AudioEngine_Default;
-
-//#ifdef _DEBUG
-//	eflags = eflags | AudioEngine_Debug;
-//#endif
-
-	//audioEngine.reset (new AudioEngine (eflags));
-	//MUSIC_TITLE.reset (new SoundEffect (audioEngine.get(), L"..\Resources\Sound\Title.wav"));
-
-	//auto effect = MUSIC_TITLE->CreateInstance();
-	//effect->Play(true);
 
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
@@ -137,7 +125,7 @@ bool DemoGame::Init()
 		}
 	}*/
 
-	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE);
+	ship = new Ship(MESH_FRIGATE, MATERIAL_DEFAULT);
 	gameobjects.push_back(ship);
 
 	DebugTimer::Stop();
@@ -172,14 +160,6 @@ void DemoGame::UpdateScene(float dt)
 {
 	keyboard.Update(dt);
 
-	//if (!audioEngine->Update())
-	//{
-	//	if (audioEngine->IsCriticalError())
-	//	{
-	//		// critical error actions here
-	//	}
-	//}
-	
 	if (state == GAME_STATE_TITLE)
 	{
 		musicChannel->setPaused(false);
@@ -194,7 +174,7 @@ void DemoGame::UpdateScene(float dt)
 	}
 	else if (state == GAME_STATE_MAIN)
 	{
-		musicChannel->setPaused(false);
+		musicChannel->setVolume(1.0f);
 		float speed = 100.0f;
 		if(keyboard.GetKey(VK_SHIFT))
 		{
@@ -231,7 +211,7 @@ void DemoGame::UpdateScene(float dt)
 		if(keyboard.GetKey(VK_DOWN)){
 			Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
 		}
-
+		
 		if (keyboard.GetKeyDown('W'))
 		{
 			ship->MoveShip('U');
@@ -249,8 +229,8 @@ void DemoGame::UpdateScene(float dt)
 			ship->MoveShip('R');
 		}
 
-		if(keyboard.GetKey(VK_SPACE)){
-			int numCubes = static_cast<int>(dt * 1000.0f);
+		if(keyboard.GetKeyDown(VK_SPACE)){
+			/*int numCubes = static_cast<int>(dt * 1000.0f);
 			for(int i = 0; i < numCubes; i++){
 				GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
 				go->transform.SetScale(1.0f,1.0f,1.0f);
@@ -258,13 +238,21 @@ void DemoGame::UpdateScene(float dt)
 				go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 				go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 				gameobjects.push_back(go);
-			}
+			}*/
+
+			Bullet* b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
+			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
+			b->transform.SetScale(1.0f, 1.0f, 1.0f);
+			b->transform.SetPosition(ship->transform.Pos());
+			bullets.push_back(b);
+			gameobjects.push_back(b);
 		}
 
 		if (keyboard.GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_PAUSE;
-			musicChannel->setPaused(true);
+			//musicChannel->setPaused(true);
+			musicChannel->setVolume(0.3f);
 		}
 
 		Camera::MainCamera.Update(dt);
@@ -273,6 +261,14 @@ void DemoGame::UpdateScene(float dt)
 
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
+		}
+
+		for (UINT i = 0; i < bullets.size(); i++)
+		{
+			if (bullets[i]->CheckOnScreen() == false)
+			{
+				bullets.erase(bullets.begin() + i);
+			}
 		}
 	}
 	else if (state == GAME_STATE_PAUSE)

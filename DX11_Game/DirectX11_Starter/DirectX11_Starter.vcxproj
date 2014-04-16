@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ReferencePath>$(ProjectDir)\Libraries\lib\Win32;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(ProjectDir)\Libraries\lib\Win32;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(SolutionDir)\FMOD\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(SolutionDir)\FMOD\inc;$(IncludePath)</IncludePath>
@@ -58,11 +58,12 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\dbg;$(SolutionDir)\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)FBX\lib\dbg\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+      <Command>copy /y "$(SolutionDir)FBX\lib\dbg\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"
+copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,10 +86,12 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\rls;$(SolutionDir)\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)FBX\lib\rls\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+      <Command>copy /y "$(SolutionDir)FBX\lib\rls\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"
+copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Constants.cpp" />
     <ClCompile Include="DemoGame.cpp" />
@@ -111,6 +114,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DemoGame.h" />
