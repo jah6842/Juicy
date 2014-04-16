@@ -12,6 +12,7 @@
 #include "KeyboardInput.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"
+#include "Bullet.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -24,10 +25,6 @@ enum GameState
 	GAME_STATE_LOSE,
 	GAME_STATE_PAUSE
 };
-
-//AUDIO_ENGINE_FLAGS eflags;
-
-//std::unique_ptr<SoundEffect> MUSIC_TITLE;
 
 // Demo class which extends the base DXGame class
 class DemoGame : public DXGame
@@ -55,6 +52,7 @@ private:
 	static const int NUM_GO = 15;
 	std::vector<GameObject*> gameobjects;
 	Ship* ship;
+	std::vector<Bullet*> bullets;
 
 	Skybox* skybox;
 
@@ -82,6 +80,4 @@ private:
 
 	FMOD::Sound* titleMusic;
 	FMOD::Channel* musicChannel;
-	
-	//std::unique_ptr<AudioEngine> audioEngine;
 };
