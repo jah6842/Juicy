@@ -131,7 +131,7 @@ struct CONSTANT_BUFFER_DIRECTIONAL_LIGHT {
 
 #pragma region Meshes
 
-// Vertex shaders
+// Meshes
 enum MESHES{
 	MESH_CUBE,
 	MESH_SPHERE,
@@ -168,5 +168,7 @@ struct MATERIAL_DESCRIPTION {
 const extern MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[NUM_MATERIALS]; // defined in CPP
 
 #pragma endregion
+
+
 
 #endif // _CONSTANTS_H

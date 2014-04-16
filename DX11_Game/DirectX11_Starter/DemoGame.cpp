@@ -88,6 +88,28 @@ bool DemoGame::Init()
 	if( !DXGame::Init() )
 		return false;
 
+	SoundSetup();
+
+	fmodResult = fmodSystem->createStream("../Resources/Sound/Title.wav", FMOD_DEFAULT, 0, &titleMusic);
+	SoundErrorCheck(fmodResult);
+
+	fmodResult = fmodSystem->playSound(FMOD_CHANNEL_FREE, titleMusic, true, &musicChannel);
+	SoundErrorCheck(fmodResult);
+	musicChannel->setMode(FMOD_LOOP_NORMAL);
+	musicChannel->setPaused(false);
+	
+	 //eflags = AudioEngine_Default;
+
+//#ifdef _DEBUG
+//	eflags = eflags | AudioEngine_Debug;
+//#endif
+
+	//audioEngine.reset (new AudioEngine (eflags));
+	//MUSIC_TITLE.reset (new SoundEffect (audioEngine.get(), L"..\Resources\Sound\Title.wav"));
+
+	//auto effect = MUSIC_TITLE->CreateInstance();
+	//effect->Play(true);
+
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
 	Camera::MainCamera.SetPosition(-60.0f, 100.0f, -60.0f);
@@ -149,9 +171,18 @@ void DemoGame::OnResize()
 void DemoGame::UpdateScene(float dt)
 {
 	keyboard.Update(dt);
+
+	//if (!audioEngine->Update())
+	//{
+	//	if (audioEngine->IsCriticalError())
+	//	{
+	//		// critical error actions here
+	//	}
+	//}
 	
 	if (state == GAME_STATE_TITLE)
 	{
+		musicChannel->setPaused(false);
 		if (keyboard.GetKeyDown(VK_RETURN))
 		{
 			state = GAME_STATE_MAIN;
@@ -163,6 +194,7 @@ void DemoGame::UpdateScene(float dt)
 	}
 	else if (state == GAME_STATE_MAIN)
 	{
+		musicChannel->setPaused(false);
 		float speed = 100.0f;
 		if(keyboard.GetKey(VK_SHIFT))
 		{
@@ -232,6 +264,7 @@ void DemoGame::UpdateScene(float dt)
 		if (keyboard.GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_PAUSE;
+			musicChannel->setPaused(true);
 		}
 
 		Camera::MainCamera.Update(dt);
@@ -356,3 +389,69 @@ void DemoGame::OnMouseScroll(WPARAM whlState, int delta){
 	//Camera::MainCamera.transform.Move(0, 0, delta / 10.0f);
 }
 #pragma endregion
+
+void DemoGame::SoundErrorCheck(FMOD_RESULT result)
+{
+	if (result != FMOD_OK)
+    {
+        printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+        exit(-1);
+    }
+}
+
+void DemoGame::SoundSetup()
+{
+	fmodResult = FMOD::System_Create(&fmodSystem);
+	SoundErrorCheck(fmodResult);
+
+	fmodResult = fmodSystem->getVersion(&fmodVer);
+	SoundErrorCheck(fmodResult);
+
+	if (fmodVer < FMOD_VERSION)
+	{
+		printf("Error! You are using an old version of FMOD %08x. This program requires %08x\n", fmodVer, FMOD_VERSION);
+		return;
+	}
+
+	fmodResult = fmodSystem->getNumDrivers(&numDrivers);
+	SoundErrorCheck(fmodResult);
+
+	if (numDrivers == 0)
+	{
+		fmodResult = fmodSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
+		SoundErrorCheck(fmodResult);
+	}
+	else
+	{
+		fmodResult = fmodSystem->getDriverCaps(0, &fmodCaps, 0, &speakerMode);
+		SoundErrorCheck(fmodResult);
+
+		fmodResult = fmodSystem->setSpeakerMode(speakerMode);
+		SoundErrorCheck(fmodResult);
+
+		if (fmodCaps & FMOD_CAPS_HARDWARE_EMULATED)
+		{
+			fmodResult = fmodSystem->setDSPBufferSize(1024, 10);
+			SoundErrorCheck(fmodResult);
+		}
+
+		fmodResult = fmodSystem->getDriverInfo(0, fmodName, 256, 0);
+		SoundErrorCheck(fmodResult);
+
+		if (strstr(fmodName, "SigmaTel"))
+		{
+			fmodResult = fmodSystem->setSoftwareFormat(48000, FMOD_SOUND_FORMAT_PCMFLOAT, 0, 0, FMOD_DSP_RESAMPLER_LINEAR);
+			SoundErrorCheck(fmodResult);
+		}
+	}
+
+	fmodResult = fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+	if (fmodResult == FMOD_ERR_OUTPUT_CREATEBUFFER)
+	{
+		fmodResult = fmodSystem->setSpeakerMode(FMOD_SPEAKERMODE_STEREO);
+		SoundErrorCheck(fmodResult);
+		
+		fmodResult = fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+	}
+	SoundErrorCheck(fmodResult);
+}
