@@ -36,7 +36,7 @@ public:
 	void OnResize();
 	void UpdateScene(float dt);
 	void DrawScene(); 
-
+	void EnemySpawner();
 	// For handing mouse input
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
@@ -49,7 +49,7 @@ private:
 	std::vector<GameObject*> gameobjects;
 	Ship* ship;
 	//enemy array
-	Enemy *enemies[MAX_ENEMIES];
+	Enemy* enemies[MAX_ENEMIES];
 
 	Skybox* skybox;
 
@@ -65,6 +65,7 @@ private:
 	std::vector<char*> pauseOptions;
 	int pauseOption;
 	int numEnemies;
+	float spawnCooldown;
 
 	KeyboardInput keyboard;
 };
