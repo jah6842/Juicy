@@ -98,6 +98,7 @@ copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DXGame.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="KeyboardInput.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Ship.cpp" />
@@ -120,6 +121,7 @@ copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="KeyboardInput.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Shaders\globals.inc" />

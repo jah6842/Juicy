@@ -13,6 +13,7 @@
 #include "fmod.hpp"
 #include "fmod_errors.h"
 #include "Bullet.h"
+#include "Enemy.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -38,7 +39,7 @@ public:
 	void OnResize();
 	void UpdateScene(float dt);
 	void DrawScene(); 
-
+	void EnemySpawner();
 	// For handing mouse input
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
@@ -50,8 +51,11 @@ private:
 	void SoundSetup();
 
 	static const int NUM_GO = 15;
+	static const int MAX_ENEMIES = 5;
 	std::vector<GameObject*> gameobjects;
 	Ship* ship;
+	//enemy array
+	Enemy* enemies[MAX_ENEMIES];
 
 	Skybox* skybox;
 
@@ -66,6 +70,8 @@ private:
 
 	std::vector<char*> pauseOptions;
 	int pauseOption;
+	int numEnemies;
+	float spawnCooldown;
 
 	KeyboardInput* keyboard;
 

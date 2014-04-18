@@ -137,6 +137,12 @@ bool DemoGame::Init()
 	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE, keyboard);
 	gameobjects.push_back(ship);
 
+	//enemies setup
+	spawnCooldown = 5.0;
+	numEnemies = 0;
+	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+	enemies[numEnemies] = enemy;
+
 	DebugTimer::Stop();
 
 	state = GAME_STATE_TITLE;
@@ -244,6 +250,34 @@ void DemoGame::UpdateScene(float dt)
 		Camera::MainCamera.Update(dt);
 
 		skybox->Update(dt);
+		//Enemy spawning
+		spawnCooldown-= dt;
+		if(spawnCooldown < 0.0 && numEnemies < MAX_ENEMIES-1)
+		{
+			spawnCooldown = 5.0;
+			numEnemies++;
+			Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+			enemies[numEnemies] = enemy;
+		}
+		//Enemies update
+		for(int i = 0; i <= numEnemies; i++)
+		{
+			enemies[i] ->Update(dt);
+			if(!enemies[i] ->getActive())
+			{
+				//destroy the enemy
+				delete enemies[i];
+				enemies[i] = nullptr;
+				int k = i;
+				for(int j = (i+1); j<=numEnemies; j++)
+				{
+					enemies[k]=enemies[j];
+					enemies[j] = nullptr;
+					k++;
+				}
+				numEnemies--;
+			}
+		}
 
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
@@ -318,7 +352,7 @@ void DemoGame::DrawScene()
 				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(1, 1, 1, 1));
 			}
 
-			height += 60;
+			height += 60;  
 		}
 	}
 
