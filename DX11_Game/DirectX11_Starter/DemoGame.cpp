@@ -89,7 +89,6 @@ bool DemoGame::Init()
 		return false;
 
 	SoundSetup();
-
 	fmodResult = fmodSystem->createStream("../Resources/Sound/Title.wav", FMOD_DEFAULT, 0, &titleMusic);
 	SoundErrorCheck(fmodResult);
 
@@ -97,6 +96,8 @@ bool DemoGame::Init()
 	SoundErrorCheck(fmodResult);
 	musicChannel->setMode(FMOD_LOOP_NORMAL);
 	musicChannel->setPaused(false);
+
+	keyboard = new KeyboardInput();
 
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
@@ -125,7 +126,7 @@ bool DemoGame::Init()
 		}
 	}*/
 
-	ship = new Ship(MESH_FRIGATE, MATERIAL_DEFAULT);
+	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE, keyboard);
 	gameobjects.push_back(ship);
 
 	DebugTimer::Stop();
@@ -158,16 +159,16 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
-	keyboard.Update(dt);
+	keyboard->Update(dt);
 
 	if (state == GAME_STATE_TITLE)
 	{
 		musicChannel->setPaused(false);
-		if (keyboard.GetKeyDown(VK_RETURN))
+		if (keyboard->GetKeyDown(VK_RETURN))
 		{
 			state = GAME_STATE_MAIN;
 		}
-		else if (keyboard.GetKeyDown(VK_ESCAPE))
+		else if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
 			exit(0);
 		}
@@ -176,7 +177,7 @@ void DemoGame::UpdateScene(float dt)
 	{
 		musicChannel->setVolume(1.0f);
 		float speed = 100.0f;
-		if(keyboard.GetKey(VK_SHIFT))
+		if(keyboard->GetKey(VK_SHIFT))
 		{
 			speed *= 3.0f;
 		}
@@ -199,37 +200,20 @@ void DemoGame::UpdateScene(float dt)
 		}*/
 
 		// Rotate camera with arrow keys
-		if(keyboard.GetKey(VK_RIGHT)){
+		if(keyboard->GetKey(VK_RIGHT)){
 			Camera::MainCamera.Rotate(5.0f * dt, 0.0f);
 		}
-		if(keyboard.GetKey(VK_LEFT)){
+		if(keyboard->GetKey(VK_LEFT)){
 			Camera::MainCamera.Rotate(-5.0f * dt, 0.0f);
 		}
-		if(keyboard.GetKey(VK_UP)){
+		if(keyboard->GetKey(VK_UP)){
 			Camera::MainCamera.Rotate(0.0f, -5.0f * dt);
 		}
-		if(keyboard.GetKey(VK_DOWN)){
+		if(keyboard->GetKey(VK_DOWN)){
 			Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
 		}
-		
-		if (keyboard.GetKeyDown('W'))
-		{
-			ship->MoveShip('U');
-		}
-		if (keyboard.GetKeyDown('S'))
-		{
-			ship->MoveShip('D');
-		}
-		if (keyboard.GetKeyDown('A'))
-		{
-			ship->MoveShip('L');
-		}
-		if (keyboard.GetKeyDown('D'))
-		{
-			ship->MoveShip('R');
-		}
 
-		if(keyboard.GetKeyDown(VK_SPACE)){
+		if(keyboard->GetKeyDown(VK_SPACE)){
 			/*int numCubes = static_cast<int>(dt * 1000.0f);
 			for(int i = 0; i < numCubes; i++){
 				GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
@@ -239,16 +223,9 @@ void DemoGame::UpdateScene(float dt)
 				go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 				gameobjects.push_back(go);
 			}*/
-
-			Bullet* b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
-			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
-			b->transform.SetScale(1.0f, 1.0f, 1.0f);
-			b->transform.SetPosition(ship->transform.Pos());
-			bullets.push_back(b);
-			gameobjects.push_back(b);
 		}
 
-		if (keyboard.GetKeyDown(VK_ESCAPE))
+		if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_PAUSE;
 			//musicChannel->setPaused(true);
@@ -262,23 +239,15 @@ void DemoGame::UpdateScene(float dt)
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
 		}
-
-		for (UINT i = 0; i < bullets.size(); i++)
-		{
-			if (bullets[i]->CheckOnScreen() == false)
-			{
-				bullets.erase(bullets.begin() + i);
-			}
-		}
 	}
 	else if (state == GAME_STATE_PAUSE)
 	{
-		if (keyboard.GetKeyDown(VK_ESCAPE))
+		if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_MAIN;
 		}
 		
-		if (keyboard.GetKeyDown(VK_RETURN))
+		if (keyboard->GetKeyDown(VK_RETURN))
 		{
 			if (pauseOptions[pauseOption] == "Resume")
 			{
@@ -290,7 +259,7 @@ void DemoGame::UpdateScene(float dt)
 			}
 		}
 
-		if (keyboard.GetKeyDown(VK_UP) || keyboard.GetKeyDown('W'))
+		if (keyboard->GetKeyDown(VK_UP) || keyboard->GetKeyDown('W'))
 		{
 			pauseOption--;
 
@@ -300,7 +269,7 @@ void DemoGame::UpdateScene(float dt)
 			}
 		}
 		
-		if (keyboard.GetKeyDown(VK_DOWN) || keyboard.GetKeyDown('S'))
+		if (keyboard->GetKeyDown(VK_DOWN) || keyboard->GetKeyDown('S'))
 		{
 			pauseOption++;
 			

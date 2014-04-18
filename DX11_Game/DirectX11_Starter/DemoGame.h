@@ -52,7 +52,6 @@ private:
 	static const int NUM_GO = 15;
 	std::vector<GameObject*> gameobjects;
 	Ship* ship;
-	std::vector<Bullet*> bullets;
 
 	Skybox* skybox;
 
@@ -68,7 +67,7 @@ private:
 	std::vector<char*> pauseOptions;
 	int pauseOption;
 
-	KeyboardInput keyboard;
+	KeyboardInput* keyboard;
 
 	FMOD_RESULT fmodResult;
 	FMOD::System* fmodSystem;
