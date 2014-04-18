@@ -78,5 +78,7 @@ private:
 	char fmodName[256];
 
 	FMOD::Sound* titleMusic;
+	FMOD::Sound* startEffect;
 	FMOD::Channel* musicChannel;
+	FMOD::Channel* startChannel;
 };

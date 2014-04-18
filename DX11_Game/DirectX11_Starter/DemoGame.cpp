@@ -89,6 +89,7 @@ bool DemoGame::Init()
 		return false;
 
 	SoundSetup();
+	
 	fmodResult = fmodSystem->createStream("../Resources/Sound/Title.wav", FMOD_DEFAULT, 0, &titleMusic);
 	SoundErrorCheck(fmodResult);
 
@@ -96,6 +97,13 @@ bool DemoGame::Init()
 	SoundErrorCheck(fmodResult);
 	musicChannel->setMode(FMOD_LOOP_NORMAL);
 	musicChannel->setPaused(false);
+
+	fmodResult = fmodSystem->createStream("../Resources/Sound/Laser.wav", FMOD_DEFAULT, 0, &startEffect);
+	SoundErrorCheck(fmodResult);
+
+	fmodResult = fmodSystem->playSound(FMOD_CHANNEL_FREE, startEffect, true, &startChannel);
+	SoundErrorCheck(fmodResult);
+	startChannel->setMode(FMOD_LOOP_OFF);
 
 	keyboard = new KeyboardInput();
 
@@ -167,6 +175,7 @@ void DemoGame::UpdateScene(float dt)
 		if (keyboard->GetKeyDown(VK_RETURN))
 		{
 			state = GAME_STATE_MAIN;
+			startChannel->setPaused(false);
 		}
 		else if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
