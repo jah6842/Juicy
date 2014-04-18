@@ -260,6 +260,7 @@ void DemoGame::UpdateScene(float dt)
 			if(!enemies[i] ->getActive())
 			{
 				//destroy the enemy
+				delete enemies[i];
 				enemies[i] = nullptr;
 				int k = i;
 				for(int j = (i+1); j<=numEnemies; j++)

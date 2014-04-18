@@ -34,7 +34,7 @@ Enemy::Enemy(MESHES m, MATERIALS mat) : GameObject(m, mat)
 Enemy::~Enemy() 
 {
 	// Unregister this GameObject from the renderer
-	Renderer::UnRegisterGameObject(this);
+	//Renderer::UnRegisterGameObject(this);
 }
 
 bool Enemy::getActive()
