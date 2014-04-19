@@ -111,12 +111,12 @@ static UINT StandardCubeIndices[] = {
 	20, 21, 22,
 	20, 22, 23
 };
-static RenderVertex ButtonVertices[4] =
+static Render2DVertex ButtonVertices[4] =
 {
-	RenderVertex(XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
-	RenderVertex(XMFLOAT3(-1.0f,  1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3(-1.0f,  1.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
-	RenderVertex(XMFLOAT3( 1.0f,  1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3( 1.0f,  1.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
-	RenderVertex(XMFLOAT3( 1.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3( 1.0f, -1.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	Render2DVertex(XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT4(1.0f,0.0f,0.0f,0.0f)),
+	Render2DVertex(XMFLOAT3(-0.5f,  0.5f, 0.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	Render2DVertex(XMFLOAT3( 0.5f,  0.5f, 0.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	Render2DVertex(XMFLOAT3( 0.5f, -0.5f, 0.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 };
 static UINT ButtonIndices[] = {
 	0,  1,  2,

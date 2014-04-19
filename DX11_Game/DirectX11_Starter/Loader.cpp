@@ -45,8 +45,8 @@ std::shared_ptr<VertexShader> LoadVertexShader(ID3D11Device* device, VSHADER vSh
 		instanced = false;
 		break;
 	case VSHADER_2D:
-		description = VERTEX_DESCRIPTION_ALL;
-		descriptionSize = 8;
+		description = VERTEX_DESCRIPTION_2D;
+		descriptionSize = 3;
 		instanced = false;
 		break;
 	default:
@@ -178,7 +178,7 @@ std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
 		m->hasTexCoord = true;
 		m->indexBuffer = Mesh::CreateIndexBuffer(ButtonIndices, 6);
 		m->numIndices = 6;
-		m->vertexBuffer = Mesh::Create2DVertexBuffer(ButtonVertices, 4, VERTEX_TYPE_ALL);
+		m->vertexBuffer = Mesh::Create2DVertexBuffer(ButtonVertices, 4, VERTEX_TYPE_2D);
 		m->numVertices = 4;
 		m->vertexType = VERTEX_TYPE_2D;
 		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
