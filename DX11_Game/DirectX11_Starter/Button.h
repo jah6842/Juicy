@@ -1,12 +1,10 @@
 #pragma once
 #include "GameObject.h"
 
-class Button{
+class Button : public GameObject{
 
 public:
-	Transform transform;
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<Material> material;
+
 
 	Button(MESHES m, MATERIALS mat);
 	~Button(void);

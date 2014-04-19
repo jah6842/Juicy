@@ -118,8 +118,8 @@ bool DemoGame::Init()
 	b = new Button(MESH_BUTTON, MATERIAL_2D);
 	b->x = 0;
 	b->y = 0;
-	b->transform.SetPosition(1.05f,1.05f,0.05f);
-	b->transform.SetScale(1.25, 25.25, 1.25);
+	b->transform.SetPosition(0.05f,0.05f,0.05f);
+	b->transform.SetScale(1.00, 1.00, 1.25);
 	b->transform.Update(0);
 
 	DebugTimer::Stop();

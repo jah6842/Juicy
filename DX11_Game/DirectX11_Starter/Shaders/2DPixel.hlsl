@@ -16,6 +16,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 diffuse =  ObjTexture.Sample( ObjSamplerState, input.texCoord );
 	//float4 diffuse = float4(input.texCoord.x,input.texCoord.y,0,1); // Debug for showing UV as color
-	diffuse *= input.color;
+	//diffuse *= input.color;
 	return diffuse;
 }

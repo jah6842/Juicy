@@ -426,15 +426,15 @@ void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOA
 
 };
 
-void Renderer::DrawButton(Button* b)
+void Renderer::DrawButton(GameObject* b)
 {
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 
 	// Get screen width and height
-	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
+	
 
-	PrepareMaterial(nullptr, b->material.get());
+	PrepareMaterial(b, b->material.get());
 
 	textureManager->SetActiveTexture(b->material->diffuseTexture);
 	textureManager->SetActiveFilterMode(b->material->textureFilter);
@@ -442,6 +442,7 @@ void Renderer::DrawButton(Button* b)
 	UINT strides = Vertex::VertexSize(b->mesh->vertexType);
 	UINT offsets = 0;
 
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
 
 	// Set the current vertex buffer
 	deviceContext->IASetVertexBuffers(0, 1, &b->mesh->vertexBuffer, &strides, &offsets);

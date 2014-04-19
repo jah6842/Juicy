@@ -113,7 +113,7 @@ static UINT StandardCubeIndices[] = {
 };
 static Render2DVertex ButtonVertices[4] =
 {
-	Render2DVertex(XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT4(1.0f,0.0f,0.0f,0.0f)),
+	Render2DVertex(XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	Render2DVertex(XMFLOAT3(-0.5f,  0.5f, 0.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	Render2DVertex(XMFLOAT3( 0.5f,  0.5f, 0.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 	Render2DVertex(XMFLOAT3( 0.5f, -0.5f, 0.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),

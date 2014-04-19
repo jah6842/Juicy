@@ -12,7 +12,7 @@
 #include "GameObject.h"
 #include "TextureManager.h"
 #include "Loader.h"
-#include "Button.h"
+
 
 
 class Button;
@@ -31,7 +31,7 @@ public:
 	// Draw text
 	void DrawString(const char* text, float x, float y, float size = 24, XMFLOAT4 color = XMFLOAT4(1,1,1,1));
 
-	void DrawButton(Button* b);
+	void DrawButton(GameObject* b);
 
 	// Add and remove 
 	static void RegisterGameObject(GameObject* go);
