@@ -432,25 +432,13 @@ void Renderer::DrawButton(Button* b)
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 
 	// Get screen width and height
-	UINT width, height;
-	Camera::MainCamera.GetScreenSize(width,height);
-
-	float posX = (b->x - static_cast<float>(width)) / static_cast<float>(width);
-	float posY = -(b->y - static_cast<float>(height)) / static_cast<float>(height);
-
 	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
 
-	CONSTANT_BUFFER_PER_MODEL modelData;
-	modelData.world = Transform::Identity().WorldMatrix();
-	deviceContext->UpdateSubresource(b->material->constantBuffer->cBuffer, 0, NULL, &modelData, 0, 0);
+	PrepareMaterial(nullptr, b->material.get());
 
-	// Change shaders
-	deviceContext->VSSetShader(b->material->vertexShader->vShader, NULL, 0);
-	deviceContext->IASetInputLayout(b->material->vertexShader->vShaderInputLayout);
-	deviceContext->VSSetConstantBuffers(1, 1, &b->material->constantBuffer->cBuffer);
-	deviceContext->PSSetShader(b->material->pixelShader->pShader, NULL, 0);
+	textureManager->SetActiveTexture(b->material->diffuseTexture);
+	textureManager->SetActiveFilterMode(b->material->textureFilter);
 
-	
 	UINT strides = Vertex::VertexSize(b->mesh->vertexType);
 	UINT offsets = 0;
 

@@ -108,18 +108,18 @@ bool DemoGame::Init()
 			for(int k = 0; k < NUM_GO; k++){
 				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
 				g->transform.SetPosition(i * 50.0f, j * 50.0f, k * 50.0f);
-				g->transform.SetScale(10, 10, 10);
+				g->transform.SetScale(1, 1, 1);
 				g->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), 0.0f);
 				gameobjects.push_back(g);
 			}
 		}
 	}
 
-	b = new Button(MESH_BUTTON, MATERIAL_FRIGATE);
+	b = new Button(MESH_BUTTON, MATERIAL_2D);
 	b->x = 0;
 	b->y = 0;
 	b->transform.SetPosition(0.0f,0.0f,0.0f);
-	b->transform.SetScale(50, 10, 10);
+	b->transform.SetScale(0.5, 0.5, 0.5);
 
 	DebugTimer::Stop();
 
@@ -279,7 +279,7 @@ void DemoGame::DrawScene()
 
 	if (state == GAME_STATE_TITLE)
 	{
-		renderer->DrawString("Press Enter to Begin", 150, 600, 160, XMFLOAT4(1, 1, 1, 1));
+		renderer->DrawString("Press Enter to Begin", 150, 600, 80, XMFLOAT4(1, 1, 1, 1));
 	}
 	else if (state == GAME_STATE_PAUSE)
 	{

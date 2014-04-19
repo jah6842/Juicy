@@ -6,7 +6,8 @@ const WCHAR* vShaderNames[] = {
 	L"TexturedInstancedVertex.cso",
 	L"TexturedInstancedLightingVertex.cso",
 	L"SkyboxVertex.cso",
-	L"FontVertex.cso"
+	L"FontVertex.cso",
+	L"2DVertex.cso"
 };
 
 const WCHAR* pShaderNames[] = {
@@ -15,7 +16,8 @@ const WCHAR* pShaderNames[] = {
 	L"TexturedInstancedPixel.cso",
 	L"TexturedInstancedLightingPixel.cso",
 	L"SkyboxPixel.cso",
-	L"FontPixel.cso"
+	L"FontPixel.cso",
+	L"2DPixel.cso"
 };
 
 const TEXTURE_DESCRIPTION TEXTURE_DESCRIPTIONS[TM_NUM_TEXTURES] = {
@@ -99,4 +101,14 @@ const MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[NUM_MATERIALS] = {
 		TM_FILTER_ANISO_4X,
 		CONSTANT_BUFFER_LAYOUT_PER_MODEL 
 	},
+	{
+		L"2D",
+		MATERIAL_2D,
+		VSHADER_2D,
+		PSHADER_2D,
+		TM_TEXTURE_SPACE_CUBEMAP,
+		TM_FILTER_ANISO_4X,
+		CONSTANT_BUFFER_LAYOUT_PER_MODEL
+	}
+
 };
