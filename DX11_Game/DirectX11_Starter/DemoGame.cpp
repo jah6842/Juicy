@@ -70,10 +70,14 @@ DemoGame::~DemoGame()
 		delete gameobjects.back();
 		gameobjects.pop_back();
 	}
+	
+	while(!buttons.empty()){
+		delete buttons.back();
+		buttons.pop_back();
+	}
 
 	delete renderer;
 	delete skybox;
-	delete b;
 
 	DeviceManager::Cleanup(DeviceManager::GetCurrentDevice());
 }
@@ -115,11 +119,12 @@ bool DemoGame::Init()
 		}
 	}
 
-	b = new Button(MESH_BUTTON, MATERIAL_2D);
-	b->x = 0;
-	b->y = 0;
-	b->transform.SetPosition(0.0f,0.0f,0.0f);
-	b->transform.SetScale(0.5, 0.5, 0.5);
+	Button * b = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 600.0f, 100.0f));
+	b->Visible = true;
+	Button * b2 = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 400.0f, 100.0f, 100.0f));
+	b2->Visible = true;
+	buttons.push_back(b);
+	buttons.push_back(b2);
 
 	DebugTimer::Stop();
 
@@ -275,7 +280,14 @@ void DemoGame::DrawScene()
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	renderer->Draw();
-	renderer->DrawButton(b);
+	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
+	{
+		Button* b = *itr;
+		if(b->Visible)
+		{
+			renderer->DrawButton(b);
+		}
+	}
 
 	if (state == GAME_STATE_TITLE)
 	{
@@ -315,12 +327,26 @@ void DemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 	prevMousePos.x = x;
 	prevMousePos.y = y;
 
+	POINT* p = new POINT();
+	p->x = x;
+	p->y = y;
+
+	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
+	{
+		Button* b = *itr;
+		if(b->Visible)
+		{
+				std::cout << b->Clicked(p) << std::endl;
+		}
+	}
+
 	SetCapture(hMainWnd);
 }
 
 void DemoGame::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
+
 }
 
 void DemoGame::OnMouseMove(WPARAM btnState, int x, int y)

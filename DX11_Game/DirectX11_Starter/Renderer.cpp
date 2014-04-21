@@ -426,15 +426,15 @@ void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOA
 
 };
 
-void Renderer::DrawButton(Button* b)
+void Renderer::DrawButton(GameObject* b)
 {
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
 	ID3D11Device* device = DeviceManager::GetCurrentDevice();
 
 	// Get screen width and height
-	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
+	
 
-	PrepareMaterial(nullptr, b->material.get());
+	PrepareMaterial(b, b->material.get());
 
 	textureManager->SetActiveTexture(b->material->diffuseTexture);
 	textureManager->SetActiveFilterMode(b->material->textureFilter);
@@ -442,6 +442,7 @@ void Renderer::DrawButton(Button* b)
 	UINT strides = Vertex::VertexSize(b->mesh->vertexType);
 	UINT offsets = 0;
 
+	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
 
 	// Set the current vertex buffer
 	deviceContext->IASetVertexBuffers(0, 1, &b->mesh->vertexBuffer, &strides, &offsets);
@@ -482,48 +483,3 @@ void Renderer::UnRegister2DGameObject(GameObject* go){
 	itr = registered2DGOs.find(go);
 	registered2DGOs.erase(itr);
 };
-
-/*void Renderer::draw2D(ID3D11Device* device, ID3D11DeviceContext* deviceContext){
-	UINT width, height;
-	Camera::MainCamera.GetScreenSize(width,height);
-
-	
-
-	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_DISABLE);
-
-	for(std::unordered_set<GameObject*>::const_iterator itr = registered2DGOs.begin(); itr != registered2DGOs.end(); ++itr){
-
-		GameObject* go = *itr;
-			
-		// Check if the object is using an instanced material
-		if(!go->material->vertexShader->isInstanced){
-			PrepareMaterial(go, go->material.get());
-
-			textureManager->SetActiveTexture(go->material->diffuseTexture);
-			textureManager->SetActiveFilterMode(go->material->textureFilter);
-
-			// Set the current vertex buffer
-			UINT stride = Vertex::VertexSize(go->mesh->vertexType);
-			UINT offset = 0;
-			ID3D11Buffer* vBuffer = go->mesh->vertexBuffer;
-			deviceContext->IASetVertexBuffers(0, 1, &vBuffer, &stride, &offset);
-			// Set the current index buffer
-			deviceContext->IASetIndexBuffer(go->mesh->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-			// Set the topology
-			deviceContext->IASetPrimitiveTopology(go->mesh->topology);
-	
-			// Draw individual model
-			deviceContext->DrawIndexed(
-				go->mesh->numIndices,	// The number of indices we're using in this draw
-				0,
-				0); 
-		}
-
-
-	}
-
-	
-
-
-	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);
-};*/

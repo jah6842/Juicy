@@ -1,16 +1,15 @@
 #pragma once
 #include "GameObject.h"
 
-class Button{
+class Button : public GameObject{
 
 public:
-	Transform transform;
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<Material> material;
 
-	Button(MESHES m, MATERIALS mat);
+
+	Button(MESHES m, MATERIALS mat, XMFLOAT4 dimensions);
 	~Button(void);
 	boolean Clicked(POINT* p);
-	
+	boolean Visible;
+private:
 	float x, y, width, height;
 };

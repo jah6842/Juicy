@@ -45,8 +45,7 @@ public:
 private:
 	static const int NUM_GO = 2;
 	std::vector<GameObject*> gameobjects;
-
-	Button* b;
+	std::vector<Button*> buttons;
 
 	Skybox* skybox;
 
