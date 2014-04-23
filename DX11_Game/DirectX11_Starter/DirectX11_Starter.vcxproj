@@ -41,10 +41,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ReferencePath>$(ProjectDir)\Libraries\lib\Win32;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(ProjectDir)\Libraries\lib\Win32;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(SolutionDir)\FMOD\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\Libraries\include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FBX\include;$(SolutionDir)\FMOD\inc;$(IncludePath)</IncludePath>
     <ReferencePath>$(ProjectDir)\Libraries\lib\Win32;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(ProjectDir)\Libraries\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -58,11 +58,12 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\dbg;$(SolutionDir)\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)FBX\lib\dbg\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+      <Command>copy /y "$(SolutionDir)FBX\lib\dbg\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"
+copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,7 +73,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DirectXTK\inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\FMOD\inc;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
@@ -80,22 +81,25 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vld.lib;d3d11.lib;d3dcompiler.lib;libfbxsdk.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\rls;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\FBX\lib\rls;$(SolutionDir)\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)FBX\lib\rls\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"</Command>
+      <Command>copy /y "$(SolutionDir)FBX\lib\rls\libfbxsdk.dll" "$(OutDir)libfbxsdk.dll"
+copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Constants.cpp" />
     <ClCompile Include="DemoGame.cpp" />
     <ClCompile Include="DeviceManager.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DXGame.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="KeyboardInput.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Skybox.cpp" />
@@ -110,13 +114,15 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Button.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DemoGame.h" />
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DXGame.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="KeyboardInput.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Shaders\globals.inc" />
     <ClInclude Include="Ship.h" />
@@ -132,14 +138,6 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\2DPixel.hlsl">
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Shaders\2DVertex.hlsl">
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/Resources/Shaders/%(Filename).cso</ObjectFileOutput>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-    </FxCompile>
     <FxCompile Include="Shaders\ColoredPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

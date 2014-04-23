@@ -88,8 +88,29 @@ bool DemoGame::Init()
 	if( !DXGame::Init() )
 		return false;
 
+	SoundSetup();
+	
+	fmodResult = fmodSystem->createStream("../Resources/Sound/Title.wav", FMOD_DEFAULT, 0, &titleMusic);
+	SoundErrorCheck(fmodResult);
+
+	fmodResult = fmodSystem->playSound(FMOD_CHANNEL_FREE, titleMusic, true, &musicChannel);
+	SoundErrorCheck(fmodResult);
+	musicChannel->setMode(FMOD_LOOP_NORMAL);
+	musicChannel->setPaused(false);
+
+	fmodResult = fmodSystem->createStream("../Resources/Sound/Laser.wav", FMOD_DEFAULT, 0, &startEffect);
+	SoundErrorCheck(fmodResult);
+
+	fmodResult = fmodSystem->playSound(FMOD_CHANNEL_FREE, startEffect, true, &startChannel);
+	SoundErrorCheck(fmodResult);
+	startChannel->setMode(FMOD_LOOP_OFF);
+
+	keyboard = new KeyboardInput();
+
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
+	Camera::MainCamera.SetPosition(-60.0f, 100.0f, -60.0f);
+	Camera::MainCamera.SetDirection(20.0f, 30.0f);
 
 	// Set up our main renderer
 	renderer = new Renderer();
@@ -102,7 +123,7 @@ bool DemoGame::Init()
 	// for cycling through textures
 	int flip = 0;
 	// Create some game objects
-	for(int i = 0; i < NUM_GO; i++){
+	/*for(int i = 0; i < NUM_GO; i++){
 		for(int j = 0; j < NUM_GO; j++){
 			for(int k = 0; k < NUM_GO; k++){
 				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
@@ -112,7 +133,16 @@ bool DemoGame::Init()
 				gameobjects.push_back(g);
 			}
 		}
-	}
+	}*/
+
+	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE, keyboard);
+	gameobjects.push_back(ship);
+
+	//enemies setup
+	spawnCooldown = 5.0;
+	numEnemies = 0;
+	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+	enemies[numEnemies] = enemy;
 
 	Button * b = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 600.0f, 100.0f));
 	b->Visible = true;
@@ -151,26 +181,31 @@ void DemoGame::OnResize()
 // push it to the buffer on the device
 void DemoGame::UpdateScene(float dt)
 {
+	keyboard->Update(dt);
+
 	if (state == GAME_STATE_TITLE)
 	{
-		if (GetAsyncKeyState(VK_RETURN))
+		musicChannel->setPaused(false);
+		if (keyboard->GetKeyDown(VK_RETURN))
 		{
 			state = GAME_STATE_MAIN;
+			startChannel->setPaused(false);
 		}
-		else if (GetAsyncKeyState(VK_ESCAPE))
+		else if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
 			exit(0);
 		}
 	}
 	else if (state == GAME_STATE_MAIN)
 	{
+		musicChannel->setVolume(1.0f);
 		float speed = 100.0f;
-		if(GetAsyncKeyState(VK_SHIFT))
+		if(keyboard->GetKey(VK_SHIFT))
 		{
 			speed *= 3.0f;
 		}
 		// Move camera with WASD
-		if(GetAsyncKeyState('W'))
+		/*if(GetAsyncKeyState('W'))
 		{
 			Camera::MainCamera.Move(CameraMovement::FORWARD, speed);
 		}
@@ -185,24 +220,24 @@ void DemoGame::UpdateScene(float dt)
 		if(GetAsyncKeyState('D'))
 		{
 			Camera::MainCamera.Move(CameraMovement::RIGHT, speed);
-		}
+		}*/
 
 		// Rotate camera with arrow keys
-		if(GetAsyncKeyState(VK_RIGHT)){
+		if(keyboard->GetKey(VK_RIGHT)){
 			Camera::MainCamera.Rotate(5.0f * dt, 0.0f);
 		}
-		if(GetAsyncKeyState(VK_LEFT)){
+		if(keyboard->GetKey(VK_LEFT)){
 			Camera::MainCamera.Rotate(-5.0f * dt, 0.0f);
 		}
-		if(GetAsyncKeyState(VK_UP)){
+		if(keyboard->GetKey(VK_UP)){
 			Camera::MainCamera.Rotate(0.0f, -5.0f * dt);
 		}
-		if(GetAsyncKeyState(VK_DOWN)){
+		if(keyboard->GetKey(VK_DOWN)){
 			Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
 		}
 
-		if(GetAsyncKeyState(VK_SPACE)){
-			int numCubes = static_cast<int>(dt * 1000.0f);
+		if(keyboard->GetKeyDown(VK_SPACE)){
+			/*int numCubes = static_cast<int>(dt * 1000.0f);
 			for(int i = 0; i < numCubes; i++){
 				GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
 				go->transform.SetScale(1.0f,1.0f,1.0f);
@@ -210,17 +245,47 @@ void DemoGame::UpdateScene(float dt)
 				go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 				go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
 				gameobjects.push_back(go);
-			}
+			}*/
 		}
 
-		if (GetAsyncKeyState(VK_ESCAPE))
+		if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_PAUSE;
+			//musicChannel->setPaused(true);
+			musicChannel->setVolume(0.3f);
 		}
 
 		Camera::MainCamera.Update(dt);
 
 		skybox->Update(dt);
+		//Enemy spawning
+		spawnCooldown-= dt;
+		if(spawnCooldown < 0.0 && numEnemies < MAX_ENEMIES-1)
+		{
+			spawnCooldown = 5.0;
+			numEnemies++;
+			Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+			enemies[numEnemies] = enemy;
+		}
+		//Enemies update
+		for(int i = 0; i <= numEnemies; i++)
+		{
+			enemies[i] ->Update(dt);
+			if(!enemies[i] ->getActive())
+			{
+				//destroy the enemy
+				delete enemies[i];
+				enemies[i] = nullptr;
+				int k = i;
+				for(int j = (i+1); j<=numEnemies; j++)
+				{
+					enemies[k]=enemies[j];
+					enemies[j] = nullptr;
+					k++;
+				}
+				numEnemies--;
+			}
+		}
 
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
@@ -228,12 +293,12 @@ void DemoGame::UpdateScene(float dt)
 	}
 	else if (state == GAME_STATE_PAUSE)
 	{
-		if (GetAsyncKeyState(VK_ESCAPE))
+		if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_MAIN;
 		}
-
-		if (GetAsyncKeyState(VK_RETURN))
+		
+		if (keyboard->GetKeyDown(VK_RETURN))
 		{
 			if (pauseOptions[pauseOption] == "Resume")
 			{
@@ -245,7 +310,7 @@ void DemoGame::UpdateScene(float dt)
 			}
 		}
 
-		if (GetAsyncKeyState(VK_UP))
+		if (keyboard->GetKeyDown(VK_UP) || keyboard->GetKeyDown('W'))
 		{
 			pauseOption--;
 
@@ -254,8 +319,8 @@ void DemoGame::UpdateScene(float dt)
 				pauseOption = pauseOptions.size() - 1;
 			}
 		}
-
-		if (GetAsyncKeyState(VK_DOWN))
+		
+		if (keyboard->GetKeyDown(VK_DOWN) || keyboard->GetKeyDown('S'))
 		{
 			pauseOption++;
 			
@@ -296,14 +361,14 @@ void DemoGame::DrawScene()
 		{
 			if (i != pauseOption)
 			{
-				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f));
+				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.5f, 0.5f, 0.5f, 0.7f));
 			}
 			else
 			{
 				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(1, 1, 1, 1));
 			}
 
-			height += 60;
+			height += 60;  
 		}
 	}
 
@@ -362,3 +427,69 @@ void DemoGame::OnMouseScroll(WPARAM whlState, int delta){
 	//Camera::MainCamera.transform.Move(0, 0, delta / 10.0f);
 }
 #pragma endregion
+
+void DemoGame::SoundErrorCheck(FMOD_RESULT result)
+{
+	if (result != FMOD_OK)
+    {
+        printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+        exit(-1);
+    }
+}
+
+void DemoGame::SoundSetup()
+{
+	fmodResult = FMOD::System_Create(&fmodSystem);
+	SoundErrorCheck(fmodResult);
+
+	fmodResult = fmodSystem->getVersion(&fmodVer);
+	SoundErrorCheck(fmodResult);
+
+	if (fmodVer < FMOD_VERSION)
+	{
+		printf("Error! You are using an old version of FMOD %08x. This program requires %08x\n", fmodVer, FMOD_VERSION);
+		return;
+	}
+
+	fmodResult = fmodSystem->getNumDrivers(&numDrivers);
+	SoundErrorCheck(fmodResult);
+
+	if (numDrivers == 0)
+	{
+		fmodResult = fmodSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
+		SoundErrorCheck(fmodResult);
+	}
+	else
+	{
+		fmodResult = fmodSystem->getDriverCaps(0, &fmodCaps, 0, &speakerMode);
+		SoundErrorCheck(fmodResult);
+
+		fmodResult = fmodSystem->setSpeakerMode(speakerMode);
+		SoundErrorCheck(fmodResult);
+
+		if (fmodCaps & FMOD_CAPS_HARDWARE_EMULATED)
+		{
+			fmodResult = fmodSystem->setDSPBufferSize(1024, 10);
+			SoundErrorCheck(fmodResult);
+		}
+
+		fmodResult = fmodSystem->getDriverInfo(0, fmodName, 256, 0);
+		SoundErrorCheck(fmodResult);
+
+		if (strstr(fmodName, "SigmaTel"))
+		{
+			fmodResult = fmodSystem->setSoftwareFormat(48000, FMOD_SOUND_FORMAT_PCMFLOAT, 0, 0, FMOD_DSP_RESAMPLER_LINEAR);
+			SoundErrorCheck(fmodResult);
+		}
+	}
+
+	fmodResult = fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+	if (fmodResult == FMOD_ERR_OUTPUT_CREATEBUFFER)
+	{
+		fmodResult = fmodSystem->setSpeakerMode(FMOD_SPEAKERMODE_STEREO);
+		SoundErrorCheck(fmodResult);
+		
+		fmodResult = fmodSystem->init(100, FMOD_INIT_NORMAL, 0);
+	}
+	SoundErrorCheck(fmodResult);
+}
