@@ -70,11 +70,6 @@ DemoGame::~DemoGame()
 		delete gameobjects.back();
 		gameobjects.pop_back();
 	}
-	
-	while(!buttons.empty()){
-		delete buttons.back();
-		buttons.pop_back();
-	}
 
 	delete renderer;
 	delete skybox;
