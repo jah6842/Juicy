@@ -1,7 +1,6 @@
 #include "Renderer.h"
 
 std::unordered_set<GameObject*> Renderer::registeredGOs = std::unordered_set<GameObject*>();
-std::unordered_set<GameObject*> Renderer::registered2DGOs = std::unordered_set<GameObject*>();
 
 //std::map<MESHES, std::vector<GameObject*>> Renderer::renderBuckets = std::map<MESHES, std::vector<GameObject*>>();
 
@@ -298,7 +297,6 @@ void Renderer::Draw(){
 	DrawString(s2.c_str(), 0, 140, 40);
 };
 
-
 void Renderer::DrawString(const char* text, float x, float y, float size, XMFLOAT4 color){
 	
 	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
@@ -460,6 +458,7 @@ void Renderer::DrawButton(GameObject* b)
 	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);
 };
 
+
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
 	registeredGOs.insert(go);
@@ -470,16 +469,4 @@ void Renderer::UnRegisterGameObject(GameObject* go){
 	std::unordered_set<GameObject*>::iterator itr;
 	itr = registeredGOs.find(go);
 	registeredGOs.erase(itr);
-};
-
-// Add a gameobject to the 2Dgameobjects list
-void Renderer::Register2DGameObject(GameObject* go){
-	registered2DGOs.insert(go);
-};
-
-// Remove a gameobject from 2Dthe gameobjects list
-void Renderer::UnRegister2DGameObject(GameObject* go){
-	std::unordered_set<GameObject*>::iterator itr;
-	itr = registered2DGOs.find(go);
-	registered2DGOs.erase(itr);
 };

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _GAME_OBJECT_H
+#define _GAME_OBJECT_H
 
 #include <string>
 #include "Mesh.h"
@@ -22,3 +23,4 @@ public:
 	virtual void Update(float dt);
 };
 
+#endif // _GAME_OBJECT_H

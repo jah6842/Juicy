@@ -25,7 +25,6 @@ struct Mesh {
 	bool hasTexCoord;
 	bool hasNormals;
 	bool hasColor;
-	bool is2D;
 
 	Mesh(){
 		name = L"UNINITIALIZED_MESH_NAME";
@@ -35,7 +34,6 @@ struct Mesh {
 		numIndices = 0;
 		numVertices = 0;
 		topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		is2D = false;
 		hasColor = false;
 		hasNormals = false;
 		hasTexCoord = false;
@@ -44,9 +42,6 @@ struct Mesh {
 	~Mesh(){
 		ReleaseMacro(vertexBuffer);
 		ReleaseMacro(indexBuffer);
-	}
-	bool Is2D(){
-		return is2D;
 	}
 
 	static ID3D11Buffer* CreateVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
@@ -111,6 +106,7 @@ static UINT StandardCubeIndices[] = {
 	20, 21, 22,
 	20, 22, 23
 };
+
 static Render2DVertex ButtonVertices[4] =
 {
 	Render2DVertex(XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
@@ -122,5 +118,4 @@ static UINT ButtonIndices[] = {
 	0,  1,  2,
 	2,  3,  0
 };
-
 #endif // _MESH_H

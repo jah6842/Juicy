@@ -9,7 +9,12 @@
 #include "Renderer.h"
 #include "Skybox.h"
 #include <vector>
-
+#include "Ship.h"
+#include "KeyboardInput.h"
+#include "fmod.hpp"
+#include "fmod_errors.h"
+#include "Bullet.h"
+#include "Enemy.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -35,7 +40,7 @@ public:
 	void OnResize();
 	void UpdateScene(float dt);
 	void DrawScene(); 
-
+	void EnemySpawner();
 	// For handing mouse input
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
@@ -43,9 +48,16 @@ public:
 	void OnMouseScroll(WPARAM whlState, int delta);
 
 private:
-	static const int NUM_GO = 2;
+	void SoundErrorCheck(FMOD_RESULT result);
+	void SoundSetup();
+
+	static const int NUM_GO = 15;
+	static const int MAX_ENEMIES = 5;
 	std::vector<GameObject*> gameobjects;
 	std::vector<Button*> buttons;
+	Ship* ship;
+	//enemy array
+	Enemy* enemies[MAX_ENEMIES];
 
 	Skybox* skybox;
 
@@ -60,4 +72,21 @@ private:
 
 	std::vector<char*> pauseOptions;
 	int pauseOption;
+	int numEnemies;
+	float spawnCooldown;
+
+	KeyboardInput* keyboard;
+
+	FMOD_RESULT fmodResult;
+	FMOD::System* fmodSystem;
+	unsigned int fmodVer;
+	int numDrivers;
+	FMOD_SPEAKERMODE speakerMode;
+	FMOD_CAPS fmodCaps;
+	char fmodName[256];
+
+	FMOD::Sound* titleMusic;
+	FMOD::Sound* startEffect;
+	FMOD::Channel* musicChannel;
+	FMOD::Channel* startChannel;
 };

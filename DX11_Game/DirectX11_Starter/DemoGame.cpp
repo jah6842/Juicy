@@ -70,6 +70,10 @@ DemoGame::~DemoGame()
 		delete gameobjects.back();
 		gameobjects.pop_back();
 	}
+	while(!buttons.empty()){
+		delete buttons.back();
+		buttons.pop_back();
+	}
 
 	delete renderer;
 	delete skybox;
@@ -128,7 +132,6 @@ bool DemoGame::Init()
 			for(int k = 0; k < NUM_GO; k++){
 				GameObject* g = new GameObject(MESH_FRIGATE, MATERIAL_FRIGATE);
 				g->transform.SetPosition(i * 50.0f, j * 50.0f, k * 50.0f);
-				g->transform.SetScale(1, 1, 1);
 				g->transform.SetRotationalVelocity(RNG::randFloat(-2,2), RNG::randFloat(-2,2), 0.0f);
 				gameobjects.push_back(g);
 			}
@@ -138,18 +141,20 @@ bool DemoGame::Init()
 	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE, keyboard);
 	gameobjects.push_back(ship);
 
-	//enemies setup
-	spawnCooldown = 5.0;
-	numEnemies = 0;
-	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
-	enemies[numEnemies] = enemy;
-
+	/*
 	Button * b = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 600.0f, 100.0f));
 	b->Visible = true;
 	Button * b2 = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 400.0f, 100.0f, 100.0f));
 	b2->Visible = true;
 	buttons.push_back(b);
 	buttons.push_back(b2);
+	*/
+
+	//enemies setup
+	spawnCooldown = 5.0;
+	numEnemies = 0;
+	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+	enemies[numEnemies] = enemy;
 
 	DebugTimer::Stop();
 
@@ -340,6 +345,7 @@ void DemoGame::DrawScene()
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	renderer->Draw();
+
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
 	{
 		Button* b = *itr;
@@ -349,9 +355,10 @@ void DemoGame::DrawScene()
 		}
 	}
 
+
 	if (state == GAME_STATE_TITLE)
 	{
-		renderer->DrawString("Press Enter to Begin", 150, 600, 80, XMFLOAT4(1, 1, 1, 1));
+		renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
 	}
 	else if (state == GAME_STATE_PAUSE)
 	{
@@ -406,7 +413,6 @@ void DemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 void DemoGame::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
-
 }
 
 void DemoGame::OnMouseMove(WPARAM btnState, int x, int y)

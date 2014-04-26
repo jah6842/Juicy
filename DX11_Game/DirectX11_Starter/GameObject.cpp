@@ -20,7 +20,7 @@ GameObject::GameObject(){
 };
 
 void GameObject::Update(float dt){
-	//transform.Update(dt);
+	transform.Update(dt);
 };
 
 GameObject::~GameObject(){

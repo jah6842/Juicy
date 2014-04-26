@@ -1,4 +1,3 @@
-
 #include "globals.inc"
 
 struct VS_INPUT

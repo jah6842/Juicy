@@ -29,6 +29,8 @@ public:
 
 	static std::map<UINT, std::shared_ptr<Material>> allMaterials;
 	static std::shared_ptr<Material> LoadMaterial(ID3D11Device* device, MATERIALS mat);
+	static ID3D11Buffer* Create2DVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
 };
+
 
 #endif // _MATERIAL_H
