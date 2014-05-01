@@ -209,23 +209,6 @@ void DemoGame::UpdateScene(float dt)
 		{
 			speed *= 3.0f;
 		}
-		// Move camera with WASD
-		/*if(GetAsyncKeyState('W'))
-		{
-			Camera::MainCamera.Move(CameraMovement::FORWARD, speed);
-		}
-		if(GetAsyncKeyState('S'))
-		{
-			Camera::MainCamera.Move(CameraMovement::BACKWARD, -speed);
-		}
-		if(GetAsyncKeyState('A'))
-		{
-			Camera::MainCamera.Move(CameraMovement::LEFT, -speed);
-		}
-		if(GetAsyncKeyState('D'))
-		{
-			Camera::MainCamera.Move(CameraMovement::RIGHT, speed);
-		}*/
 
 		// Rotate camera with arrow keys
 		if(keyboard->GetKey(VK_RIGHT)){
@@ -239,18 +222,6 @@ void DemoGame::UpdateScene(float dt)
 		}
 		if(keyboard->GetKey(VK_DOWN)){
 			Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
-		}
-
-		if(keyboard->GetKeyDown(VK_SPACE)){
-			/*int numCubes = static_cast<int>(dt * 1000.0f);
-			for(int i = 0; i < numCubes; i++){
-				GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
-				go->transform.SetScale(1.0f,1.0f,1.0f);
-				go->transform.SetPosition(0,0,0);
-				go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-				go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-				gameobjects.push_back(go);
-			}*/
 		}
 
 		if (keyboard->GetKeyDown(VK_ESCAPE))

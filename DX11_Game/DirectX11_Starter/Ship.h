@@ -15,6 +15,7 @@ private:
 	void Shoot();
 	void Move();
 
+	FireMode fireMode;
 	std::vector<std::vector<Transform>> locations;
 	int dimensions;
 	int rowIndex;
@@ -24,5 +25,6 @@ private:
 	KeyboardInput* keyboard;
 	float shootCooldown;
 	float shootTimer;
+	float rapidCooldown;
 };
 

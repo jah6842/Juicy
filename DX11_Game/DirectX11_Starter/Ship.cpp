@@ -5,6 +5,8 @@ Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb) : GameObject(m, mat)
 {
 	keyboard = kb;
 	
+	fireMode = FIRE_MODE_NORMAL;
+
 	dimensions = 4;
 	interval = 30;
 	
@@ -30,6 +32,7 @@ Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb) : GameObject(m, mat)
 	//transform.SetPosition(60.0f, 60.0f, 60.0f);
 
 	shootCooldown = 0.6f;
+	rapidCooldown = 0.3f;
 	shootTimer = 0.0f;
 }
 
@@ -38,7 +41,28 @@ void Ship::Update(float dt)
 	shootTimer -= dt;
 	
 	Move();
-	Shoot();
+
+	if (keyboard->GetKey(VK_SPACE) && shootTimer <= 0.0f)
+	{
+		Shoot();
+	}
+
+	if (keyboard->GetKeyDown('Z'))
+	{
+		fireMode = FIRE_MODE_RAPID;
+	}
+	else if (keyboard->GetKeyDown('X'))
+	{
+		fireMode = FIRE_MODE_PIERCING;
+	}
+	else if (keyboard->GetKeyDown('C'))
+	{
+		fireMode = FIRE_MODE_WIDE;
+	}
+	else if (keyboard->GetKeyDown('V'))
+	{
+		fireMode = FIRE_MODE_NORMAL;
+	}
 
 	for (UINT i = 0; i < bullets.size(); i++)
 	{
@@ -96,14 +120,49 @@ void Ship::Move()
 
 void Ship::Shoot()
 {
-	if (keyboard->GetKey(VK_SPACE) && shootTimer <= 0.0f)
+	Bullet* b;
+	
+	if (fireMode == FIRE_MODE_PIERCING)
 	{
-		Bullet* b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
-		b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
-		b->transform.SetScale(1.0f, 1.0f, 1.0f);
-		b->transform.SetPosition(transform.Pos());
-		bullets.push_back(b);
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, true);
+	}
+	else
+	{
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
+	}
 
+	b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
+	b->transform.SetScale(1.0f, 1.0f, 1.0f);
+	b->transform.SetPosition(transform.Pos());
+	bullets.push_back(b);
+
+	if (fireMode == FIRE_MODE_WIDE)
+	{
+		if (rowIndex > 0)
+		{
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
+			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
+			b->transform.SetScale(1.0f, 1.0f, 1.0f);
+			b->transform.SetPosition(locations[rowIndex - 1][columnIndex].Pos());
+			bullets.push_back(b);
+		}
+
+		if (rowIndex < dimensions - 1)
+		{
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
+			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
+			b->transform.SetScale(1.0f, 1.0f, 1.0f);
+			b->transform.SetPosition(locations[rowIndex + 1][columnIndex].Pos());
+			bullets.push_back(b);
+		}
+	}
+
+	if (fireMode == FIRE_MODE_RAPID)
+	{
+		shootTimer = rapidCooldown;
+	}
+	else
+	{
 		shootTimer = shootCooldown;
 	}
 }
