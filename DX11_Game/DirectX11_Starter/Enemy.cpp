@@ -41,6 +41,12 @@ bool Enemy::getActive()
 {
 	return active;
 }
+
+void Enemy::setActive(bool isActive)
+{
+	active = isActive;
+}
+
 void Enemy::Update(float dt)
 {
 	
@@ -52,4 +58,14 @@ void Enemy::Update(float dt)
 		
 	}
 	transform.Update(dt);
+}
+
+int Enemy::GetRow()
+{
+	return rowIndex;
+}
+
+int Enemy::GetColumn()
+{
+	return columnIndex;
 }

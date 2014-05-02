@@ -247,6 +247,19 @@ void DemoGame::UpdateScene(float dt)
 		for(int i = 0; i <= numEnemies; i++)
 		{
 			enemies[i] ->Update(dt);
+
+			for (int j = 0; j < ship->GetBullets().size(); j++)
+			{
+				if (enemies[i]->GetRow() == ship->GetBullets()[j]->GetRow() && enemies[i]->GetColumn() == ship->GetBullets()[j]->GetColumn())
+				{
+					if (ship->GetBullets()[i]->transform.PosY()  >= enemies[i]->transform.PosY() - 50 && ship->GetBullets()[i]->transform.PosY()  <= enemies[i]->transform.PosY() + 50)
+					{
+						ship->GetBullets()[i]->Collision();
+						enemies[i]->setActive(false);
+					}
+				}
+			}
+
 			if(!enemies[i] ->getActive())
 			{
 				//destroy the enemy
@@ -262,7 +275,7 @@ void DemoGame::UpdateScene(float dt)
 				numEnemies--;
 			}
 		}
-
+		
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
 		}

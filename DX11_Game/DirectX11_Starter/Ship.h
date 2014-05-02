@@ -11,6 +11,9 @@ public:
 	Ship(MESHES m, MATERIALS mat, KeyboardInput* kb);
 	~Ship(void);
 	void Update(float dt);
+	vector<Bullet*> GetBullets();
+	int GetRow();
+	int GetColumn();
 private:
 	void Shoot();
 	void Move();

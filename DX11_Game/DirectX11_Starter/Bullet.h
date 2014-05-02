@@ -4,15 +4,20 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(MESHES m, MATERIALS mat, bool piercing);
+	Bullet(MESHES m, MATERIALS mat, int row, int column, bool piercing);
 	~Bullet(void);
 
-	bool CheckCollision(GameObject* object);
+	bool CheckCollision();
 	bool CheckOnScreen();
 	void Update(float dt);
+	int GetRow();
+	int GetColumn();
+	void Collision();
 
 private:
 	bool isPiercing;
-	// target?
+	int rowIndex;
+	int columnIndex;
+	bool collision;
 };
 

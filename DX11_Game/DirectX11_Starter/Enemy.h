@@ -11,6 +11,9 @@ public:
 	void Update(float dt);
 	void MoveEnemy(int speed);
 	bool getActive();
+	void setActive(bool isActive);
+	int GetRow();
+	int GetColumn();
 private:
 	std::vector<std::vector<Transform>> locations;
 	bool active;

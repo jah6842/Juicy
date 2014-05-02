@@ -68,7 +68,7 @@ void Ship::Update(float dt)
 	{
 		bullets[i]->Update(dt);
 		
-		if (bullets[i]->CheckOnScreen() == false)
+		if (bullets[i]->CheckOnScreen() == false || bullets[i]->CheckCollision() == true)
 		{
 			delete(bullets[i]);
 			bullets.erase(bullets.begin() + i);
@@ -124,11 +124,11 @@ void Ship::Shoot()
 	
 	if (fireMode == FIRE_MODE_PIERCING)
 	{
-		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, true);
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, true);
 	}
 	else
 	{
-		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, false);
 	}
 
 	b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
@@ -140,7 +140,7 @@ void Ship::Shoot()
 	{
 		if (rowIndex > 0)
 		{
-			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex - 1, columnIndex, false);
 			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
 			b->transform.SetPosition(locations[rowIndex - 1][columnIndex].Pos());
@@ -149,7 +149,7 @@ void Ship::Shoot()
 
 		if (rowIndex < dimensions - 1)
 		{
-			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, false);
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex + 1, columnIndex, false);
 			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
 			b->transform.SetPosition(locations[rowIndex + 1][columnIndex].Pos());
@@ -165,4 +165,19 @@ void Ship::Shoot()
 	{
 		shootTimer = shootCooldown;
 	}
+}
+
+vector<Bullet*> Ship::GetBullets()
+{
+	return bullets;
+}
+
+int Ship::GetRow()
+{
+	return rowIndex;
+}
+
+int Ship::GetColumn()
+{
+	return columnIndex;
 }
