@@ -114,7 +114,8 @@ bool DemoGame::Init()
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
 	Camera::MainCamera.SetPosition(-60.0f, 100.0f, -60.0f);
-	Camera::MainCamera.SetDirection(20.0f, 30.0f);
+	
+	Camera::MainCamera.SetDirection(XMConvertToRadians(45.0f), XMConvertToRadians(30.0f));
 
 	// Set up our main renderer
 	renderer = new Renderer();
@@ -426,8 +427,8 @@ void DemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 		prevMousePos.y = y;
 	}
 
-	Camera::MainCamera.Rotate((float)-(prevMousePos.x - x)/ 100.0f, 0.0f);
-	Camera::MainCamera.Rotate(0.0f, (float)-(prevMousePos.y - y)/ 100.0f);
+	//Camera::MainCamera.Rotate((float)-(prevMousePos.x - x)/ 100.0f, 0.0f);
+	//Camera::MainCamera.Rotate(0.0f, (float)-(prevMousePos.y - y)/ 100.0f);
 
 	prevMousePos.x = x;
 	prevMousePos.y = y;
