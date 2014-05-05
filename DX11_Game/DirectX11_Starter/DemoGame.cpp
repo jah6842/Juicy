@@ -142,9 +142,13 @@ bool DemoGame::Init()
 	gameobjects.push_back(ship);
 
 	
-	Button * b = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 100.0f, 100.0f));
-	b->Visible = true;
-	buttons.push_back(b);
+	Button * startButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 100.0f, 100.0f));
+	startButton->Visible = true;
+	buttons.push_back(startButton);
+	Button * returnButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 200.0f, 100.0f, 100.0f));
+	buttons.push_back(returnButton);
+	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 400.0f, 100.0f, 100.0f));
+	buttons.push_back(quitButton);
 	
 
 	//enemies setup
@@ -226,6 +230,9 @@ void DemoGame::UpdateScene(float dt)
 			state = GAME_STATE_PAUSE;
 			//musicChannel->setPaused(true);
 			musicChannel->setVolume(0.3f);
+
+			buttons.at(BUTTON_RETURN)->Visible = true;
+			buttons.at(BUTTON_QUIT)->Visible = true;
 		}
 
 		Camera::MainCamera.Update(dt);
@@ -349,11 +356,11 @@ void DemoGame::DrawScene()
 		{
 			if (i != pauseOption)
 			{
-				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.5f, 0.5f, 0.5f, 0.7f));
+				//renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.5f, 0.5f, 0.5f, 0.7f));
 			}
 			else
 			{
-				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(1, 1, 1, 1));
+				//renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(1, 1, 1, 1));
 			}
 
 			height += 60;  
@@ -382,11 +389,23 @@ void DemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
 	{
 		Button* b = *itr;
-		if(b->Visible)
+		if(b->Visible && b->Clicked(p))
 		{
-				//std::cout << b->Clicked(p) << std::endl;
-			b->Visible = false;
-			state = GAME_STATE_MAIN;
+			if(b == buttons.at(BUTTON_START))
+			{
+				b->Visible = false;
+				state = GAME_STATE_MAIN;
+			}
+			else if(b == buttons.at(BUTTON_RETURN))
+			{
+				b->Visible = false;
+				buttons.at(BUTTON_QUIT)->Visible = false;
+				state = GAME_STATE_MAIN;
+			}
+			else if(b == buttons.at(BUTTON_QUIT))
+			{
+				exit(0);
+			}
 		}
 	}
 

@@ -29,6 +29,8 @@ Button::Button(MESHES m, MATERIALS mat, XMFLOAT4 dimensions){
 	transform.Update(0);
 
 	Visible = false;
+
+	//Needs to unregister so it is not used in Draw() call
 	Renderer::UnRegisterGameObject(this);
 };
 
@@ -37,6 +39,7 @@ Button::~Button(void)
 {
 	mesh = nullptr;
 	material = nullptr;
+	//Needs to be registered for GameObject Deallocator
 	Renderer::RegisterGameObject(this);
 };
 

@@ -181,6 +181,14 @@ const extern MATERIAL_DESCRIPTION MATERIAL_DESCRIPTIONS[NUM_MATERIALS]; // defin
 
 #pragma endregion
 
+#pragma region Buttons
+
+enum BUTTONS {
+	BUTTON_START,
+	BUTTON_RETURN,
+	BUTTON_QUIT,
+};
+
 
 
 #endif // _CONSTANTS_H
