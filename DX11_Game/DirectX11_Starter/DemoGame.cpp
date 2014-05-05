@@ -141,14 +141,11 @@ bool DemoGame::Init()
 	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE, keyboard);
 	gameobjects.push_back(ship);
 
-	/*
-	Button * b = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 600.0f, 100.0f));
+	
+	Button * b = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 100.0f, 100.0f));
 	b->Visible = true;
-	Button * b2 = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 400.0f, 100.0f, 100.0f));
-	b2->Visible = true;
 	buttons.push_back(b);
-	buttons.push_back(b2);
-	*/
+	
 
 	//enemies setup
 	spawnCooldown = 5.0;
@@ -342,7 +339,7 @@ void DemoGame::DrawScene()
 
 	if (state == GAME_STATE_TITLE)
 	{
-		renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
+		//renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
 	}
 	else if (state == GAME_STATE_PAUSE)
 	{
@@ -387,7 +384,9 @@ void DemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 		Button* b = *itr;
 		if(b->Visible)
 		{
-				std::cout << b->Clicked(p) << std::endl;
+				//std::cout << b->Clicked(p) << std::endl;
+			b->Visible = false;
+			state = GAME_STATE_MAIN;
 		}
 	}
 
