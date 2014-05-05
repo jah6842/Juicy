@@ -383,8 +383,10 @@ void DemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 	prevMousePos.y = y;
 
 	POINT* p = new POINT();
-	p->x = x;
-	p->y = y;
+	UINT width, height;
+	Camera::MainCamera.GetScreenSize(width, height);
+	p->x = (x * 800) / width;
+	p->y = (y * 600) / height;
 
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
 	{
