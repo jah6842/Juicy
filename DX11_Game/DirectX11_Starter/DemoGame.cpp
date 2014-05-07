@@ -150,11 +150,13 @@ bool DemoGame::Init()
 	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 400.0f, 200.0f, 100.0f));
 	buttons.push_back(quitButton);
 	
+	//grid setup
+	
 
 	//enemies setup
 	spawnCooldown = 5.0;
 	numEnemies = 0;
-	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER, true);
 	enemies[numEnemies] = enemy;
 
 	DebugTimer::Stop();
@@ -244,7 +246,7 @@ void DemoGame::UpdateScene(float dt)
 		{
 			spawnCooldown = 5.0;
 			numEnemies++;
-			Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+			Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER, true);
 			enemies[numEnemies] = enemy;
 		}
 		//Enemies update
@@ -266,6 +268,8 @@ void DemoGame::UpdateScene(float dt)
 
 			if(!enemies[i] ->getActive())
 			{
+				//damage the ship
+
 				//destroy the enemy
 				delete enemies[i];
 				enemies[i] = nullptr;
