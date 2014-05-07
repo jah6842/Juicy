@@ -143,12 +143,12 @@ bool DemoGame::Init()
 	gameobjects.push_back(ship);
 
 	
-	Button * startButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(300.0f, 300.0f, 200.0f, 100.0f));
+	Button * startButton = new Button(MESH_BUTTON, MATERIAL_START_BUTTON, XMFLOAT4(300.0f, 300.0f, 200.0f, 100.0f));
 	startButton->Visible = true;
 	buttons.push_back(startButton);
-	Button * returnButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 200.0f, 200.0f, 100.0f));
+	Button * returnButton = new Button(MESH_BUTTON, MATERIAL_RETURN_BUTTON, XMFLOAT4(100.0f, 200.0f, 200.0f, 100.0f));
 	buttons.push_back(returnButton);
-	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 400.0f, 200.0f, 100.0f));
+	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_QUIT_BUTTON, XMFLOAT4(100.0f, 400.0f, 200.0f, 100.0f));
 	buttons.push_back(quitButton);
 	
 
