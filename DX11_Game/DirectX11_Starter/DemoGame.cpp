@@ -257,9 +257,9 @@ void DemoGame::UpdateScene(float dt)
 			{
 				if (enemies[i]->GetRow() == ship->GetBullets()[j]->GetRow() && enemies[i]->GetColumn() == ship->GetBullets()[j]->GetColumn())
 				{
-					if (ship->GetBullets()[i]->transform.PosY()  >= enemies[i]->transform.PosY() - 50 && ship->GetBullets()[i]->transform.PosY()  <= enemies[i]->transform.PosY() + 50)
+					if (ship->GetBullets()[j]->transform.PosY()  >= enemies[i]->transform.PosY() - 50 && ship->GetBullets()[j]->transform.PosY()  <= enemies[i]->transform.PosY() + 50)
 					{
-						ship->GetBullets()[i]->Collision();
+						ship->GetBullets()[j]->Collision();
 						enemies[i]->setActive(false);
 					}
 				}
