@@ -9,7 +9,7 @@ public:
 	SpaceStation(MESHES m, MATERIALS mat);
 	~SpaceStation();
 	void Update(float dt);
-	bool getHealth();
+	int getHealth();
 	void setHealth(int health);
 private:
 	int health;

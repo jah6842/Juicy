@@ -12,7 +12,7 @@ SpaceStation::~SpaceStation()
 	//Renderer::UnRegisterGameObject(this);
 }
 
-bool SpaceStation::getHealth()
+int SpaceStation::getHealth()
 {
 	return health;
 }

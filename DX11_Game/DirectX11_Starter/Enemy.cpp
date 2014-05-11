@@ -8,6 +8,8 @@ Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
 	active = true;
 	canShoot = shooter;
 	shotCooldown = 180;
+	rapidCooldown = 40;
+	burst = 0;
 	for (int i = 0; i < dimensions; i++)
 	{
 		std::vector<Transform> row;
@@ -34,6 +36,11 @@ Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
 	transform.SetScale(3,3,3);
 	transform.SetRotation(XMConvertToRadians(90),0,0);
 	transform.AddVelocity(0.0,-30.0,0.0);
+
+	//setup marker
+	/*
+	MESHES plane;
+	marker = new GameObject(plane, MATERIAL_MARKER);*/
 }
 
 Enemy::~Enemy() 
@@ -100,11 +107,19 @@ void Enemy::shoot()
 	
 	if (fireMode == FIRE_MODE_PIERCING)
 	{
-		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, true);
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_PIERCING);
 	}
-	else
+	else if (fireMode == FIRE_MODE_WIDE)
 	{
-		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, false);
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_WIDE);
+	}
+	else if (fireMode == FIRE_MODE_RAPID)
+	{
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_RAPID);
+	}
+	else 
+	{
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_NORMAL);
 	}
 
 	b->transform.SetVelocity(0.0f, -250.0f, 0.0f);
@@ -116,7 +131,7 @@ void Enemy::shoot()
 	{
 		if (rowIndex > 0)
 		{
-			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex - 1, columnIndex, false);
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex - 1, columnIndex, FIRE_MODE_WIDE);
 			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
 			b->transform.SetPosition(locations[rowIndex - 1][columnIndex].Pos());
@@ -125,7 +140,7 @@ void Enemy::shoot()
 
 		if (rowIndex < dimensions - 1)
 		{
-			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex + 1, columnIndex, false);
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex + 1, columnIndex, FIRE_MODE_WIDE);
 			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
 			b->transform.SetPosition(locations[rowIndex + 1][columnIndex].Pos());
@@ -136,6 +151,12 @@ void Enemy::shoot()
 	if (fireMode == FIRE_MODE_RAPID)
 	{
 		shotCooldown = rapidCooldown;
+		burst++;
+		if(burst > 3)
+		{
+			shotCooldown = regCooldown;
+			burst = 0;
+		}
 	}
 	else
 	{

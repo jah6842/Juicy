@@ -18,16 +18,21 @@ public:
 	void shoot();
 private:
 	std::vector<std::vector<Transform>> locations;
+	//bullet stuff
 	std::vector<Bullet*> bullets;
 	FireMode fireMode;
-	bool active;
 	bool canShoot;
 	float shotCooldown;
 	float regCooldown;
 	float rapidCooldown;
+	//for rapid fire
+	int burst;
+
+	bool active;
 	int dimensions;
 	int rowIndex;
 	int columnIndex;
 	float interval;
+	GameObject* marker;
 };
 

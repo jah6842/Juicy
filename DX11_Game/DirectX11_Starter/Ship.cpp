@@ -124,11 +124,11 @@ void Ship::Shoot()
 	
 	if (fireMode == FIRE_MODE_PIERCING)
 	{
-		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, true);
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_PIERCING);
 	}
 	else
 	{
-		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, false);
+		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_NORMAL);
 	}
 
 	b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
@@ -140,7 +140,7 @@ void Ship::Shoot()
 	{
 		if (rowIndex > 0)
 		{
-			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex - 1, columnIndex, false);
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex - 1, columnIndex, FIRE_MODE_WIDE);
 			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
 			b->transform.SetPosition(locations[rowIndex - 1][columnIndex].Pos());
@@ -149,7 +149,7 @@ void Ship::Shoot()
 
 		if (rowIndex < dimensions - 1)
 		{
-			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex + 1, columnIndex, false);
+			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex + 1, columnIndex, FIRE_MODE_WIDE);
 			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
 			b->transform.SetPosition(locations[rowIndex + 1][columnIndex].Pos());
