@@ -55,6 +55,7 @@ private:
 	static const int MAX_ENEMIES = 5;
 	std::vector<GameObject*> gameobjects;
 	std::vector<Button*> buttons;
+	Button* titleScreen;
 	Ship* ship;
 	//enemy array
 	Enemy* enemies[MAX_ENEMIES];

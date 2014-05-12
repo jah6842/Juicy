@@ -74,6 +74,7 @@ DemoGame::~DemoGame()
 		delete buttons.back();
 		buttons.pop_back();
 	}
+	delete titleScreen;
 
 	delete renderer;
 	delete skybox;
@@ -150,6 +151,7 @@ bool DemoGame::Init()
 	buttons.push_back(returnButton);
 	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_QUIT_BUTTON, XMFLOAT4(100.0f, 400.0f, 200.0f, 100.0f));
 	buttons.push_back(quitButton);
+	titleScreen = new Button(MESH_BUTTON, MATERIAL_TITLE_SCREEN, XMFLOAT4(0.0f, 0.0f, 800.0f, 600.0f));
 	
 	//grid setup
 	GameObject* grid = new GameObject(MESH_GRID,MATERIAL_GRID);
@@ -339,7 +341,13 @@ void DemoGame::DrawScene()
 	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Black);
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+
 	renderer->Draw();
+
+	if (state == GAME_STATE_TITLE)
+	{
+		renderer->DrawButton(titleScreen);
+	}
 
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
 	{
@@ -351,28 +359,7 @@ void DemoGame::DrawScene()
 	}
 
 
-	if (state == GAME_STATE_TITLE)
-	{
-		//renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
-	}
-	else if (state == GAME_STATE_PAUSE)
-	{
-		int height = 500;
 
-		for (int i = 0; i < pauseOptions.size(); i++)
-		{
-			if (i != pauseOption)
-			{
-				//renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.5f, 0.5f, 0.5f, 0.7f));
-			}
-			else
-			{
-				//renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(1, 1, 1, 1));
-			}
-
-			height += 60;  
-		}
-	}
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));
