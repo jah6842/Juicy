@@ -114,7 +114,8 @@ bool DemoGame::Init()
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
 	Camera::MainCamera.SetPosition(-60.0f, 100.0f, -60.0f);
-	Camera::MainCamera.SetDirection(20.0f, 30.0f);
+	
+	Camera::MainCamera.SetDirection(XMConvertToRadians(45.0f), XMConvertToRadians(30.0f));
 
 	// Set up our main renderer
 	renderer = new Renderer();
@@ -142,12 +143,12 @@ bool DemoGame::Init()
 	gameobjects.push_back(ship);
 
 	
-	Button * startButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(300.0f, 300.0f, 200.0f, 100.0f));
+	Button * startButton = new Button(MESH_BUTTON, MATERIAL_START_BUTTON, XMFLOAT4(300.0f, 300.0f, 200.0f, 100.0f));
 	startButton->Visible = true;
 	buttons.push_back(startButton);
-	Button * returnButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 200.0f, 200.0f, 100.0f));
+	Button * returnButton = new Button(MESH_BUTTON, MATERIAL_RETURN_BUTTON, XMFLOAT4(100.0f, 200.0f, 200.0f, 100.0f));
 	buttons.push_back(returnButton);
-	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(100.0f, 400.0f, 200.0f, 100.0f));
+	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_QUIT_BUTTON, XMFLOAT4(100.0f, 400.0f, 200.0f, 100.0f));
 	buttons.push_back(quitButton);
 	
 	//grid setup
@@ -258,9 +259,9 @@ void DemoGame::UpdateScene(float dt)
 			{
 				if (enemies[i]->GetRow() == ship->GetBullets()[j]->GetRow() && enemies[i]->GetColumn() == ship->GetBullets()[j]->GetColumn())
 				{
-					if (ship->GetBullets()[i]->transform.PosY()  >= enemies[i]->transform.PosY() - 50 && ship->GetBullets()[i]->transform.PosY()  <= enemies[i]->transform.PosY() + 50)
+					if (ship->GetBullets()[j]->transform.PosY()  >= enemies[i]->transform.PosY() - 50 && ship->GetBullets()[j]->transform.PosY()  <= enemies[i]->transform.PosY() + 50)
 					{
-						ship->GetBullets()[i]->Collision();
+						ship->GetBullets()[j]->Collision();
 						enemies[i]->setActive(false);
 					}
 				}
@@ -387,8 +388,10 @@ void DemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 	prevMousePos.y = y;
 
 	POINT* p = new POINT();
-	p->x = x;
-	p->y = y;
+	UINT width, height;
+	Camera::MainCamera.GetScreenSize(width, height);
+	p->x = (x * 800) / width;
+	p->y = (y * 600) / height;
 
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
 	{
@@ -428,8 +431,8 @@ void DemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 		prevMousePos.y = y;
 	}
 
-	Camera::MainCamera.Rotate((float)-(prevMousePos.x - x)/ 100.0f, 0.0f);
-	Camera::MainCamera.Rotate(0.0f, (float)-(prevMousePos.y - y)/ 100.0f);
+	//Camera::MainCamera.Rotate((float)-(prevMousePos.x - x)/ 100.0f, 0.0f);
+	//Camera::MainCamera.Rotate(0.0f, (float)-(prevMousePos.y - y)/ 100.0f);
 
 	prevMousePos.x = x;
 	prevMousePos.y = y;
