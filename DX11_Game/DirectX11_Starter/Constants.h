@@ -148,7 +148,9 @@ enum MESHES{
 	MESH_SPHERE,
 	MESH_FRIGATE,
 	MESH_INVADER,
-	MESH_BUTTON
+	MESH_BUTTON,
+	MESH_GRID,
+	MESH_MARKER
 };
 const WCHAR* meshNames[]; // defined in CPP
 
