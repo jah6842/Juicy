@@ -152,7 +152,9 @@ bool DemoGame::Init()
 	buttons.push_back(quitButton);
 	
 	//grid setup
-	
+	GameObject* grid = new GameObject(MESH_GRID,MATERIAL_GRID);
+	grid ->transform.SetScale(10,10,10);
+	gameobjects.push_back(grid);
 
 	//enemies setup
 	spawnCooldown = 5.0;

@@ -38,15 +38,19 @@ Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
 	transform.AddVelocity(0.0,-30.0,0.0);
 
 	//setup marker
-	/*
-	MESHES plane;
-	marker = new GameObject(plane, MATERIAL_MARKER);*/
+	
+	marker = new GameObject(MESH_MARKER, MATERIAL_MARKER);
+	marker ->transform.SetPosition(locations[rowIndex][columnIndex].Pos());
+	marker ->transform.SetScale(100,100,100);
+	marker->transform.SetRotationalVelocity(10,10,10);
+	Renderer::RegisterGameObject(marker);
 }
 
 Enemy::~Enemy() 
 {
 	// Unregister this GameObject from the renderer
-	//Renderer::UnRegisterGameObject(this);
+	Renderer::UnRegisterGameObject(this);
+	Renderer::UnRegisterGameObject(marker);
 }
 
 bool Enemy::getActive()
@@ -89,6 +93,7 @@ void Enemy::Update(float dt)
 	{
 		active = false;
 	}
+	marker->transform.Update(dt);
 	transform.Update(dt);
 }
 
