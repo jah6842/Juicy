@@ -11,9 +11,12 @@ public:
 	Ship(MESHES m, MATERIALS mat, KeyboardInput* kb);
 	~Ship(void);
 	void Update(float dt);
+	void Draw(Renderer* renderer);
 	vector<Bullet*> GetBullets();
 	int GetRow();
 	int GetColumn();
+	void Collision(Bullet* bullet);
+	bool IsDead();
 private:
 	void Shoot();
 	void Move();
@@ -29,5 +32,12 @@ private:
 	float shootCooldown;
 	float shootTimer;
 	float rapidCooldown;
+	int lives;
+	int rapidEnergy;
+	int wideEnergy;
+	int piercingEnergy;
+	bool shield;
+	bool powerup;
+	float specialLength;
 };
 

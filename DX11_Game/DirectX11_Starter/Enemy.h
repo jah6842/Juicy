@@ -16,6 +16,7 @@ public:
 	int GetRow();
 	int GetColumn();
 	void shoot();
+	std::vector<Bullet*> GetBullets();
 private:
 	std::vector<std::vector<Transform>> locations;
 	//bullet stuff

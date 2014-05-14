@@ -259,6 +259,18 @@ void DemoGame::UpdateScene(float dt)
 		{
 			enemies[i] ->Update(dt);
 
+			for (int j = 0; j < enemies[i]->GetBullets().size(); j++)
+			{
+				if (ship->GetRow() == enemies[i]->GetBullets()[j]->GetRow() && ship->GetColumn() == enemies[i]->GetBullets()[j]->GetColumn())
+				{
+					if (enemies[i]->GetBullets()[j]->transform.PosY() <= ship->transform.PosY() + 50 && enemies[i]->GetBullets()[j]->transform.PosY() >= ship->transform.PosY() - 50)
+					{
+						ship->Collision(enemies[i]->GetBullets()[j]);
+						enemies[i]->GetBullets()[j]->Collision();
+					}
+				}
+			}
+
 			for (int j = 0; j < ship->GetBullets().size(); j++)
 			{
 				if (enemies[i]->GetRow() == ship->GetBullets()[j]->GetRow() && enemies[i]->GetColumn() == ship->GetBullets()[j]->GetColumn())
@@ -291,6 +303,11 @@ void DemoGame::UpdateScene(float dt)
 		
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
+		}
+
+		if (ship->IsDead())
+		{
+			state = GAME_STATE_LOSE;
 		}
 	}
 	else if (state == GAME_STATE_PAUSE)
@@ -347,6 +364,14 @@ void DemoGame::DrawScene()
 	if (state == GAME_STATE_TITLE)
 	{
 		renderer->DrawButton(titleScreen);
+	}
+	else if (state == GAME_STATE_MAIN)
+	{
+		ship->Draw(renderer);
+	}
+	else if (state == GAME_STATE_LOSE)
+	{
+		renderer->DrawString("GAME OVER", 500.0f, 500.0f, 50.0f);
 	}
 
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)

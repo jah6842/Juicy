@@ -168,3 +168,8 @@ void Enemy::shoot()
 		shotCooldown = regCooldown;
 	}
 }
+
+std::vector<Bullet*> Enemy::GetBullets()
+{
+	return bullets;
+}

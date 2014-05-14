@@ -9,6 +9,11 @@ Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb) : GameObject(m, mat)
 
 	dimensions = 4;
 	interval = 30;
+
+	lives = 3;
+	rapidEnergy = 0;
+	wideEnergy = 0;
+	piercingEnergy = 0;
 	
 	for (int i = 0; i < dimensions; i++)
 	{
@@ -34,6 +39,10 @@ Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb) : GameObject(m, mat)
 	shootCooldown = 0.6f;
 	rapidCooldown = 0.3f;
 	shootTimer = 0.0f;
+
+	shield = false;
+	powerup = false;
+	specialLength = 10.0f;
 }
 
 void Ship::Update(float dt)
@@ -42,26 +51,59 @@ void Ship::Update(float dt)
 	
 	Move();
 
-	if (keyboard->GetKey(VK_SPACE) && shootTimer <= 0.0f)
+	if (keyboard->GetKey(VK_SPACE) && shootTimer <= 0.0f && shield == false)
 	{
 		Shoot();
 	}
 
-	if (keyboard->GetKeyDown('Z'))
+	if (keyboard->GetKeyDown('Z') && rapidEnergy == 100 && powerup == false)
 	{
 		fireMode = FIRE_MODE_RAPID;
 	}
-	else if (keyboard->GetKeyDown('X'))
+	else if (keyboard->GetKeyDown('X') && piercingEnergy == 100 && powerup == false)
 	{
 		fireMode = FIRE_MODE_PIERCING;
 	}
-	else if (keyboard->GetKeyDown('C'))
+	else if (keyboard->GetKeyDown('C') && wideEnergy == 100 && powerup == false)
 	{
 		fireMode = FIRE_MODE_WIDE;
 	}
-	else if (keyboard->GetKeyDown('V'))
+
+	if (powerup)
 	{
-		fireMode = FIRE_MODE_NORMAL;
+		if (fireMode == FIRE_MODE_RAPID)
+		{
+			rapidEnergy -= dt * specialLength;
+
+			if (rapidEnergy <= 0)
+			{
+				rapidEnergy = 0;
+				powerup = false;
+				fireMode = FIRE_MODE_NORMAL;
+			}
+		}
+		else if (fireMode == FIRE_MODE_PIERCING)
+		{
+			piercingEnergy -= dt * specialLength;
+
+			if (piercingEnergy <= 0)
+			{
+				piercingEnergy = 0;
+				powerup = false;
+				fireMode = FIRE_MODE_NORMAL;
+			}
+		}
+		else if (fireMode == FIRE_MODE_WIDE)
+		{
+			wideEnergy -= dt * specialLength;
+
+			if (wideEnergy <= 0)
+			{
+				wideEnergy = 0;
+				powerup = false;
+				fireMode = FIRE_MODE_NORMAL;
+			}
+		}
 	}
 
 	for (UINT i = 0; i < bullets.size(); i++)
@@ -74,6 +116,8 @@ void Ship::Update(float dt)
 			bullets.erase(bullets.begin() + i);
 		}
 	}
+
+	shield = keyboard->GetKey(VK_SHIFT);
 }
 
 void Ship::Move()
@@ -180,4 +224,68 @@ int Ship::GetRow()
 int Ship::GetColumn()
 {
 	return columnIndex;
+}
+
+void Ship::Draw(Renderer* renderer)
+{
+	const char* lifeString = "Lives: ";
+
+	/*for (int i = 0; i < lives; i++)
+	{
+		strcat(lifeString, "I");
+	}*/
+
+	renderer->DrawString(lifeString, 10.0f, 10.0f, 24.0f);
+}
+
+void Ship::Collision(Bullet* bullet)
+{
+	if (shield)
+	{
+		if (bullet->GetUpgradeType() == FIRE_MODE_NORMAL)
+		{
+			piercingEnergy += 10;
+
+			if (piercingEnergy > 100)
+			{
+				piercingEnergy = 100;
+			}
+		}
+		else if (bullet->GetUpgradeType() == FIRE_MODE_RAPID)
+		{
+			rapidEnergy += 10;
+
+			if (rapidEnergy > 100)
+			{
+				rapidEnergy = 100;
+			}
+		}
+		else if (bullet->GetUpgradeType() == FIRE_MODE_WIDE)
+		{
+			wideEnergy += 10;
+
+			if (wideEnergy > 100)
+			{
+				wideEnergy = 100;
+			}
+		}
+	}
+	else
+	{
+		lives--;
+		rowIndex = rand() % dimensions;
+		columnIndex = rand() % dimensions;
+	}
+}
+
+bool Ship::IsDead()
+{
+	if (lives < 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
