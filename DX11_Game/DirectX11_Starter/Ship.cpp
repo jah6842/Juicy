@@ -11,9 +11,9 @@ Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb) : GameObject(m, mat)
 	interval = 30;
 
 	lives = 3;
-	rapidEnergy = 0;
-	wideEnergy = 0;
-	piercingEnergy = 0;
+	rapidEnergy = 0.0f;
+	wideEnergy = 0.0f;
+	piercingEnergy = 0.0f;
 	
 	for (int i = 0; i < dimensions; i++)
 	{
@@ -59,14 +59,17 @@ void Ship::Update(float dt)
 	if (keyboard->GetKeyDown('Z') && rapidEnergy == 100 && powerup == false)
 	{
 		fireMode = FIRE_MODE_RAPID;
+		powerup = true;
 	}
 	else if (keyboard->GetKeyDown('X') && piercingEnergy == 100 && powerup == false)
 	{
 		fireMode = FIRE_MODE_PIERCING;
+		powerup = true;
 	}
 	else if (keyboard->GetKeyDown('C') && wideEnergy == 100 && powerup == false)
 	{
 		fireMode = FIRE_MODE_WIDE;
+		powerup = true;
 	}
 
 	if (powerup)
@@ -228,14 +231,49 @@ int Ship::GetColumn()
 
 void Ship::Draw(Renderer* renderer)
 {
-	const char* lifeString = "Lives: ";
+	std::string lifeString = "Lives: " + std::to_string(lives);
+	std::string rapidString = "Rapid Fire: " + std::to_string(rapidEnergy);
+	std::string piercingString = "Piercing Fire: " + std::to_string(piercingEnergy);
+	std::string wideString = "Wide Fire: " + std::to_string(wideEnergy);
 
 	/*for (int i = 0; i < lives; i++)
 	{
 		strcat(lifeString, "I");
 	}*/
+	
+	renderer->DrawString(lifeString.c_str(), 10.0f, 10.0f, 48.0f);
 
-	renderer->DrawString(lifeString, 10.0f, 10.0f, 24.0f);
+	if (rapidEnergy >= 100)
+	{
+		renderer->DrawString(rapidString.c_str(), 10.0f, 1000.0f, 48.0f, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+	else
+	{
+		renderer->DrawString(rapidString.c_str(), 10.0f, 1000.0f, 48.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+
+	if (piercingEnergy >= 100)
+	{
+		renderer->DrawString(piercingString.c_str(), 10.0f, 1050.0f, 48.0f, XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+	}
+	else
+	{
+		renderer->DrawString(piercingString.c_str(), 10.0f, 1050.0f, 48.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+
+	if (wideEnergy >= 100)
+	{
+		renderer->DrawString(wideString.c_str(), 10.0f, 1100.0f, 48.0f, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	}
+	else
+	{
+		renderer->DrawString(wideString.c_str(), 10.0f, 1100.0f, 48.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+
+	if (shield)
+	{
+		renderer->DrawString("SHIELD", 700.0f, 900.0f, 35.0f);
+	}
 }
 
 void Ship::Collision(Bullet* bullet)
@@ -244,29 +282,29 @@ void Ship::Collision(Bullet* bullet)
 	{
 		if (bullet->GetUpgradeType() == FIRE_MODE_NORMAL)
 		{
-			piercingEnergy += 10;
+			piercingEnergy += 10.0f;
 
 			if (piercingEnergy > 100)
 			{
-				piercingEnergy = 100;
+				piercingEnergy = 100.0f;
 			}
 		}
 		else if (bullet->GetUpgradeType() == FIRE_MODE_RAPID)
 		{
-			rapidEnergy += 10;
+			rapidEnergy += 10.0f;
 
 			if (rapidEnergy > 100)
 			{
-				rapidEnergy = 100;
+				rapidEnergy = 100.0f;
 			}
 		}
 		else if (bullet->GetUpgradeType() == FIRE_MODE_WIDE)
 		{
-			wideEnergy += 10;
+			wideEnergy += 10.0f;
 
 			if (wideEnergy > 100)
 			{
-				wideEnergy = 100;
+				wideEnergy = 100.0f;
 			}
 		}
 	}

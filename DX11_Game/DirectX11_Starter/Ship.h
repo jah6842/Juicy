@@ -33,9 +33,9 @@ private:
 	float shootTimer;
 	float rapidCooldown;
 	int lives;
-	int rapidEnergy;
-	int wideEnergy;
-	int piercingEnergy;
+	float rapidEnergy;
+	float wideEnergy;
+	float piercingEnergy;
 	bool shield;
 	bool powerup;
 	float specialLength;
