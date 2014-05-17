@@ -155,8 +155,8 @@ bool DemoGame::Init()
 	
 	//grid setup
 	GameObject* grid = new GameObject(MESH_CUBE,MATERIAL_GRID);
-	grid ->transform.SetScale(40,.1,40);
-	grid->transform.SetPosition(25,0,25);
+	grid ->transform.SetScale(60,.1,60);
+	grid->transform.SetPosition(40,0,40);
 	gameobjects.push_back(grid);
 
 	//enemies setup
