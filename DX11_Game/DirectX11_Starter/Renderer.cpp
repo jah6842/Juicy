@@ -77,7 +77,7 @@ void Renderer::PrepareLighting(){
 	CONSTANT_BUFFER_DIRECTIONAL_LIGHT dirLight;
 	dirLight.ambientColor = XMFLOAT4(ambientStrength,ambientStrength,ambientStrength,1.0f);
 	dirLight.diffuseColor = XMFLOAT4(1,1,1,1);
-	dirLight.lightDirection = XMFLOAT3(1.0f, 1.0f, 0.0f);
+	dirLight.lightDirection = XMFLOAT3(0.1f, -1.0f, 0.0f);
 
 	deviceContext->UpdateSubresource(_directionalLightBuffer->cBuffer, 0, NULL, &dirLight, 0, 0);
 	deviceContext->PSSetConstantBuffers(_directionalLightBuffer->slot,1,&_directionalLightBuffer->cBuffer);

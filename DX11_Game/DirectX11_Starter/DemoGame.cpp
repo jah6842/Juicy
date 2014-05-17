@@ -154,8 +154,9 @@ bool DemoGame::Init()
 	titleScreen = new Button(MESH_BUTTON, MATERIAL_TITLE_SCREEN, XMFLOAT4(0.0f, 0.0f, 800.0f, 600.0f));
 	
 	//grid setup
-	GameObject* grid = new GameObject(MESH_GRID,MATERIAL_GRID);
-	grid ->transform.SetScale(10,10,10);
+	GameObject* grid = new GameObject(MESH_CUBE,MATERIAL_GRID);
+	grid ->transform.SetScale(40,.1,40);
+	grid->transform.SetPosition(25,0,25);
 	gameobjects.push_back(grid);
 
 	//enemies setup
