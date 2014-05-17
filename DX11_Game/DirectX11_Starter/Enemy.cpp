@@ -40,10 +40,10 @@ Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
 	//setup marker
 	
 	marker = new GameObject(MESH_CUBE, MATERIAL_MARKER);
-	marker ->transform.SetPosition(columnIndex * interval - interval/4, -9.0f, rowIndex * interval-interval/4);
+	marker ->transform.SetPosition(columnIndex * interval - interval/4, -11.0f, rowIndex * interval-interval/4);
 	//printf("%d, %d, %d\n", locations[rowIndex][columnIndex].Pos().x, locations[rowIndex][columnIndex].Pos().y, locations[rowIndex][columnIndex].Pos().z);
 	//marker->transform.SetPosition(0,-4.8f,0);
-	marker ->transform.SetScale(10,10,10);
+	marker ->transform.SetScale(12,12,12);
 	//marker->transform.SetRotationalVelocity(0,0,0);
 	//Renderer::RegisterGameObject(marker);
 }
