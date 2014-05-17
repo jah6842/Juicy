@@ -39,11 +39,13 @@ Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
 
 	//setup marker
 	
-	marker = new GameObject(MESH_MARKER, MATERIAL_MARKER);
-	marker ->transform.SetPosition(locations[rowIndex][columnIndex].Pos());
-	marker ->transform.SetScale(100,100,100);
-	marker->transform.SetRotationalVelocity(10,10,10);
-	Renderer::RegisterGameObject(marker);
+	marker = new GameObject(MESH_CUBE, MATERIAL_MARKER);
+	marker ->transform.SetPosition(columnIndex * interval - interval/4, -9.0f, rowIndex * interval-interval/4);
+	//printf("%d, %d, %d\n", locations[rowIndex][columnIndex].Pos().x, locations[rowIndex][columnIndex].Pos().y, locations[rowIndex][columnIndex].Pos().z);
+	//marker->transform.SetPosition(0,-4.8f,0);
+	marker ->transform.SetScale(10,10,10);
+	//marker->transform.SetRotationalVelocity(0,0,0);
+	//Renderer::RegisterGameObject(marker);
 }
 
 Enemy::~Enemy() 
@@ -51,6 +53,7 @@ Enemy::~Enemy()
 	// Unregister this GameObject from the renderer
 	//Renderer::UnRegisterGameObject(this);
 	//Renderer::UnRegisterGameObject(marker);
+	delete marker;
 }
 
 bool Enemy::getActive()
