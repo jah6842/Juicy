@@ -5,6 +5,7 @@
 #include "DXGame.h"
 #include "GameObject.h"
 #include "Button.h"
+#include "ParticleSystem.h"
 #include "Camera.h"
 #include "Renderer.h"
 #include "Skybox.h"

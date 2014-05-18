@@ -102,6 +102,8 @@ copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="KeyboardInput.cpp" />
     <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="SpaceStation.cpp" />
@@ -127,6 +129,8 @@ copy /y "$(SolutionDir)FMOD\lib\fmodex.dll" "$(OutDir)fmodex.dll"</Command>
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="KeyboardInput.h" />
     <ClInclude Include="Loader.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Shaders\globals.inc" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Skybox.h" />

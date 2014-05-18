@@ -458,7 +458,11 @@ void Renderer::DrawButton(GameObject* b)
 	DeviceManager::SetStencilMode(deviceContext, DM_STENCIL_ENABLE);
 };
 
-
+void Renderer::DrawParticles(GameObject* p)
+{
+	ID3D11DeviceContext* deviceContext = DeviceManager::GetCurrentDeviceContext();
+	ID3D11Device* device = DeviceManager::GetCurrentDevice();
+}
 // Add a gameobject to the gameobjects list
 void Renderer::RegisterGameObject(GameObject* go){
 	registeredGOs.insert(go);
