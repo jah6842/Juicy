@@ -272,7 +272,13 @@ void Ship::Draw(Renderer* renderer)
 
 	if (shield)
 	{
-		renderer->DrawString("SHIELD", 700.0f, 900.0f, 35.0f);
+		UINT screenWidth, screenHeight;
+		Camera::MainCamera.GetScreenSize(screenWidth,screenHeight);
+
+		float x = (700.0f / 800.0f) * (float)screenWidth;
+		float y = (900.0f / 600.0f) * (float)screenHeight;
+
+		renderer->DrawString("SHIELD", x, y, 60.0f);
 	}
 }
 

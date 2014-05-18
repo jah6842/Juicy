@@ -76,6 +76,8 @@ private:
 	int pauseOption;
 	int numEnemies;
 	float spawnCooldown;
+	float score;
+	float gameTimer;
 
 	KeyboardInput* keyboard;
 
