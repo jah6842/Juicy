@@ -7,7 +7,7 @@
 class Enemy : public GameObject
 {
 public:
-	Enemy(MESHES m, MATERIALS mat, bool shooter);
+	Enemy(MESHES m, MATERIALS mat, FireMode fire, bool shooter);
 	~Enemy();
 	void Update(float dt);
 	void MoveEnemy(int speed);
