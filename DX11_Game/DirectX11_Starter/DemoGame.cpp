@@ -140,7 +140,7 @@ bool DemoGame::Init()
 		}
 	}*/
 
-	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE, keyboard);
+	ship = new Ship(MESH_FRIGATE, MATERIAL_FRIGATE, keyboard, fmodSystem);
 	gameobjects.push_back(ship);
 
 	

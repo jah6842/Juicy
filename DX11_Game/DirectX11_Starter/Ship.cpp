@@ -1,9 +1,10 @@
 #include "Ship.h"
 
 
-Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb) : GameObject(m, mat)
+Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb, FMOD::System* systemFMOD) : GameObject(m, mat)
 {
 	keyboard = kb;
+	fmodSystem = systemFMOD;
 	
 	fireMode = FIRE_MODE_NORMAL;
 
@@ -43,6 +44,13 @@ Ship::Ship(MESHES m, MATERIALS mat, KeyboardInput* kb) : GameObject(m, mat)
 	shield = false;
 	powerup = false;
 	specialLength = 10.0f;
+
+	fmodResult = fmodSystem->createStream("../Resources/Sound/Shot.wav", FMOD_DEFAULT, 0, &laserSound);
+	SoundErrorCheck(fmodResult);
+
+	fmodResult = fmodSystem->playSound(FMOD_CHANNEL_FREE, laserSound, true, &laserChannel);
+	SoundErrorCheck(fmodResult);
+	laserChannel->setMode(FMOD_LOOP_OFF);
 }
 
 void Ship::Update(float dt)
@@ -167,6 +175,8 @@ void Ship::Move()
 
 void Ship::Shoot()
 {
+	fmodSystem->playSound(FMOD_CHANNEL_FREE, laserSound, false, &laserChannel);
+	
 	Bullet* b;
 	
 	if (fireMode == FIRE_MODE_PIERCING)
@@ -332,4 +342,13 @@ bool Ship::IsDead()
 	{
 		return false;
 	}
+}
+
+void Ship::SoundErrorCheck(FMOD_RESULT result)
+{
+	if (result != FMOD_OK)
+    {
+        printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
+        exit(-1);
+    }
 }

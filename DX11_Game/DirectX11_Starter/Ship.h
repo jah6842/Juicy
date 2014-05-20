@@ -4,11 +4,13 @@
 #include <vector>
 #include "KeyboardInput.h"
 #include "Bullet.h"
+#include "fmod.hpp"
+#include "fmod_errors.h"
 
 class Ship : public GameObject
 {
 public:
-	Ship(MESHES m, MATERIALS mat, KeyboardInput* kb);
+	Ship(MESHES m, MATERIALS mat, KeyboardInput* kb, FMOD::System* systemFMOD);
 	~Ship(void);
 	void Update(float dt);
 	void Draw(Renderer* renderer);
@@ -20,6 +22,7 @@ public:
 private:
 	void Shoot();
 	void Move();
+	void SoundErrorCheck(FMOD_RESULT result);
 
 	FireMode fireMode;
 	std::vector<std::vector<Transform>> locations;
@@ -39,5 +42,11 @@ private:
 	bool shield;
 	bool powerup;
 	float specialLength;
+
+	FMOD_RESULT fmodResult;
+	FMOD::System* fmodSystem;
+
+	FMOD::Sound* laserSound;
+	FMOD::Channel* laserChannel;
 };
 
