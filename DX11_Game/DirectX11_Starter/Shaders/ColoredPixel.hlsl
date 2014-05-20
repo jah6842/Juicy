@@ -4,7 +4,6 @@
 struct PS_INPUT
 {
 	float4 pos		: SV_POSITION;
-	float2 texCoord : TEXCOORD0;
 	float3 normal	: NORMAL;
 	float4 color	: COLOR;
 };

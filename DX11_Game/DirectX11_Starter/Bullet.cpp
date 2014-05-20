@@ -1,9 +1,12 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(MESHES m, MATERIALS mat, bool piercing) : GameObject(m, mat)
+Bullet::Bullet(MESHES m, MATERIALS mat, int row, int column, FireMode type) : GameObject(m, mat)
 {
-	isPiercing = piercing;
+	rowIndex = row;
+	columnIndex = column;
+	upgradeType = type;
+	collision = false;
 }
 
 
@@ -11,12 +14,14 @@ Bullet::~Bullet(void)
 {
 }
 
-bool Bullet::CheckCollision(GameObject* object)
+bool Bullet::CheckCollision()
 {
-	if (isPiercing)
+	if (upgradeType == 1)
 	{
 		return false;
 	}
+
+	return collision;
 }
 
 bool Bullet::CheckOnScreen()
@@ -27,4 +32,24 @@ bool Bullet::CheckOnScreen()
 void Bullet::Update(float dt)
 {
 	transform.Update(dt);
+}
+
+int Bullet::GetRow()
+{
+	return rowIndex;
+}
+
+FireMode Bullet::GetUpgradeType()
+{
+	return upgradeType;
+}
+
+int Bullet::GetColumn()
+{
+	return columnIndex;
+}
+
+void Bullet::Collision()
+{
+	collision = true;
 }

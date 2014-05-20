@@ -4,15 +4,23 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(MESHES m, MATERIALS mat, bool piercing);
+	Bullet(MESHES m, MATERIALS mat, int row, int column, FireMode type);
 	~Bullet(void);
 
-	bool CheckCollision(GameObject* object);
+	bool CheckCollision();
 	bool CheckOnScreen();
 	void Update(float dt);
+	int GetRow();
+	int GetColumn();
+	FireMode GetUpgradeType();
+	void Collision();
 
 private:
+	//UPGRADE TYPE: 0 = NORMAL, 1= PIERCING, 2=WIDE, 3 = BURST
+	FireMode upgradeType;
 	bool isPiercing;
-	// target?
+	int rowIndex;
+	int columnIndex;
+	bool collision;
 };
 

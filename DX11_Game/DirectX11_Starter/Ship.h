@@ -11,10 +11,17 @@ public:
 	Ship(MESHES m, MATERIALS mat, KeyboardInput* kb);
 	~Ship(void);
 	void Update(float dt);
+	void Draw(Renderer* renderer);
+	vector<Bullet*> GetBullets();
+	int GetRow();
+	int GetColumn();
+	void Collision(Bullet* bullet);
+	bool IsDead();
 private:
 	void Shoot();
 	void Move();
 
+	FireMode fireMode;
 	std::vector<std::vector<Transform>> locations;
 	int dimensions;
 	int rowIndex;
@@ -24,5 +31,13 @@ private:
 	KeyboardInput* keyboard;
 	float shootCooldown;
 	float shootTimer;
+	float rapidCooldown;
+	int lives;
+	float rapidEnergy;
+	float wideEnergy;
+	float piercingEnergy;
+	bool shield;
+	bool powerup;
+	float specialLength;
 };
 

@@ -40,8 +40,16 @@ const TEXTURE_DESCRIPTION TEXTURE_DESCRIPTIONS[TM_NUM_TEXTURES] = {
 	{ L"Texture Space Invader.png",TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
 
 	{ L"StartButtonDown.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
+	{ L"ResumeButton.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
 	{ L"StartButtonUp.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
 	{ L"StartButtonOver.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
+	{ L"QuitButton.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
+	{ L"TitleScreen.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
+	{ L"EndScreen.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
+	
+	{ L"Grid2.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
+	{ L"Marker.png", TM_TYPE_DIFFUSE, TM_FILE_FORMAT_WIC},
+
 };
 
 const WCHAR* meshNames[] = { 

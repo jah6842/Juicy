@@ -10,7 +10,8 @@ enum VERTEX_TYPE
 {
 	VERTEX_TYPE_NON_INSTANCED,
 	VERTEX_TYPE_ALL,
-	VERTEX_TYPE_2D
+	VERTEX_TYPE_2D,
+	VERTEX_TYPE_PARTICLE
 };
 
 struct InstanceType {
@@ -40,6 +41,14 @@ struct Render2DVertex
 	XMFLOAT4 color;
 };
 
+struct RenderParticleVertex
+{
+	RenderParticleVertex(){}
+	RenderParticleVertex(XMFLOAT3 p, XMFLOAT4 c): pos(p), color(c){}
+	XMFLOAT3 pos;
+	XMFLOAT4 color;
+};
+
 namespace Vertex {
 	// Returns the size of each type of vertex struct
 	static UINT VertexSize(VERTEX_TYPE type){
@@ -47,6 +56,7 @@ namespace Vertex {
 		switch(type){
 			case VERTEX_TYPE_ALL: vertexSize = sizeof(RenderVertex); break;
 			case VERTEX_TYPE_2D: vertexSize = sizeof(Render2DVertex); break;
+			case VERTEX_TYPE_PARTICLE: vertexSize = sizeof(RenderParticleVertex); break;
 			default: vertexSize = 0; break;
 		}
 

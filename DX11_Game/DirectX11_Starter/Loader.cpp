@@ -183,6 +183,18 @@ std::shared_ptr<Mesh> LoadMesh(ID3D11Device* device, MESHES mesh){
 		m->vertexType = VERTEX_TYPE_2D;
 		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	}
+	else if(mesh == MESH_PARTICLE){
+		m->hasColor = true;
+		m->hasNormals = false;
+		m->hasPosition = true;
+		m->hasTexCoord = false;
+		m->indexBuffer = Mesh::CreateIndexBuffer(ButtonIndices, 6);
+		m->numIndices = 6;
+		m->vertexBuffer = Mesh::CreateParticleVertexBuffer(ParticleVertices, 4, VERTEX_TYPE_PARTICLE);
+		m->numVertices = 4;
+		m->vertexType = VERTEX_TYPE_PARTICLE;
+		m->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	}
 	else 
 	{
 		m = LoadModel(meshNames[mesh]);

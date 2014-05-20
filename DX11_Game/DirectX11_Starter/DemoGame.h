@@ -5,6 +5,7 @@
 #include "DXGame.h"
 #include "GameObject.h"
 #include "Button.h"
+#include "ParticleSystem.h"
 #include "Camera.h"
 #include "Renderer.h"
 #include "Skybox.h"
@@ -55,6 +56,8 @@ private:
 	static const int MAX_ENEMIES = 5;
 	std::vector<GameObject*> gameobjects;
 	std::vector<Button*> buttons;
+	Button* titleScreen;
+	Button* endScreen;
 	Ship* ship;
 	//enemy array
 	Enemy* enemies[MAX_ENEMIES];
@@ -89,4 +92,6 @@ private:
 	FMOD::Sound* startEffect;
 	FMOD::Channel* musicChannel;
 	FMOD::Channel* startChannel;
+
+
 };

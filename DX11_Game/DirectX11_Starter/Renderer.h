@@ -13,6 +13,7 @@
 #include "TextureManager.h"
 #include "Loader.h"
 
+
 class GameObject;
 
 class Renderer {
@@ -30,6 +31,9 @@ public:
 
 	//Draw Button
 	void DrawButton(GameObject* b);
+
+	//Draw Particles
+	void DrawParticles(GameObject* p);
 
 	// Add and remove 
 	static void RegisterGameObject(GameObject* go);

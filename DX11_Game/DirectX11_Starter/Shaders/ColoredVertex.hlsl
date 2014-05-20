@@ -4,17 +4,12 @@
 struct VS_INPUT
 {
 	float4 position		: POSITION;
-	float2 texCoord		: TEXCOORD0;
-	float3 normal		: NORMAL;
 	float4 color		: COLOR;
-	matrix instancePosition : INSTANCEPOS;
 };
 
 struct VS_OUTPUT
 {
 	float4 position	: SV_POSITION;
-	float2 texCoord : TEXCOORD0;
-	float3 normal	: NORMAL;
 	float4 color	: COLOR;
 };
 
@@ -32,8 +27,6 @@ VS_OUTPUT main( VS_INPUT input )
 
 	// Pass other values through
 	output.color = input.color;
-	output.normal = input.normal;
-	output.texCoord = input.texCoord;
 
 	return output;
 }

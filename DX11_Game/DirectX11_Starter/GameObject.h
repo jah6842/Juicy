@@ -9,6 +9,14 @@
 #include "Renderer.h"
 #include "Mesh.h"
 
+enum FireMode
+{
+	FIRE_MODE_NORMAL,
+	FIRE_MODE_RAPID,
+	FIRE_MODE_PIERCING,
+	FIRE_MODE_WIDE
+};
+
 class GameObject {
 
 public:

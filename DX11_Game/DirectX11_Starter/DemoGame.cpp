@@ -74,6 +74,7 @@ DemoGame::~DemoGame()
 		delete buttons.back();
 		buttons.pop_back();
 	}
+	delete titleScreen;
 
 	delete renderer;
 	delete skybox;
@@ -114,7 +115,8 @@ bool DemoGame::Init()
 	// Set up the main camera
 	Camera::MainCamera = Camera(windowWidth, windowHeight);
 	Camera::MainCamera.SetPosition(-60.0f, 100.0f, -60.0f);
-	Camera::MainCamera.SetDirection(20.0f, 30.0f);
+	
+	Camera::MainCamera.SetDirection(XMConvertToRadians(45.0f), XMConvertToRadians(30.0f));
 
 	// Set up our main renderer
 	renderer = new Renderer();
@@ -142,15 +144,26 @@ bool DemoGame::Init()
 	gameobjects.push_back(ship);
 
 	
-	Button * b = new Button(MESH_BUTTON, MATERIAL_2D, XMFLOAT4(200.0f, 300.0f, 100.0f, 100.0f));
-	b->Visible = true;
-	buttons.push_back(b);
-	
+	Button * startButton = new Button(MESH_BUTTON, MATERIAL_START_BUTTON, XMFLOAT4(300.0f, 300.0f, 200.0f, 100.0f));
+	startButton->Visible = true;
+	buttons.push_back(startButton);
+	Button * returnButton = new Button(MESH_BUTTON, MATERIAL_RETURN_BUTTON, XMFLOAT4(100.0f, 200.0f, 200.0f, 100.0f));
+	buttons.push_back(returnButton);
+	Button * quitButton = new Button(MESH_BUTTON, MATERIAL_QUIT_BUTTON, XMFLOAT4(100.0f, 400.0f, 200.0f, 100.0f));
+	buttons.push_back(quitButton);
+	titleScreen = new Button(MESH_BUTTON, MATERIAL_TITLE_SCREEN, XMFLOAT4(0.0f, 0.0f, 800.0f, 600.0f));
+	endScreen = new Button(MESH_BUTTON, MATERIAL_END_SCREEN, XMFLOAT4(0.0f, 0.0f, 800.0f, 600.0f));
+
+	//grid setup
+	GameObject* grid = new GameObject(MESH_CUBE,MATERIAL_GRID);
+	grid ->transform.SetScale(60,60,60);
+	grid->transform.SetPosition(40,-60,40);
+	gameobjects.push_back(grid);
 
 	//enemies setup
 	spawnCooldown = 5.0;
 	numEnemies = 0;
-	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER, true);
 	enemies[numEnemies] = enemy;
 
 	DebugTimer::Stop();
@@ -206,23 +219,6 @@ void DemoGame::UpdateScene(float dt)
 		{
 			speed *= 3.0f;
 		}
-		// Move camera with WASD
-		/*if(GetAsyncKeyState('W'))
-		{
-			Camera::MainCamera.Move(CameraMovement::FORWARD, speed);
-		}
-		if(GetAsyncKeyState('S'))
-		{
-			Camera::MainCamera.Move(CameraMovement::BACKWARD, -speed);
-		}
-		if(GetAsyncKeyState('A'))
-		{
-			Camera::MainCamera.Move(CameraMovement::LEFT, -speed);
-		}
-		if(GetAsyncKeyState('D'))
-		{
-			Camera::MainCamera.Move(CameraMovement::RIGHT, speed);
-		}*/
 
 		// Rotate camera with arrow keys
 		if(keyboard->GetKey(VK_RIGHT)){
@@ -238,23 +234,14 @@ void DemoGame::UpdateScene(float dt)
 			Camera::MainCamera.Rotate(0.0f, 5.0f * dt);
 		}
 
-		if(keyboard->GetKeyDown(VK_SPACE)){
-			/*int numCubes = static_cast<int>(dt * 1000.0f);
-			for(int i = 0; i < numCubes; i++){
-				GameObject* go = new GameObject(MESH_CUBE, MATERIAL_DEFAULT);
-				go->transform.SetScale(1.0f,1.0f,1.0f);
-				go->transform.SetPosition(0,0,0);
-				go->transform.SetVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-				go->transform.SetRotationalVelocity(RNG::randFloat(-50,50), RNG::randFloat(-50,50), RNG::randFloat(-50,50));
-				gameobjects.push_back(go);
-			}*/
-		}
-
 		if (keyboard->GetKeyDown(VK_ESCAPE))
 		{
 			state = GAME_STATE_PAUSE;
 			//musicChannel->setPaused(true);
 			musicChannel->setVolume(0.3f);
+
+			buttons.at(BUTTON_RETURN)->Visible = true;
+			buttons.at(BUTTON_QUIT)->Visible = true;
 		}
 
 		Camera::MainCamera.Update(dt);
@@ -266,15 +253,42 @@ void DemoGame::UpdateScene(float dt)
 		{
 			spawnCooldown = 5.0;
 			numEnemies++;
-			Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER);
+			Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER, true);
 			enemies[numEnemies] = enemy;
 		}
 		//Enemies update
 		for(int i = 0; i <= numEnemies; i++)
 		{
 			enemies[i] ->Update(dt);
+
+			for (int j = 0; j < enemies[i]->GetBullets().size(); j++)
+			{
+				if (ship->GetRow() == enemies[i]->GetBullets()[j]->GetRow() && ship->GetColumn() == enemies[i]->GetBullets()[j]->GetColumn())
+				{
+					if (enemies[i]->GetBullets()[j]->transform.PosY() <= ship->transform.PosY() + 50 && enemies[i]->GetBullets()[j]->transform.PosY() >= ship->transform.PosY() - 50)
+					{
+						ship->Collision(enemies[i]->GetBullets()[j]);
+						enemies[i]->GetBullets()[j]->Collision();
+					}
+				}
+			}
+
+			for (int j = 0; j < ship->GetBullets().size(); j++)
+			{
+				if (enemies[i]->GetRow() == ship->GetBullets()[j]->GetRow() && enemies[i]->GetColumn() == ship->GetBullets()[j]->GetColumn())
+				{
+					if (ship->GetBullets()[j]->transform.PosY()  >= enemies[i]->transform.PosY() - 50 && ship->GetBullets()[j]->transform.PosY()  <= enemies[i]->transform.PosY() + 50)
+					{
+						ship->GetBullets()[j]->Collision();
+						enemies[i]->setActive(false);
+					}
+				}
+			}
+
 			if(!enemies[i] ->getActive())
 			{
+				//damage the ship
+
 				//destroy the enemy
 				delete enemies[i];
 				enemies[i] = nullptr;
@@ -288,9 +302,16 @@ void DemoGame::UpdateScene(float dt)
 				numEnemies--;
 			}
 		}
+		
+
 
 		for(UINT i = 0; i < gameobjects.size(); i++){
 			gameobjects[i]->Update(dt);
+		}
+
+		if (ship->IsDead())
+		{
+			state = GAME_STATE_LOSE;
 		}
 	}
 	else if (state == GAME_STATE_PAUSE)
@@ -341,7 +362,22 @@ void DemoGame::DrawScene()
 	deviceContext->ClearRenderTargetView(renderTargetView, Colors::Black);
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+
 	renderer->Draw();
+
+	if (state == GAME_STATE_TITLE)
+	{
+		renderer->DrawButton(titleScreen);
+	}
+	else if (state == GAME_STATE_MAIN)
+	{
+		ship->Draw(renderer);
+	}
+	else if (state == GAME_STATE_LOSE)
+	{
+		//renderer->DrawString("GAME OVER", 500.0f, 500.0f, 50.0f);
+		renderer->DrawButton(endScreen);
+	}
 
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
 	{
@@ -353,28 +389,7 @@ void DemoGame::DrawScene()
 	}
 
 
-	if (state == GAME_STATE_TITLE)
-	{
-		//renderer->DrawString("Press Enter to Begin", 150, 600, 60, XMFLOAT4(1, 1, 1, 1));
-	}
-	else if (state == GAME_STATE_PAUSE)
-	{
-		int height = 500;
 
-		for (int i = 0; i < pauseOptions.size(); i++)
-		{
-			if (i != pauseOption)
-			{
-				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(0.5f, 0.5f, 0.5f, 0.7f));
-			}
-			else
-			{
-				renderer->DrawString(pauseOptions[i], 150, height, 60, XMFLOAT4(1, 1, 1, 1));
-			}
-
-			height += 60;  
-		}
-	}
 
 	// Present the buffer
 	HR(swapChain->Present(0, 0));
@@ -392,17 +407,31 @@ void DemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 	prevMousePos.y = y;
 
 	POINT* p = new POINT();
-	p->x = x;
-	p->y = y;
+	UINT width, height;
+	Camera::MainCamera.GetScreenSize(width, height);
+	p->x = (x * 800) / width;
+	p->y = (y * 600) / height;
 
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
 	{
 		Button* b = *itr;
-		if(b->Visible)
+		if(b->Visible && b->Clicked(p))
 		{
-				//std::cout << b->Clicked(p) << std::endl;
-			b->Visible = false;
-			state = GAME_STATE_MAIN;
+			if(b == buttons.at(BUTTON_START))
+			{
+				b->Visible = false;
+				state = GAME_STATE_MAIN;
+			}
+			else if(b == buttons.at(BUTTON_RETURN))
+			{
+				b->Visible = false;
+				buttons.at(BUTTON_QUIT)->Visible = false;
+				state = GAME_STATE_MAIN;
+			}
+			else if(b == buttons.at(BUTTON_QUIT))
+			{
+				exit(0);
+			}
 		}
 	}
 
@@ -421,8 +450,8 @@ void DemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 		prevMousePos.y = y;
 	}
 
-	Camera::MainCamera.Rotate((float)-(prevMousePos.x - x)/ 100.0f, 0.0f);
-	Camera::MainCamera.Rotate(0.0f, (float)-(prevMousePos.y - y)/ 100.0f);
+	//Camera::MainCamera.Rotate((float)-(prevMousePos.x - x)/ 100.0f, 0.0f);
+	//Camera::MainCamera.Rotate(0.0f, (float)-(prevMousePos.y - y)/ 100.0f);
 
 	prevMousePos.x = x;
 	prevMousePos.y = y;

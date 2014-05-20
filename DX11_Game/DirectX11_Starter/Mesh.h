@@ -47,6 +47,7 @@ struct Mesh {
 	static ID3D11Buffer* CreateVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
 	static ID3D11Buffer* CreateIndexBuffer(UINT* indices, UINT numIndices);
 	static ID3D11Buffer* Create2DVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
+	static ID3D11Buffer* CreateParticleVertexBuffer(void* vertices, UINT numVertices, VERTEX_TYPE t);
 };
 
 ////////// HARDCODED VERTICES //////////////
@@ -117,5 +118,13 @@ static Render2DVertex ButtonVertices[4] =
 static UINT ButtonIndices[] = {
 	0,  1,  2,
 	2,  3,  0
+};
+
+static RenderParticleVertex ParticleVertices[4] = 
+{
+	RenderParticleVertex(XMFLOAT3(-0.5f, -0.5f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderParticleVertex(XMFLOAT3(-0.5f,  0.5f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderParticleVertex(XMFLOAT3( 0.5f,  0.5f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
+	RenderParticleVertex(XMFLOAT3( 0.5f, -0.5f, 0.0f), XMFLOAT4(0.0f,0.0f,0.0f,0.0f)),
 };
 #endif // _MESH_H
