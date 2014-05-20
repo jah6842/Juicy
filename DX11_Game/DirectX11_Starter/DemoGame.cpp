@@ -162,7 +162,7 @@ bool DemoGame::Init()
 	//enemies setup
 	spawnCooldown = 5.0;
 	numEnemies = 0;
-	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER, true);
+	Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER,FIRE_MODE_PIERCING, false);
 	enemies[numEnemies] = enemy;
 
 	DebugTimer::Stop();
@@ -255,16 +255,33 @@ void DemoGame::UpdateScene(float dt)
 		spawnCooldown-= dt;
 		if(spawnCooldown < 0.0 && numEnemies < MAX_ENEMIES-1)
 		{
+			int mode = RNG::randInt(0,3);
 			spawnCooldown = 5.0;
 			numEnemies++;
-			Enemy* enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER, true);
+			Enemy* enemy;
+			if(mode == 0)
+			{
+				enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER,FIRE_MODE_PIERCING, false);
+			}
+			else if(mode == 1)
+			{
+				enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER_SHOOTER,FIRE_MODE_NORMAL, true);
+			}
+			else if(mode == 2)
+			{
+				enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER_WIDE,FIRE_MODE_WIDE, true);
+			}
+			else
+			{
+				enemy = new Enemy(MESH_INVADER,MATERIAL_INVADER_RAPID,FIRE_MODE_RAPID, true);
+			}
 			enemies[numEnemies] = enemy;
 		}
 		//Enemies update
 		for(int i = 0; i <= numEnemies; i++)
 		{
 			enemies[i] ->Update(dt);
-
+            //enemy bullets hitting the ship
 			for (int j = 0; j < enemies[i]->GetBullets().size(); j++)
 			{
 				if (ship->GetRow() == enemies[i]->GetBullets()[j]->GetRow() && ship->GetColumn() == enemies[i]->GetBullets()[j]->GetColumn())
@@ -276,7 +293,7 @@ void DemoGame::UpdateScene(float dt)
 					}
 				}
 			}
-
+            //ship bullets hitting the enemy
 			for (int j = 0; j < ship->GetBullets().size(); j++)
 			{
 				if (enemies[i]->GetRow() == ship->GetBullets()[j]->GetRow() && enemies[i]->GetColumn() == ship->GetBullets()[j]->GetColumn())

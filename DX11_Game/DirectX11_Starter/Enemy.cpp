@@ -1,12 +1,13 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
+Enemy::Enemy(MESHES m, MATERIALS mat, FireMode fire, bool shooter) : GameObject(m, mat)
 {
 	dimensions = 4;
 	interval = 30;
 	active = true;
 	canShoot = shooter;
+	fireMode = fire;
 	shotCooldown = 180;
 	rapidCooldown = 40;
 	burst = 0;
@@ -17,7 +18,7 @@ Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
 		for (int j = 0; j < dimensions; j++)
 		{
 			Transform location;
-			location.SetPosition(interval * j, 300, interval * i);
+			location.SetPosition(interval * j, 150, interval * i);
 			row.push_back(location);
 		}
 
@@ -30,22 +31,20 @@ Enemy::Enemy(MESHES m, MATERIALS mat, bool shooter) : GameObject(m, mat)
 	
 	shotCooldown = 0.0f;
 	regCooldown = 3.6f;
-	rapidCooldown = 1.3f;
+	rapidCooldown = 0.6f;
 
 	transform.SetPosition(locations[rowIndex][columnIndex].Pos());
 	transform.SetScale(3,3,3);
 	transform.SetRotation(XMConvertToRadians(90),0,0);
-	transform.AddVelocity(0.0,-30.0,0.0);
+	transform.AddVelocity(0.0,-15.0,0.0);
 
 	//setup marker
 	
-	marker = new GameObject(MESH_CUBE, MATERIAL_MARKER);
-	marker ->transform.SetPosition(columnIndex * interval - interval/4, -11.0f, rowIndex * interval-interval/4);
-	//printf("%d, %d, %d\n", locations[rowIndex][columnIndex].Pos().x, locations[rowIndex][columnIndex].Pos().y, locations[rowIndex][columnIndex].Pos().z);
-	//marker->transform.SetPosition(0,-4.8f,0);
-	marker ->transform.SetScale(12,12,12);
-	//marker->transform.SetRotationalVelocity(0,0,0);
-	//Renderer::RegisterGameObject(marker);
+	marker = new GameObject(MESH_MARKER, MATERIAL_MARKER);
+	marker ->transform.SetPosition(locations[rowIndex][columnIndex].Pos());
+	marker ->transform.SetScale(100,100,100);
+	marker->transform.SetRotationalVelocity(10,10,10);
+	Renderer::RegisterGameObject(marker);
 }
 
 Enemy::~Enemy() 
@@ -53,7 +52,6 @@ Enemy::~Enemy()
 	// Unregister this GameObject from the renderer
 	//Renderer::UnRegisterGameObject(this);
 	//Renderer::UnRegisterGameObject(marker);
-	delete marker;
 }
 
 bool Enemy::getActive()
@@ -84,7 +82,7 @@ void Enemy::Update(float dt)
 	{
 		bullets[i]->Update(dt);
 		
-		if (bullets[i]->CheckOnScreen() == false || bullets[i]->CheckCollision() == true)
+		if (bullets[i]->transform.PosY() < 0 || bullets[i]->CheckCollision() == true)
 		{
 			delete(bullets[i]);
 			bullets.erase(bullets.begin() + i);
@@ -113,11 +111,7 @@ void Enemy::shoot()
 {
 	Bullet* b;
 	
-	if (fireMode == FIRE_MODE_PIERCING)
-	{
-		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_PIERCING);
-	}
-	else if (fireMode == FIRE_MODE_WIDE)
+	if (fireMode == FIRE_MODE_WIDE)
 	{
 		b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex, columnIndex, FIRE_MODE_WIDE);
 	}
@@ -140,18 +134,18 @@ void Enemy::shoot()
 		if (rowIndex > 0)
 		{
 			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex - 1, columnIndex, FIRE_MODE_WIDE);
-			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
+			b->transform.SetVelocity(0.0f, -250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
-			b->transform.SetPosition(locations[rowIndex - 1][columnIndex].Pos());
+			b->transform.SetPosition(locations[rowIndex - 1][columnIndex].PosX(),transform.PosY(),transform.PosZ());
 			bullets.push_back(b);
 		}
 
 		if (rowIndex < dimensions - 1)
 		{
 			b = new Bullet(MESH_CUBE, MATERIAL_DEFAULT, rowIndex + 1, columnIndex, FIRE_MODE_WIDE);
-			b->transform.SetVelocity(0.0f, 250.0f, 0.0f);
+			b->transform.SetVelocity(0.0f, -250.0f, 0.0f);
 			b->transform.SetScale(1.0f, 1.0f, 1.0f);
-			b->transform.SetPosition(locations[rowIndex + 1][columnIndex].Pos());
+			b->transform.SetPosition(locations[rowIndex + 1][columnIndex].PosX(),transform.PosY(),transform.PosZ());
 			bullets.push_back(b);
 		}
 	}
