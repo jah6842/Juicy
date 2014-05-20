@@ -288,7 +288,7 @@ void Ship::Draw(Renderer* renderer)
 		float x = (700.0f / 800.0f) * (float)screenWidth;
 		float y = (900.0f / 600.0f) * (float)screenHeight;
 
-		renderer->DrawString("SHIELD", x, y, 60.0f);
+		renderer->DrawString("SHIELD", x, y, 50.0f);
 	}
 }
 
@@ -307,7 +307,7 @@ void Ship::Collision(Bullet* bullet)
 		}
 		else if (bullet->GetUpgradeType() == FIRE_MODE_RAPID)
 		{
-			rapidEnergy += 10.0f;
+			rapidEnergy += 5.0f;
 
 			if (rapidEnergy > 100)
 			{
@@ -316,7 +316,7 @@ void Ship::Collision(Bullet* bullet)
 		}
 		else if (bullet->GetUpgradeType() == FIRE_MODE_WIDE)
 		{
-			wideEnergy += 10.0f;
+			wideEnergy += 5.0f;
 
 			if (wideEnergy > 100)
 			{

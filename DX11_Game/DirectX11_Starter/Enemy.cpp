@@ -41,7 +41,7 @@ Enemy::Enemy(MESHES m, MATERIALS mat, FireMode fire, bool shooter) : GameObject(
 	//setup marker
 	
 	marker = new GameObject(MESH_CUBE, MATERIAL_MARKER);
- 	marker ->transform.SetPosition(columnIndex * interval - interval/4, -9.0f, rowIndex * interval-interval/4);
+ 	marker ->transform.SetPosition(columnIndex * interval - interval/4, -24.0f, rowIndex * interval-interval/4);
  	//printf("%d, %d, %d\n", locations[rowIndex][columnIndex].Pos().x, locations[rowIndex][columnIndex].Pos().y, locations[rowIndex][columnIndex].Pos().z);
  	//marker->transform.SetPosition(0,-4.8f,0);
  	marker ->transform.SetScale(11,11,11);

@@ -155,10 +155,14 @@ bool DemoGame::Init()
 	endScreen = new Button(MESH_BUTTON, MATERIAL_END_SCREEN, XMFLOAT4(0.0f, 0.0f, 800.0f, 600.0f));
 
 	//grid setup
-	GameObject* grid = new GameObject(MESH_CUBE,MATERIAL_GRID);
+	/*GameObject* grid = new GameObject(MESH_CUBE,MATERIAL_GRID);
 	grid ->transform.SetScale(60,60,60);
 	grid->transform.SetPosition(40,-60,40);
-	gameobjects.push_back(grid);
+	gameobjects.push_back(grid);*/
+
+	spaceStation = new SpaceStation(MESH_CUBE, MATERIAL_GRID);
+	spaceStation->setHealth(100);
+	gameobjects.push_back(spaceStation);
 
 	//enemies setup
 	spawnCooldown = 5.0;
@@ -293,6 +297,11 @@ void DemoGame::UpdateScene(float dt)
 						enemies[i]->GetBullets()[j]->Collision();
 					}
 				}
+				else if (enemies[i]->GetBullets()[j]->transform.PosY() <= 2)
+				{
+					spaceStation->Collision();
+					enemies[i]->GetBullets()[j]->Collision();
+				}
 			}
             //ship bullets hitting the enemy
 			for (int j = 0; j < ship->GetBullets().size(); j++)
@@ -342,7 +351,7 @@ void DemoGame::UpdateScene(float dt)
 			gameobjects[i]->Update(dt);
 		}
 
-		if (ship->IsDead())
+		if (ship->IsDead() || spaceStation->IsDestroyed())
 		{
 			state = GAME_STATE_LOSE;
 		}
@@ -405,6 +414,7 @@ void DemoGame::DrawScene()
 	else if (state == GAME_STATE_MAIN)
 	{
 		ship->Draw(renderer);
+		spaceStation->Draw(renderer);
 	}
 	else if (state == GAME_STATE_LOSE)
 	{
@@ -417,7 +427,7 @@ void DemoGame::DrawScene()
 		UINT screenWidth, screenHeight;
 		Camera::MainCamera.GetScreenSize(screenWidth,screenHeight);
 
-		float x = (500.0f / 800.0f) * (float)screenWidth;
+		float x = (300.0f / 800.0f) * (float)screenWidth;
 		float y = (500.0f / 600.0f) * (float)screenHeight;
 		
 		renderer->DrawString("GAME OVER", x, y, 50.0f);

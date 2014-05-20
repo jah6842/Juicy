@@ -16,6 +16,7 @@
 #include "fmod_errors.h"
 #include "Bullet.h"
 #include "Enemy.h"
+#include "SpaceStation.h"
 
 // For DirectX Math
 using namespace DirectX;
@@ -59,6 +60,7 @@ private:
 	Button* titleScreen;
 	Button* endScreen;
 	Ship* ship;
+	SpaceStation* spaceStation;
 	//enemy array
 	Enemy* enemies[MAX_ENEMIES];
 

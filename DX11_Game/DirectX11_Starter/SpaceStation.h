@@ -11,6 +11,9 @@ public:
 	void Update(float dt);
 	int getHealth();
 	void setHealth(int health);
+	void Collision();
+	bool IsDestroyed();
+	void Draw(Renderer* renderer);
 private:
 	int health;
 };
