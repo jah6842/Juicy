@@ -173,6 +173,9 @@ bool DemoGame::Init()
 	pauseOptions.push_back("Quit");
 	pauseOption = 0;
 
+	gameTimer = 0;
+	score = 0;
+	
 	return true;
 }
 
@@ -213,6 +216,8 @@ void DemoGame::UpdateScene(float dt)
 	}
 	else if (state == GAME_STATE_MAIN)
 	{
+		gameTimer += dt;
+
 		musicChannel->setVolume(1.0f);
 		float speed = 100.0f;
 		if(keyboard->GetKey(VK_SHIFT))
@@ -279,6 +284,17 @@ void DemoGame::UpdateScene(float dt)
 				{
 					if (ship->GetBullets()[j]->transform.PosY()  >= enemies[i]->transform.PosY() - 50 && ship->GetBullets()[j]->transform.PosY()  <= enemies[i]->transform.PosY() + 50)
 					{
+						Bullet* shipBullet = ship->GetBullets()[j];
+
+						if (shipBullet->GetUpgradeType() == FIRE_MODE_NORMAL)
+						{
+							score += 20;
+						}
+						else
+						{
+							score += 40;
+						}
+						
 						ship->GetBullets()[j]->Collision();
 						enemies[i]->setActive(false);
 					}
@@ -377,6 +393,20 @@ void DemoGame::DrawScene()
 	{
 		//renderer->DrawString("GAME OVER", 500.0f, 500.0f, 50.0f);
 		renderer->DrawButton(endScreen);
+		std::string timeString = "Time: " + std::to_string(gameTimer);
+		std::string scoreString = "Score: " + std::to_string(score);
+		std::string finalScore = "FINAL SCORE: " + std::to_string((gameTimer / 4) * score);
+
+		UINT screenWidth, screenHeight;
+		Camera::MainCamera.GetScreenSize(screenWidth,screenHeight);
+
+		float x = (500.0f / 800.0f) * (float)screenWidth;
+		float y = (500.0f / 600.0f) * (float)screenHeight;
+		
+		renderer->DrawString("GAME OVER", x, y, 50.0f);
+		renderer->DrawString(scoreString.c_str(), x, y + 50, 50.0f);
+		renderer->DrawString(timeString.c_str(), x, y + 100, 50.0f);
+		renderer->DrawString(finalScore.c_str(), x, y + 150, 50.0f);
 	}
 
 	for(std::vector<Button*>::const_iterator itr = buttons.begin(); itr != buttons.end(); ++itr)
